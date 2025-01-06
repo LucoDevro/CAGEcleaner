@@ -1,5 +1,5 @@
 """
-Usage: `python3 main.py <options>`
+Usage: `cagecleaner <options>`
 
 This python script cleans up redundant hits from the cblaster tool. It has primarly been developed and tested for usage with the NCBI nr database.
 Other databases may work, but have not been tested.
@@ -26,7 +26,7 @@ import sys
 import subprocess
 import re
 import os
-import itertools as it
+from more_itertools import batched
 import gzip
 import shutil
 import argparse
@@ -151,7 +151,7 @@ def download_genomes(assemblies: list, batch_size: int = 300) -> None:
     
     # Prepare the batches and save them in a temporary file
     with open('download_batches.txt', 'w') as file:
-            download_batches = list(it.batched(assemblies, batch_size))
+            download_batches = list(batched(assemblies, batch_size))
             for batch in download_batches: 
                 file.write(' '.join(batch) + '\n')
 

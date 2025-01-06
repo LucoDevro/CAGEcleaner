@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # This helper script retrieves the NCBI Assembly IDs linked to a list of Nucleotide IDs using the NCBI E-utilities.
 # It discerns between non-WGS entries and WGS entries. While the former contain sequence data and are directly linked to an assembly ID, 
