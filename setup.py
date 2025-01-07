@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name = "cagecleaner",
-      version = "0.1.0",
+      version = "0.0.1",
       author="Lucas De Vrieze",
       author_email="lucas.devrieze@kuleuven.be",
       license = "MIT",

@@ -17,7 +17,7 @@ echo "Got $(cat non_wgs_assembly_accessions | wc -l) non-WGS Assembly accession 
 ## WGS entries
 echo "--> Checking for WGS entries"
 echo "Found $(cat $scaffolds_list | grep -vE '_|^[A-Z|0-9]{8}\.[1-9]' | wc -l) WGS Nucleotide accession codes."
-# WGS entries need to be redirected to the master record holding all the separate contig records in Nucleotide
+# WGS entries need to be redirected to the master record holding all the separate scaffold records in Nucleotide
 # before linking to Assembly and fetching the assembly
 echo "Redirecting to WGS master record accession codes..."
 cat $scaffolds_list | grep -vE '_|^[A-Z|0-9]{8}\.[1-9]' | 

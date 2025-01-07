@@ -2,22 +2,21 @@
 Usage: `cagecleaner <options>`
 
 This python script cleans up redundant hits from the cblaster tool. It has primarly been developed and tested for usage with the NCBI nr database.
-Other databases may work, but have not been tested.
 
 In its simplest use case, it takes the binary and summary output files as arguments, 
 along with a percent identity cutoff to dereplicate the genomes using the skDER tool.
-In addition, it recovers some of the gene cluster diversity lost by the dereplication by assessing gene cluster structure and hit score outliers.
+In addition, it recovers some of the gene cluster diversity lost by the dereplication by assessing gene cluster content and hit score outliers.
 
 This tool will produce four final output files
     - cleaned_binary.csv: a file structured in the same way as the cblaster binary output, containing only the retained hits. 
     - clusters.txt: the corresponding cluster IDs from the cblaster summary file for each cleaned hit.
     - genome_cluster_sizes.txt: the number of genomes in a dereplication genome cluster, referred to by the dereplication representative genome.
-    - genome_cluster_status.txt: a table with scaffold IDs, their representative genome assembly and their dereplication status.
+    - genome_cluster_status.txt: a table with scaffoldz IDs, their representative genome assembly and their dereplication status.
     
 There are four possible dereplication statuses:
     - 'dereplication_representative': this scaffold is part of the genome assembly that has been selected as the representative of a genome cluster.
-    - 'readded_by_structure': this scaffold contains a hit that is different from the one of the dereplication representative and has therefore been kept.
-    - 'readded_by_score': this scaffold contains a hit that has an outlier cblaster score and has therefore been kept.
+    - 'readded_by_content': this scaffold has been kept as it contains a hit that is different in content from the one of the dereplication representative.
+    - 'readded_by_score': this scaffold has been kept as it contains a hit that has an outlier cblaster score.
     - 'redundant': this scaffold has not been retained and is therefore removed from the final output.
 """
 
@@ -306,26 +305,26 @@ def parse_dereplication_clusters(scaffold_assembly_pairs: dict) -> pd.DataFrame:
     return genome_clusters
 
 
-def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not_by_structure: bool = False, not_by_score: bool = False, outlier_z: float = 2, min_score_diff: float = 0.1) -> pd.DataFrame:
+def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not_by_content: bool = False, not_by_score: bool = False, outlier_z: float = 2, min_score_diff: float = 0.1) -> pd.DataFrame:
     """
     This function recovers some variation in gene clusters that was lost due to dereplicating the hosting genomes. It offers two approaches to
     flag interesting gene clusters that will be kept in the output.
     
-    1) Different gene cluster structure
-    A scaffold that is part of a dereplication cluster may have a different gene cluster structure than its representative. The cblaster binary table
-    also lists the number of homologs were found in a gene cluster for each query gene. If these numbers are different from the ones of the representative
-    assembly, flag to keep this scaffold and its hit.
+    1) Different gene cluster content
+    A scaffold that is part of a dereplication cluster may have a different gene cluster content than its representative, i.e. a different number of
+    identified homologs. The cblaster binary table also lists the number of homologs were found in a gene cluster for each query gene.
+    If these numbers are different from the ones of the representative assembly, flag to keep this scaffold and its hit.
     
     2) Outlier cblaster score
     cblaster adds a 'Score' column in the binary output table that captures the numbers of homologs as well as aggregates the level of homology
     of the entire cluster. If this score is significantly different from the other scores, this may indicate multiple gene cluster lineages within
     this genome cluster, or a remarkably fast evolving gene cluster. In any case, it is interesting to retain this hit.
-    Signficance is currently determined using z-scores.
+    Signficance is currently determined using z-scores for each cluster content group.
     
     :param str path_to_binary: path to the cblaster binary result table
     :param pandas Dataframe genome_clusters_mapping: dataframe returned by the parse_dereplication_clusters() function, containing the dereplication
                                                      status and representative of each assembly
-    :param bool not_by_structure: flag to disable recovering gene clusters by gene cluster structure, also disables recovery by outlier score [default: False]
+    :param bool not_by_content: flag to disable recovering gene clusters by gene cluster content, also disables recovery by outlier score [default: False]
     :param bool not_by_score: flag to disable recovering gene clusters by outlier cblaster score [default: False]
     :param float outlier_z: minimum absolute value of the z-score to consider a hit as an outlier
     :param float min_score_diff: minimum difference in cblaster score between a hit and the mode score when determining outlier scores.
@@ -337,8 +336,8 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
     # Make a copy of the original genome cluster table
     updated_mapping = genome_clusters_mapping.copy()
     
-    # Skip this if not recovering by gene cluster structure
-    if not(not_by_structure):
+    # Skip this if not recovering by gene cluster content
+    if not(not_by_content):
         
         # Read the relevant columns from the cblaster binary table
         with open(path_to_binary, 'r'):
@@ -357,31 +356,31 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
             hits_this_group = hits.loc[group]
             
             # Split the dereplication grouping further into gene cluster subgroups as reflected by the number of homologs of each query gene
-            hits_this_group_by_structure_group = [l.to_list() for l in hits_this_group.groupby(
+            hits_this_group_by_content_group = [l.to_list() for l in hits_this_group.groupby(
                                                     list(set(hits_this_group.columns).difference({'Score'})) # to get all query gene columns
                                                     ).groups.values()]
             
             # Loop over all structural subgroups
-            for structure_group in hits_this_group_by_structure_group:
-                scores_this_structure_group = hits_this_group.loc[structure_group, 'Score'] # cblaster scores
-                mode_score_this_structure_group = float(scores_this_structure_group.mode().iloc[0]) # modal cblaster score
-                zscores_this_structure_group = scores_this_structure_group.transform(zscore) # zscores
+            for content_group in hits_this_group_by_content_group:
+                scores_this_content_group = hits_this_group.loc[content_group, 'Score'] # cblaster scores
+                mode_score_this_content_group = float(scores_this_content_group.mode().iloc[0]) # modal cblaster score
+                zscores_this_content_group = scores_this_content_group.transform(zscore) # zscores
                 
                 # If the result of the z-score calculation yields all NaNs, all cblaster scores were identical, implying there is no score outlier.
-                # In that case, we can continue flagging different gene cluster structures, if any
+                # In that case, we can continue flagging different gene cluster contents, if any
                 # If the user is not interested in flagging score outlier hits, we end up in this case anyway.
-                if not_by_score or zscores_this_structure_group.isna().all():
+                if not_by_score or zscores_this_content_group.isna().all():
                     
                     # If the dereplication representative is one of the assemblies that has a scaffold in this structural subgroup, 
                     # then we already have a hit from this subgroup, so we can skip this one.
-                    dereplication_status_this_structure_group = [genome_clusters_mapping.loc[m, 'dereplication_status'] for m in structure_group]
-                    if "dereplication_representative" in dereplication_status_this_structure_group:
+                    dereplication_status_this_content_group = [genome_clusters_mapping.loc[m, 'dereplication_status'] for m in content_group]
+                    if "dereplication_representative" in dereplication_status_this_content_group:
                         continue
                     
                     # If the dereplication representative is not in this structural subgroup, randomly pick a member as a representative hit to keep
                     else:
-                        structure_group_representative = choice(structure_group)
-                        updated_mapping.at[structure_group_representative, 'dereplication_status'] = 'readded_by_cluster_structure'
+                        content_group_representative = choice(content_group)
+                        updated_mapping.at[content_group_representative, 'dereplication_status'] = 'readded_by_cluster_content'
                 
                 # The case there were different cblaster scores and the user is interested in score outliers
                 else:
@@ -389,12 +388,12 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
                     # Select hits that have an absolute z-score above the threshold,
                     # and of which the cblaster score is sufficiently different from the modal score,
                     # to avoid 'false' outliers that are just a little bit more different than most hits
-                    outliers_this_structure_group = zscores_this_structure_group.loc[
-                        (zscores_this_structure_group.abs() >= outlier_z) &
-                        ((scores_this_structure_group - mode_score_this_structure_group).abs() >= min_score_diff)].index
+                    outliers_this_content_group = zscores_this_content_group.loc[
+                        (zscores_this_content_group.abs() >= outlier_z) &
+                        ((scores_this_content_group - mode_score_this_content_group).abs() >= min_score_diff)].index
                     
                     # All score outliers will be added
-                    for outlier in outliers_this_structure_group.to_list():
+                    for outlier in outliers_this_content_group.to_list():
                         # If the overarching assembly of this outlier is the dereplication representative, skip flagging it
                         dereplication_status_outlier = genome_clusters_mapping.loc[outlier, 'dereplication_status']
                         if dereplication_status_outlier == "dereplication_representative":
@@ -403,18 +402,18 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
                             updated_mapping.at[outlier, 'dereplication_status'] = 'readded_by_outlier_score'
                             
                     # We still have to flag a non-outlier representative of this structural subgroup
-                    non_outliers_this_structure_group = zscores_this_structure_group.drop(index = outliers_this_structure_group).index.to_list()
+                    non_outliers_this_content_group = zscores_this_content_group.drop(index = outliers_this_content_group).index.to_list()
                     
                     # If this subgroup contains a scaffold of the dereplication representative, skip this subgroup
-                    dereplication_status_non_outliers_this_structure_group = [genome_clusters_mapping.loc[m, 'dereplication_status'] 
-                                                                              for m in non_outliers_this_structure_group]
-                    if "dereplication_representative" in dereplication_status_non_outliers_this_structure_group:
+                    dereplication_status_non_outliers_this_content_group = [genome_clusters_mapping.loc[m, 'dereplication_status'] 
+                                                                              for m in non_outliers_this_content_group]
+                    if "dereplication_representative" in dereplication_status_non_outliers_this_content_group:
                         continue
                     
                     # If not, pick a random representative from the non-outlier hits
                     else:
-                        structure_group_representative = choice(non_outliers_this_structure_group)
-                        updated_mapping.at[structure_group_representative, 'dereplication_status'] = 'readded_by_cluster_structure'
+                        content_group_representative = choice(non_outliers_this_content_group)
+                        updated_mapping.at[content_group_representative, 'dereplication_status'] = 'readded_by_cluster_content'
     
     # There is nothing to recover in this case
     else:
@@ -513,7 +512,7 @@ def parse_arguments():
     parser.add_argument('-s', '--summary', dest = "summary")
     parser.add_argument('-c', '--cores', dest = 'cores', default = 1)
     parser.add_argument('-a', dest = 'ani', default = 99.0, type = check_percentage)
-    parser.add_argument('--no-structure-revisit', dest = 'no_revisit_by_structure', default = False, action = "store_true")
+    parser.add_argument('--no-content-revisit', dest = 'no_revisit_by_content', default = False, action = "store_true")
     parser.add_argument('--no-score-revisit', dest = 'no_revisit_by_score', default = False, action = "store_true")
     parser.add_argument('--min-z-score', dest = 'outlier_z', default = 2.0)
     parser.add_argument('--min-score-diff', dest = 'min_score_diff', default = 0.1)
@@ -537,7 +536,7 @@ def main():
     path_to_summary = os.path.join(os.getcwd(), args.summary)
     nb_cores = int(args.cores)
     ani_threshold = float(args.ani)
-    no_revisit_by_structure = args.no_revisit_by_structure
+    no_revisit_by_content = args.no_revisit_by_content
     no_revisit_by_score = args.no_revisit_by_score
     outlier_z = float(args.outlier_z)
     min_score_diff = float(args.min_score_diff)
@@ -569,7 +568,7 @@ def main():
     # parse the secondary clustering from the skDER output and construct a dereplication status table
     genome_cluster_composition = parse_dereplication_clusters(scaffold_assembly_pairs)
     # recover gene cluster hits and update 
-    updated_status = recover_hits(path_to_binary, genome_cluster_composition, no_revisit_by_structure, no_revisit_by_score, outlier_z, min_score_diff)
+    updated_status = recover_hits(path_to_binary, genome_cluster_composition, no_revisit_by_content, no_revisit_by_score, outlier_z, min_score_diff)
     # retrieve the finally retained scaffold IDs from the updated status table
     dereplicated_scaffolds = get_dereplicated_scaffolds(updated_status)
     # generate final output files
