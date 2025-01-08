@@ -1,3 +1,5 @@
+#!/bin/env python
+
 """
 Usage: `cagecleaner <options>`
 
@@ -140,6 +142,8 @@ def get_assemblies(scaffolds: list) -> list:
 def download_genomes(assemblies: list, batch_size: int = 300) -> None:
     """
     This function downloads the full nucleotide fasta files of all found assemblies using the NCBI Datasets CLI via a bash subprocess.
+    It automatically selects for the most recent accession version by omitting the version digit and relying on the NCBI Datasets CLI defaults 
+    to download the most recent version.
     The assemblies are downloaded in batches of 300 by default and saved in the temporary folder data/genomes in the working directory.
     
     :param list assemblies: A list containing Genbank and RefSeq assembly IDs.
@@ -148,10 +152,13 @@ def download_genomes(assemblies: list, batch_size: int = 300) -> None:
     
     print("\n--- STEP 3: Downloading genomes. ---")
     
+    # Cut off the version digits
+    versionless_assemblies = [acc.split('.')[0] for acc in assemblies]
+    
     # Prepare the batches and save them in a temporary file
     with open('download_batches.txt', 'w') as file:
-            download_batches = list(batched(assemblies, batch_size))
-            for batch in download_batches: 
+            download_batches = list(batched(versionless_assemblies, batch_size))
+            for batch in download_batches:
                 file.write(' '.join(batch) + '\n')
 
     # Run the bash script to download and cluster genomes:
@@ -194,7 +201,11 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
     for assmbl in assemblies:
         
         # Find the path to the downloaded fasta file for this assembly ID
-        assmbl_file = [a for a in os.listdir(GENOMES) if assmbl in a][0]
+        try:
+            assmbl_file = [a for a in os.listdir(GENOMES) if assmbl in a][0]
+        except IndexError:
+            print(f'No assembly file found for {assmbl}!')
+            continue
         
         # All genomes were gzip-compressed
         with gzip.open(os.path.join(GENOMES, assmbl_file), "rt") as genome:
