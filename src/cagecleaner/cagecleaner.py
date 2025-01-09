@@ -1,19 +1,26 @@
 #!/bin/env python
 
+### Program: cagecleaner
+### Author: Lucas De Vrieze
+### (c) Masschelein lab
+### VIB-KU Leuven Centre of Microbiology
+### KU Leuven, Department of Biology
+
 """
 Usage: `cagecleaner <options>`
 
-This python script cleans up redundant hits from the cblaster tool. It has primarly been developed and tested for usage with the NCBI nr database.
+cageclear cleans up redundant hits from the cblaster tool. It has primarly been developed and tested for usage with the NCBI nr database.
 
 In its simplest use case, it takes the binary and summary output files as arguments, 
 along with a percent identity cutoff to dereplicate the genomes using the skDER tool.
 In addition, it recovers some of the gene cluster diversity lost by the dereplication by assessing gene cluster content and hit score outliers.
 
-This tool will produce four final output files
+This tool will produce five final output files
     - cleaned_binary.csv: a file structured in the same way as the cblaster binary output, containing only the retained hits. 
     - clusters.txt: the corresponding cluster IDs from the cblaster summary file for each cleaned hit.
     - genome_cluster_sizes.txt: the number of genomes in a dereplication genome cluster, referred to by the dereplication representative genome.
-    - genome_cluster_status.txt: a table with scaffoldz IDs, their representative genome assembly and their dereplication status.
+    - genome_cluster_status.txt: a table with scaffold IDs, their representative genome assembly and their dereplication status.
+    - mappings.txt: a table with scaffold IDs and the IDs of the genome assemblies of which they are part.
     
 There are four possible dereplication statuses:
     - 'dereplication_representative': this scaffold is part of the genome assembly that has been selected as the representative of a genome cluster.
@@ -34,6 +41,9 @@ import argparse
 from Bio import SeqIO
 from scipy.stats import zscore
 from random import choice
+from importlib.metadata import version
+
+__version__ = version("cagecleaner")
 
 ACCESSIONS_SCRIPT = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'get_accessions.sh')
 DOWNLOAD_SCRIPT = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'download_assemblies.sh')
@@ -41,6 +51,78 @@ DEREPLICATE_SCRIPT = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])),
 
 GENOMES = "data/genomes"
 SKDER_OUT = "data/skder_out"
+
+
+def parse_arguments():
+    """
+    Argument parsing function
+    """
+    
+    # Auxiliary function to check the value range of the ANI threshold
+    def check_percentage(value):
+        if 0 <= float(value) <= 100:
+            return value
+        else:
+            raise argparse.ArgumentTypeError("%s should be a percentage value between 0 and 100" % value)
+    
+    # Auxiliary function to check whether a path exists
+    def check_exists(path):
+        if os.path.exists(path):
+            return path
+        else:
+            raise argparse.ArgumentTypeError("%s is not a valid path. Please check the file path." % path)
+    
+    parser = argparse.ArgumentParser(prog = 'cagecleaner',
+                                     epilog = """
+    Lucas De Vrieze, 2025
+    (c) Masschelein lab, VIB
+                                     """,
+                                     formatter_class = argparse.RawDescriptionHelpFormatter,
+                                     description = """
+    cagecleaner: A tool to remove redundancy from cblaster hits.
+    
+    cagecleaner reduces redundancy in cblaster hit sets by dereplicating the genomes containing the hits. 
+    It can also recover hits that would have been omitted by this dereplication if they have a different gene cluster content
+    or an outlier cblaster score.
+    
+    cagecleaner has been designed for usage with the NCBI nr database. It first retrieves the assembly accession IDs
+    of each cblaster hit via NCBI Entrez-Direct utilities, then downloads these assemblies using NCBI Datasets CLI,
+    and then dereplicates these assemblies using skDER. If requested, cblaster hits that have an alternative gene cluster content
+    or an outlier cblaster score (calculated via z-scores) are recovered.
+                                     """,
+                                     add_help = False
+                                     )
+
+    args_general = parser.add_argument_group('General')
+    args_general.add_argument('-c', '--cores', dest = 'cores', default = 1, type = int, help = "Number of cores to use (default: 1)")    
+    args_general.add_argument('-h', '--help', action = 'help', help = "Show this help message and exit")      
+    args_general.add_argument('-v', '--version', action = "version", version = "%(prog)s " + __version__)
+    
+    args_io = parser.add_argument_group('Input / Output')
+    args_io.add_argument('-o', '--output', dest = "output_dir", default = '.', help = "Output directory (default: current working directory)")
+    args_io.add_argument('-b', '--binary', dest = "binary_file", type = check_exists, help = "Path to cblaster binary file")
+    args_io.add_argument('-s', '--summary', dest = "summary_file", type = check_exists, help = "Path to cblaster summary file")
+    args_io.add_argument('--validate-files', dest = "validate_inputs", default = False, action = "store_true", help = "Validate cblaster input files")
+    args_io.add_argument('--keep-downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
+    args_io.add_argument('--keep-dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
+    args_io.add_argument('--keep-intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
+    
+    args_download = parser.add_argument_group('Download')
+    args_download.add_argument('--download-batch', dest = 'download_batch', default = 300, type = int, help = "Number of genomes to download in one batch (default: 300)")
+    
+    args_dereplication = parser.add_argument_group('Dereplication')
+    args_dereplication.add_argument('-a', '--ani', dest = 'ani', default = 99.0, type = check_percentage, help = "ANI dereplication threshold (default: 99.0)")
+    
+    args_recovery = parser.add_argument_group('Hit recovery')
+    args_recovery.add_argument('--no-content-revisit', dest = 'no_revisit_by_content', default = False, action = "store_true", help = "Do not recover hits by cluster content")
+    args_recovery.add_argument('--no-score-revisit', dest = 'no_revisit_by_score', default = False, action = "store_true", help = "Do not recover hits by outlier scores")
+    args_recovery.add_argument('--min-z-score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
+    args_recovery.add_argument('--min-score-diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum cblaster score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold")
+
+    args = parser.parse_args()
+        
+    return args
+
 
 def validate_input_files(path_to_binary: str, path_to_summary:str) -> bool:
     """
@@ -56,10 +138,6 @@ def validate_input_files(path_to_binary: str, path_to_summary:str) -> bool:
         print("--- STEP 0: Validating input files. ---")
         print("Validating binary file.")
         
-        # First we check if the file exists:
-        if not os.path.isfile(path_to_binary): 
-            raise FileNotFoundError(f"'{path_to_binary}' does not exist. Please check if the binary file path is correct and try again.")
-        
         # Now we check if the file has at least 6 columns:
         data = pd.read_table(path_to_binary, sep = "\\s{2,}", engine = 'python')
         assert len(data.columns) > 6, "The amount of columns does not correspond to a cblaster binary output file. Please check the file structure. At least 6 columns should be present."
@@ -74,10 +152,6 @@ def validate_input_files(path_to_binary: str, path_to_summary:str) -> bool:
         print("CHECK") 
         
         print("Validating summary file.")
-    
-        # Again, check if the summary file exists:
-        if not os.path.isfile(path_to_summary):
-            raise FileNotFoundError(f"'{path_to_summary}' does not exist. Please check if the summary file path is correct and try again.")
         
         # The amount of appearances of the word "Cluster" in the summary file should correspond to the amount of lines
         # in the binary file:
@@ -161,7 +235,7 @@ def download_genomes(assemblies: list, batch_size: int = 300) -> None:
             for batch in download_batches:
                 file.write(' '.join(batch) + '\n')
 
-    # Run the bash script to download and cluster genomes:
+    # Run the bash script to download genomes:
     subprocess.run(["bash", DOWNLOAD_SCRIPT], check=True)
     
     # Remove temporary files
@@ -176,6 +250,7 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
     scaffolds are retrieved from the headers of the assembly fasta files. Prefixes are split off from both scaffold ID sets (the one from cblaster,
     and the one from the NCBI download) during mapping as scaffold IDs mapped by the E-utilities sometimes do not correspond with the ones
     in the downloaded fasta files.
+    It generates a report text file with the scaffold-assembly pairs.
         
     :param list scaffolds: A list containing Genbank and RefSeq Nucleotide IDs.
     :param assemblies: A list containing Genbank and RefSeq Assembly IDs.
@@ -200,9 +275,9 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
     
     for assmbl in assemblies:
         
-        # Find the path to the downloaded fasta file for this assembly ID
+        # Find the path to the downloaded fasta file for this assembly ID, ignoring version digits
         try:
-            assmbl_file = [a for a in os.listdir(GENOMES) if assmbl in a][0]
+            assmbl_file = [a for a in os.listdir(GENOMES) if assmbl.split('.')[0] in a][0]
         except IndexError:
             print(f'No assembly file found for {assmbl}!')
             continue
@@ -229,7 +304,11 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
                     
             except IndexError:
                 print(f'No corresponding scaffold accession ID could be found for {assmbl}!')
-                
+    
+    # Write scaffold-assembly pairs to report file
+    with open('pairs.txt', 'w') as handle:
+        handle.write('\n'.join([s + '\t' + a for s,a in mappings.items()]))
+    
     print(f"Found {len(mappings)} scaffold-assembly links")
     
     return mappings
@@ -368,8 +447,8 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
             
             # Split the dereplication grouping further into gene cluster subgroups as reflected by the number of homologs of each query gene
             hits_this_group_by_content_group = [l.to_list() for l in hits_this_group.groupby(
-                                                    list(set(hits_this_group.columns).difference({'Score'})) # to get all query gene columns
-                                                    ).groups.values()]
+                                                list(set(hits_this_group.columns).difference({'Score'})) # to get all query gene columns
+                                                ).groups.values()]
             
             # Loop over all structural subgroups
             for content_group in hits_this_group_by_content_group:
@@ -430,8 +509,10 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
     else:
         print('All revisiting options have been disabled. Not updating the genome grouping labels.')
     
-    # Tidy up the updated mapping and write report file
+    # Tidy up the updated mapping
     updated_mapping = updated_mapping.sort_values(by = ['representative', 'dereplication_status'])
+    
+    # Write report file
     updated_mapping.reset_index(names = 'scaffold').to_csv('genome_cluster_status.txt', sep = "\t", index = False)
     
     return updated_mapping
@@ -503,38 +584,7 @@ def write_output(dereplicated_scaffolds:list, path_to_summary:str, path_to_binar
             file.write(f"{cluster}\n")
             
     return None
-    
-    
-def parse_arguments():
-    """
-    Argument parsing function
-    """
-    
-    # Auxiliary function to check the value range of the ANI threshold
-    def check_percentage(value):
-        if 0 <= float(value) <= 100:
-            return value
-        else:
-            raise argparse.ArgumentTypeError("%s should be a percentage value between 0 and 100" % value)
-    
-    parser = argparse.ArgumentParser(prog = 'ccleaner', description = "Tool to reduce redundancy in cblaster hits")
-    parser.add_argument('-o', '--output', dest = "work_dir", default = '.')
-    parser.add_argument('-b', '--binary', dest = "binary")
-    parser.add_argument('-s', '--summary', dest = "summary")
-    parser.add_argument('-c', '--cores', dest = 'cores', default = 1)
-    parser.add_argument('-a', dest = 'ani', default = 99.0, type = check_percentage)
-    parser.add_argument('--no-content-revisit', dest = 'no_revisit_by_content', default = False, action = "store_true")
-    parser.add_argument('--no-score-revisit', dest = 'no_revisit_by_score', default = False, action = "store_true")
-    parser.add_argument('--min-z-score', dest = 'outlier_z', default = 2.0)
-    parser.add_argument('--min-score-diff', dest = 'min_score_diff', default = 0.1)
-    parser.add_argument('--download-batch', dest = 'download_batch', default = 300)
-    parser.add_argument('--validate-files', dest = "validate_inputs", default = False, action = "store_true")
-    parser.add_argument('--keep-downloads', dest = "keep_downloads", default = False, action = "store_true")
-    parser.add_argument('--keep-dereplication', dest = "keep_dereplication", default = False, action = "store_true")
-    parser.add_argument('--keep-intermediate', dest = "keep_intermediate", default = False, action = "store_true")
-    args = parser.parse_args()
-    
-    return args
+
 
 def main():
     """
@@ -542,15 +592,15 @@ def main():
     """
     args = parse_arguments()
     
-    work_dir = args.work_dir.rstrip('/')
-    path_to_binary = os.path.join(os.getcwd(), args.binary)
-    path_to_summary = os.path.join(os.getcwd(), args.summary)
+    work_dir = args.output_dir.rstrip('/')
+    path_to_binary = os.path.join(os.getcwd(), args.binary_file)
+    path_to_summary = os.path.join(os.getcwd(), args.summary_file)
     nb_cores = int(args.cores)
     ani_threshold = float(args.ani)
     no_revisit_by_content = args.no_revisit_by_content
     no_revisit_by_score = args.no_revisit_by_score
-    outlier_z = float(args.outlier_z)
-    min_score_diff = float(args.min_score_diff)
+    outlier_z = float(args.zscore_outlier_threshold)
+    min_score_diff = float(args.minimal_score_difference)
     download_batch_size = int(args.download_batch)
     validate_inputs = args.validate_inputs
     keep_downloads = args.keep_downloads
@@ -578,7 +628,7 @@ def main():
     dereplicate_genomes(ani_threshold, nb_cores)
     # parse the secondary clustering from the skDER output and construct a dereplication status table
     genome_cluster_composition = parse_dereplication_clusters(scaffold_assembly_pairs)
-    # recover gene cluster hits and update 
+    # recover gene cluster hits and update status table
     updated_status = recover_hits(path_to_binary, genome_cluster_composition, no_revisit_by_content, no_revisit_by_score, outlier_z, min_score_diff)
     # retrieve the finally retained scaffold IDs from the updated status table
     dereplicated_scaffolds = get_dereplicated_scaffolds(updated_status)
@@ -595,7 +645,8 @@ def main():
             if not(keep_dereplication):
                 shutil.rmtree(SKDER_OUT)
     
-    print(f"All done! Results are written to {work_dir}")
+    print(f"All done! Results can be found in {work_dir}")
             
+
 if __name__ == "__main__":
     main()
