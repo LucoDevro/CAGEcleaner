@@ -8,6 +8,8 @@ Given the results files of a `cblaster` run (or a [`CAGECAT`](https://cagecat.bi
 
 This tool has primarily been developed for `cblaster` searches against the NCBI nr database, but should work for any result set containing NCBI Nucleotide accession codes.
 
+![workflow](workflow.png)
+
 ## Installation
 
 First set up a `conda` environment using the `env.yml` file in this repo, and activate the environment.
