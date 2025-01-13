@@ -117,7 +117,7 @@ def parse_arguments():
     args_recovery.add_argument('--no-content-revisit', dest = 'no_revisit_by_content', default = False, action = "store_true", help = "Do not recover hits by cluster content")
     args_recovery.add_argument('--no-score-revisit', dest = 'no_revisit_by_score', default = False, action = "store_true", help = "Do not recover hits by outlier scores")
     args_recovery.add_argument('--min-z-score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
-    args_recovery.add_argument('--min-score-diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum cblaster score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold")
+    args_recovery.add_argument('--min-score-diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum cblaster score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
 
     args = parser.parse_args()
         

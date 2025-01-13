@@ -1,0 +1,147 @@
+Organism                                                      Scaffold              Start    End      Score  LLS_Dehydrogenase  LLS_E1-like  LLS_LlsA  LLS_YcaO
+Listeria monocytogenes PNUSAL003275                           RCPF01000001.1        19644    24956    5.22   1                  1            1         1       
+Listeria monocytogenes clinical isolate of L. monocytogenes   DASDLM010000013.1     3844     9157     3.16   1                  0            1         1       
+Listeria monocytogenes CFSAN051112                            AAAUAI010000028.1     63       4069     4.13   1                  1            1         0       
+Listeria monocytogenes PNUSAL012053                           ABDQRO010000001.1     593200   598545   4.16   0                  1            1         1       
+Listeria monocytogenes 875539                                 AANDLJ010000029.1     409      3516     4.21   1                  1            0         1       
+Listeria monocytogenes PNUSAL004110                           RENG01000005.1        3180     8493     5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL004108                           REPD01000041.1        127      5439     5.22   1                  1            1         1       
+Listeria monocytogenes CFSAN060136                            RSNC01000003.1        301031   306343   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL019004                           ABMRVO010000009.1     124042   129230   4.16   0                  1            1         1       
+Listeria monocytogenes CFSAN008055                            AAAQLO010000004.1     311802   315808   4.13   1                  1            1         0       
+Listeria monocytogenes 337                                    DABXYZ010000025.1     0        2914     4.20   1                  1            0         1       
+Listeria monocytogenes 282341                                 AABERP010000021.1     311      5352     6.22   1                  1            1         1       
+Listeria monocytogenes CFSAN060957                            AAAAGF010000001.1     587587   592899   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL005410                           AANCSV010000026.1     91       5404     3.16   1                  0            1         1       
+Listeria monocytogenes CFSAN056274                            ABDRHJ010000022.1     170      3277     4.21   1                  1            0         1       
+Listeria monocytogenes PNUSAL010130                           ABAKZP010000001.1     585411   590722   4.16   0                  1            1         1       
+Listeria monocytogenes PNUSAL003826                           AABCFU010000001.1     0        3894     4.12   1                  1            1         0       
+Listeria monocytogenes PNUSAL001427                           AAAHTE010000001.1     605301   610613   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL001338                           AAAHSN010000001.1     603388   608699   5.22   1                  1            1         1       
+Listeria monocytogenes CFSAN030471                            AAAHSP010000001.1     681625   686937   5.22   1                  1            1         1       
+Listeria monocytogenes AG19-0226                              AAEXPE010000106.1     45       4051     4.13   1                  1            1         0       
+Listeria monocytogenes FSIS22029580                           AAXDEA010000039.1     434      3541     4.21   1                  1            0         1       
+Listeria monocytogenes BCW_2403                               NZ_MJUB01000017.1     156433   161728   3.16   1                  0            1         1       
+Listeria monocytogenes CFSAN060106                            AAAIVD010000016.1     68266    73578    5.22   1                  1            1         1       
+Listeria monocytogenes SENASICA_Li_Q33                        AABGOP010000107.1     0        2969     4.20   1                  1            0         1       
+Listeria monocytogenes clinical isolate of L. monocytogenes   DASCFO010000057.1     25       4031     4.13   1                  1            1         0       
+Listeria monocytogenes PNUSAL010557                           ABAVZH010000036.1     19950    25262    3.16   1                  0            1         1       
+Listeria monocytogenes CFSAN060192                            AAAIVF010000001.1     116911   122223   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL003642                           AAAXFV010000048.1     84       4090     4.13   1                  1            1         0       
+Listeria monocytogenes OSF108033                              AAXIGC010000040.1     448      3555     4.21   1                  1            0         1       
+Listeria monocytogenes serotype 1/2b CFSAN090862              ABJNTF010000001.1     457300   462595   3.16   1                  0            1         1       
+Listeria monocytogenes CFSAN060201                            AAAKTV010000001.1     115242   120554   5.22   1                  1            1         1       
+Listeria monocytogenes CFSAN073954                            AAQOQV010000001.1     751977   757271   3.16   1                  0            1         1       
+Listeria monocytogenes PNUSAL017056                           ABLPAN010000001.1     114810   120114   4.16   0                  1            1         1       
+Listeria monocytogenes CFSAN064028                            AABCAY010000063.1     140      3724     4.10   1                  1            1         0       
+Listeria monocytogenes FSIS32206684                           ABFQUW010000019.1     0        2888     4.20   1                  1            0         1       
+Listeria monocytogenes CFSAN060071                            AAAKTI010000014.1     66359    71671    5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL004274                           AAAMPO010000001.1     509870   515182   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL004495                           AAAMVD010000001.1     17965    23277    5.22   1                  1            1         1       
+Listeria monocytogenes FDA917978-143-22                       AAAPKH010000001.1     119135   124447   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL008811                           AAXQNZ010000065.1     250      3022     4.19   1                  1            0         1       
+Listeria monocytogenes                                        DAEZRP010000048.1     167      3751     4.10   1                  1            1         0       
+Listeria monocytogenes                                        DAEZFK010000003.1     18419    23731    4.16   0                  1            1         1       
+Listeria monocytogenes Lm214                                  NZ_MDQD01000009.1     621310   626623   3.16   1                  0            1         1       
+Listeria monocytogenes FLAG-08084                             AAAPWQ010000002.1     433      5745     5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL000673                           AAAQQY010000007.1     154955   160267   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL000178                           AAAREV010000001.1     126949   132261   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL002211                           AABARG010000001.1     340693   346005   5.22   1                  1            1         1       
+Listeria monocytogenes FDA605850 72-3                         AABCMT010000001.1     621936   627248   5.22   1                  1            1         1       
+Listeria monocytogenes FDA848181-11-1                         AAAPLD010000042.1     0        2990     4.20   1                  1            0         1       
+Listeria monocytogenes CFSAN049215                            NZ_NYIU01000001.1     590495   595683   4.16   0                  1            1         1       
+Listeria monocytogenes CFSAN042318                            DAHAIF010000050.1     178      3829     4.10   1                  1            1         0       
+Listeria monocytogenes 160017                                 AABEFW010000007.1     195763   201074   3.16   1                  0            1         1       
+Listeria monocytogenes CFSAN072505                            AABEIS010000001.1     175679   180991   5.21   1                  1            1         1       
+Listeria monocytogenes CFSAN018418                            AAAKDE010000001.1     599028   604340   5.22   1                  1            1         1       
+Listeria monocytogenes L7-1735                                AAHZIJ010000009.1     69       5381     5.22   1                  1            1         1       
+Listeria monocytogenes L7-1749                                AAHZIZ010000009.1     95       5407     5.22   1                  1            1         1       
+Listeria monocytogenes L7-1734                                AAHZJV010000024.1     18364    23676    5.22   1                  1            1         1       
+Listeria monocytogenes FDA1070397-S044-007                    AAIAAG010000001.1     227      5538     5.22   1                  1            1         1       
+Listeria monocytogenes L7-0495                                AAJADM010000011.1     19715    25039    5.21   1                  1            1         1       
+Listeria monocytogenes                                        DAADJP010000001.1     307349   312659   3.16   1                  0            1         1       
+Listeria monocytogenes                                        DAADSB010000002.1     193135   198448   5.22   1                  1            1         1       
+Listeria monocytogenes 445953                                 AANEJI010000001.1     139442   144754   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL006885                           AANEMI010000033.1     0        2876     4.19   1                  1            0         1       
+Listeria monocytogenes PNUSAL007238                           AATINX010000001.1     119002   124314   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL001267                           AAANRF010000023.1     1873     4980     4.21   1                  1            0         1       
+Listeria monocytogenes PNUSAL007557                           AAUAYP010000001.1     605649   610961   5.21   1                  1            1         1       
+Listeria monocytogenes NMSU-EP28                              AAWIFW010000001.1     653940   659252   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL005848                           AALONQ010000044.1     25       5338     4.16   0                  1            1         1       
+Listeria monocytogenes PNUSAL002163                           AAAZYB010000020.1     400      3507     4.21   1                  1            0         1       
+Listeria monocytogenes                                        DAACFO010000001.1     614767   620079   3.16   1                  0            1         1       
+Listeria monocytogenes PNUSAL013811                           ABGCEY010000001.1     595196   599202   4.13   1                  1            1         0       
+Listeria monocytogenes SFBRL219_S1                            DABXUZ010000001.1     588902   594218   4.15   0                  1            1         1       
+Listeria monocytogenes PNUSAL000188                           QXKP01000001.1        120034   123140   4.18   1                  1            0         1       
+Listeria monocytogenes SFBRL160_S13                           DABYGZ010000001.1     659702   665018   4.15   0                  1            1         1       
+Listeria monocytogenes PNUSAL006946                           AAOYXS010000008.1     176874   180892   4.12   1                  1            1         0       
+Listeria monocytogenes PNUSAL016784                           ABLBMW010000002.1     130452   135733   5.16   1                  1            1         1       
+Listeria monocytogenes PNUSAL008438                           AAWYLS010000001.1     607778   613090   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL008563                           AAXBSG010000001.1     614767   620079   5.22   1                  1            1         1       
+Listeria monocytogenes FDA0938081-S100-001                    AABBBS010000001.1     33552    38863    4.16   0                  1            1         1       
+Listeria monocytogenes OSF108242                              AAXIRK010000054.1     0        3954     4.12   1                  1            1         0       
+Listeria monocytogenes OH-1409855                             AABDPA010000060.1     0        2912     4.19   1                  1            0         1       
+Listeria monocytogenes FDA731238 27-1                         AAAJVH010000001.1     621384   626697   3.16   1                  0            1         1       
+Listeria monocytogenes PNUSAL009152                           AAYWUG010000001.1     861617   866929   5.22   1                  1            1         1       
+Listeria monocytogenes CFSAN061343                            AAZCPG010000007.1     169231   174543   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL010382                           ABASSW010000001.1     594734   600046   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL010391                           ABASUG010000001.1     387483   392795   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL010458                           ABAUQG010000002.1     260410   265722   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL011488                           ABCRZV010000001.1     614903   620215   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL012292                           ABDWQV010000022.1     17674    22986    5.22   1                  1            1         1       
+Listeria innocua FDA0904545-032-001                           ABEKZN010000001.1     863687   868999   5.22   1                  1            1         1       
+Listeria innocua CFSAN045767                                  AABDZX010000002.1     2591     7902     3.16   1                  0            1         1       
+Listeria monocytogenes Lmo-638-1                              ABGCHL010000001.1     631309   636621   5.22   1                  1            1         1       
+Listeria monocytogenes CFSAN093423                            AANOMM010000001.1     608274   612279   4.13   1                  1            1         0       
+Listeria monocytogenes PNUSAL019346                           ABNZFF010000032.1     289      3396     4.21   1                  1            0         1       
+Listeria monocytogenes FDA1180445-S006-001                    ABEVLX010000001.1     591428   596722   3.16   1                  0            1         1       
+Listeria monocytogenes NIHS-28                                NZ_BAZD01000003.1     252372   257683   4.16   0                  1            1         1       
+Listeria monocytogenes PNUSAL014302                           ABGXQR010000010.1     109964   115277   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL015581                           ABIUSW010000001.1     841350   846662   5.21   1                  1            1         1       
+Listeria innocua                                              ABKOQQ010000001.1     144843   150155   5.22   1                  1            1         1       
+Listeria innocua GT24-0006                                    DAOZBX010000001.1     583052   588364   5.21   1                  1            1         1       
+Listeria innocua JJ42                                         DAMWVV010000083.1     1038     4145     4.21   1                  1            0         1       
+Listeria innocua VA-WGS-23001                                 ABLQKC010000001.1     691640   696951   5.22   1                  1            1         1       
+Listeria innocua 23MDARD051                                   ABLQKI010000001.1     858644   863956   5.21   1                  1            1         1       
+Listeria innocua Lin13-014                                    RBYP01000001.1        858760   862324   4.10   1                  1            1         0       
+Listeria innocua FDA929098-S050-002                           ABCBVK010000020.1     190      3297     4.21   1                  1            0         1       
+Listeria monocytogenes PNUSAL018543                           ABLSPB010000001.1     815497   820809   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL017486                           ABLULK010000003.1     158827   164140   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL017134                           ABLXFD010000001.1     119434   124746   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL018771                           ABMCQW010000001.1     612983   618295   5.22   1                  1            1         1       
+Listeria monocytogenes PNUSAL019041                           ABMYRK010000001.1     122807   128118   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL019729                           ABORAA010000001.1     619377   624688   5.21   1                  1            1         1       
+Listeria monocytogenes PNUSAL019881                           ABPFFK010000001.1     873888   879200   5.21   1                  1            1         1       
+Listeria innocua FDA1219843-S077-002                          ABPTLZ010000001.1     855298   860610   5.21   1                  1            1         1       
+Listeria innocua                                              DAFISR010000003.1     208908   212914   4.13   1                  1            1         0       
+Listeria monocytogenes N1-011A                                NC_021826.1           3090241  3094247  4.13   1                  1            1         0       
+Listeria monocytogenes PNUSAL004548                           AANEGA010000041.1     200      3033     4.19   1                  1            0         1       
+Listeria monocytogenes CFSAN081127                            AABCVH020000001.1     760471   765783   5.22   1                  1            1         1       
+Listeria monocytogenes FSL R2-503                             NZ_AARR02000006.1     116421   121734   3.16   1                  0            1         1       
+Listeria monocytogenes FLAG-34723                             RLMM01000001.1        623182   628492   4.16   0                  1            1         1       
+Listeria monocytogenes NRRL B-33372                           NZ_MKNO01000015.1     856999   862310   5.21   1                  1            1         1       
+Listeria seeligeri RR4                                        NZ_CP034772.1         2023038  2028350  5.17   1                  1            1         1       
+Listeria monocytogenes FSL L7-0647                            NZ_VTIE01000003.1     371212   376523   5.22   1                  1            1         1       
+Listeria monocytogenes FSL L7-0624                            NZ_VTIP01000001.1     841969   847280   5.22   1                  1            1         1       
+Listeria seeligeri FSL L7-1548                                NZ_JAARRH010000011.1  53579    56685    4.17   1                  1            0         1       
+Listeria seeligeri LS26                                       NZ_JAPJXA010000005.1  49371    54683    5.17   1                  1            1         1       
+Listeria seeligeri FSL L7-1465                                NZ_JAARRQ010000001.1  94020    99332    5.17   1                  1            1         1       
+Listeria seeligeri FSL L7-1357                                NZ_JAARSA010000002.1  144068   149380   5.17   1                  1            1         1       
+Listeria welshimeri FSL L7-1107                               JAARTZ010000019.1     24288    29608    5.19   1                  1            1         1       
+Listeria seeligeri FSL L7-0952                                NZ_JAASUW010000012.1  49311    54623    5.17   1                  1            1         1       
+Listeria innocua FSL L7-0789                                  NZ_JAASVB010000001.1  278164   283470   5.21   1                  1            1         1       
+Listeria innocua FSL L7-0313                                  NZ_JAARXP010000001.1  568968   574280   5.21   1                  1            1         1       
+Listeria cossartiae subsp. cossartiae FSL L7-0229             NZ_JAARYM010000001.1  791128   796440   5.22   1                  1            1         1       
+Listeria farberi FSL L7-0091                                  NZ_JAARZJ010000024.1  732      6038     5.21   1                  1            1         1       
+Listeria innocua FSL L7-1059                                  NZ_JAARUM010000001.1  295864   301170   5.21   1                  1            1         1       
+Listeria monocytogenes 2013L-5759                             NZ_JABXMT010000016.1  17731    23043    5.22   1                  1            1         1       
+Listeria seeligeri FSL W9-0822                                NZ_JACTIU010000001.1  152546   157858   5.17   1                  1            1         1       
+Listeria seeligeri FSL W9-0598                                NZ_JACTJS010000002.1  130096   135408   5.17   1                  1            1         1       
+Listeria seeligeri Sr73                                       NZ_CP063071.1         1987349  1992661  5.17   1                  1            1         1       
+Listeria seeligeri LS59                                       JAAOHW010000001.1     2171938  2177250  5.17   1                  1            1         1       
+Listeria seeligeri LS46                                       JAAIYQ010000001.1     1881859  1887171  5.17   1                  1            1         1       
+Listeria marthii UTK_C1-0024-E1                               CP089089.1            1152962  1158286  5.21   1                  1            1         1       
+Listeria innocua L171                                         NZ_JANVZK010000021.1  649246   654558   5.22   1                  1            1         1       
+Listeria seeligeri LS49                                       NZ_JAPJWF010000001.1  144890   150201   5.16   1                  1            1         1       
+Listeria seeligeri LS44                                       NZ_JAPJWJ010000001.1  379393   384705   5.17   1                  1            1         1       
+Listeria seeligeri FSL W9-0276                                NZ_JACTLM010000002.1  398087   401951   4.09   1                  1            1         0       

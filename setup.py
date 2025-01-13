@@ -2,12 +2,17 @@
 
 from setuptools import setup
 
+with open("README.md") as readme:
+    long_description = readme.read()
+
 setup(name = "cagecleaner",
-      version = "0.0.1",
+      version = "0.0.5",
       author="Lucas De Vrieze",
       author_email="lucas.devrieze@kuleuven.be",
       license = "MIT",
-      description = "Redundancy removal tool for cblaster hits",
+      description = "Redundancy removal tool for cblaster hit sets",
+      long_description = long_description,
+      long_description_content_type = "text/markdown",
       python_requires = ">=3.10",
       classifiers = [
           "Programming Language :: Python :: 3",
