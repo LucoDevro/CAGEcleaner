@@ -16,8 +16,8 @@ along with a percent identity cutoff to dereplicate the genomes using the skDER 
 In addition, it recovers some of the gene cluster diversity lost by the dereplication by assessing gene cluster content and hit score outliers.
 
 This tool will produce five final output files
-    - cleaned_binary.csv: a file structured in the same way as the cblaster binary output, containing only the retained hits. 
-    - clusters.txt: the corresponding cluster IDs from the cblaster summary file for each cleaned hit.
+    - cleaned_binary.txt: a file structured in the same way as the cblaster binary output, containing only the retained hits. 
+    - clusters.txt: the corresponding cluster IDs from the cblaster summary file for each retained hit.
     - genome_cluster_sizes.txt: the number of genomes in a dereplication genome cluster, referred to by the dereplication representative genome.
     - genome_cluster_status.txt: a table with scaffold IDs, their representative genome assembly and their dereplication status.
     - mappings.txt: a table with scaffold IDs and the IDs of the genome assemblies of which they are part.
