@@ -101,7 +101,7 @@ Hit recovery:
 
 ## Example case
 
-We provide example output in the folder `test` in this repo. Running the command for the inputs in subfolder `input`
+We provide example output in the folder `example` in this repo. Running the command for the inputs in subfolder `input`
 ```
 cagecleaner -b N081D319W620L53_binary.txt -s N081D319W620L53_summary.txt -o output
 ```
