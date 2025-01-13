@@ -119,7 +119,7 @@ Hit recovery:
 
 We provide an example case in the folder `example` in this repo. In this case, 1155 hits from *Staphylococcus* sp. should be reduced to 30 non-redundant hits. Running the command for the inputs in subfolder `input`
 ```
-cagecleaner -b N081D319W620L53_binary.txt -s N081D319W620L53_summary.txt -o output
+cagecleaner -b N398V589S066P61_binary.txt -s N398V589S066P61_summary.txt -o output
 ```
 should give the five output files in the subfolder `output`. This should take about 15' using 20 cores, depending on the download speed of your internet connection.
 ```
