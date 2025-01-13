@@ -10,6 +10,20 @@ This tool has primarily been developed for `cblaster` searches against the NCBI 
 
 ![workflow](workflow.png)
 
+## Output
+This tool will produce five final output files:
+- `cleaned_binary.txt`: a file structured in the same way as the cblaster binary output, containing only the retained hits. 
+- `clusters.txt`: the corresponding cluster IDs from the cblaster summary file for each retained hit.
+- `genome_cluster_sizes.txt`: the number of genomes in a dereplication genome cluster, referred to by the dereplication representative genome.
+- `genome_cluster_status.txt`: a table with scaffold IDs, their representative genome assembly and their dereplication status.
+- `mappings.txt`: a table with scaffold IDs and the IDs of the genome assemblies of which they are part.
+    
+There are four possible dereplication statuses:
+- `dereplication_representative`: this scaffold is part of the genome assembly that has been selected as the representative of a genome cluster.
+- `readded_by_content`: this scaffold has been kept as it contains a hit that is different in content from the one of the dereplication representative.
+- `readded_by_score`: this scaffold has been kept as it contains a hit that has an outlier cblaster score.
+- `redundant`: this scaffold has not been retained and is therefore removed from the final output.
+
 ## Installation
 
 First set up a `conda` environment using the `env.yml` file in this repo, and activate the environment.
