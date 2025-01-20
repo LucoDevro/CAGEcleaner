@@ -137,17 +137,13 @@ def validate_input_files(path_to_binary: str, path_to_summary:str) -> bool:
         
         print("--- STEP 0: Validating input files. ---")
         print("Validating binary file.")
-        
-        # Now we check if the file has at least 6 columns:
         data = pd.read_table(path_to_binary, sep = "\\s{2,}", engine = 'python')
-        assert len(data.columns) > 6, "The amount of columns does not correspond to a cblaster binary output file. Please check the file structure. At least 6 columns should be present."
         
-        # Check if the required column names are present (Organism, Scaffold...):
-        assert {"Organism", "Scaffold", "Start", "End", "Score"} < set(data.columns), ...
-        "The column names do not correspond to a cblaster binary output file. Please check the file structure.\n The columns 'Organism', 'Scaffold', 'Start', 'End' and 'Score' should be present."
+        # Check if the minimally required columns are present (Scaffold & Score):
+        assert {"Scaffold", "Score"} < set(data.columns), "The minimally required columns do not seem to be present. Please make sure you have a 'Scaffold' and a 'Score' column."
     
         # Check if there are at least two hits (3 because of header):
-        assert len(data.index) > 3, "We are expecting at least two hits in the cblaster binary output file."
+        assert len(data.index) > 3, "At least two hits are expected in the cblaster binary output file."
         
         print("CHECK") 
         
@@ -373,15 +369,15 @@ def parse_dereplication_clusters(scaffold_assembly_pairs: dict) -> pd.DataFrame:
     ## Replace Assembly accession IDs by Nucleotide IDs.
     ## If there are multiple Nucleotide IDs with a cblaster hit, the records will be replicated.
     
-    # Deconstruct the initial dataframe from the parsing into a dictionary with index values as keys and data as values
+    # Deconstruct the initial dataframe from the parsing into a dictionary with Assembly accessions as keys and representative assemblies as values
     genome_clusters_records = genome_clusters_df.to_dict(orient = 'index')
     
-    # Build a similar dictionary using Nucleotide accessions as keys, replicating data if needed
+    # Build a similar dictionary using Nucleotide accessions as keys, replicating representative assemblies if needed
     genome_clusters = {}
-    for assembly, data in genome_clusters_records.items():
+    for assembly, representative in genome_clusters_records.items():
         mapped_scaffolds = map_scaffolds(assembly, scaffold_assembly_pairs) # map assembly to a list of scaffold(s) with a cblaster hit
         for scaffold in mapped_scaffolds:
-            genome_clusters[scaffold] = data
+            genome_clusters[scaffold] = representative
     
     # Construct a new dataframe from this Nucleotide-keyed dictionary
     genome_clusters = pd.DataFrame.from_dict(genome_clusters, orient = 'index', columns = ['representative', 'dereplication_status'])
@@ -425,6 +421,9 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
     
     # Make a copy of the original genome cluster table
     updated_mapping = genome_clusters_mapping.copy()
+    
+    # Count the number of recovered scaffolds
+    recovered = 0
     
     # Skip this if not recovering by gene cluster content
     if not(not_by_content):
@@ -471,6 +470,7 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
                     else:
                         content_group_representative = choice(content_group)
                         updated_mapping.at[content_group_representative, 'dereplication_status'] = 'readded_by_cluster_content'
+                        recovered += 1
                 
                 # The case there were different cblaster scores and the user is interested in score outliers
                 else:
@@ -490,6 +490,7 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
                             continue
                         else:
                             updated_mapping.at[outlier, 'dereplication_status'] = 'readded_by_outlier_score'
+                            recovered += 1
                             
                     # We still have to flag a non-outlier representative of this structural subgroup
                     non_outliers_this_content_group = zscores_this_content_group.drop(index = outliers_this_content_group).index.to_list()
@@ -504,6 +505,7 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
                     else:
                         content_group_representative = choice(non_outliers_this_content_group)
                         updated_mapping.at[content_group_representative, 'dereplication_status'] = 'readded_by_cluster_content'
+                        recovered += 1
     
     # There is nothing to recover in this case
     else:
@@ -514,6 +516,8 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
     
     # Write report file
     updated_mapping.reset_index(names = 'scaffold').to_csv('genome_cluster_status.txt', sep = "\t", index = False)
+    
+    print(f"Recovered {recovered} scaffolds")
     
     return updated_mapping
 
@@ -529,7 +533,7 @@ def get_dereplicated_scaffolds(genome_clusters: pd.DataFrame) -> list:
     
     dereplicated_scaffolds = genome_clusters[genome_clusters['dereplication_status'] != 'redundant'].index.to_list()
 
-    print(f"Got {len(dereplicated_scaffolds)} representative scaffold IDs")
+    print(f"Got {len(dereplicated_scaffolds)} representative scaffolds")
     
     return dereplicated_scaffolds
 
@@ -583,6 +587,8 @@ def write_output(dereplicated_scaffolds:list, path_to_summary:str, path_to_binar
         for cluster in clusters:
             file.write(f"{cluster}\n")
             
+    print("Done!")
+            
     return None
 
 
@@ -613,8 +619,7 @@ def main():
     # Validate the input files. If a covered assertation fails, it will fail inside the function. An unknown error is captured by this
     # main assert statement
     if validate_inputs:
-        assert validate_input_files(path_to_binary, path_to_summary), ...
-        "Something was wrong with the input files! Please check them and try again."
+        assert validate_input_files(path_to_binary, path_to_summary), "Something was wrong with the input files! Please check them and try again."
     
     # extract scaffold IDs from the cblaster output
     scaffolds = get_scaffolds(path_to_binary)
@@ -645,7 +650,7 @@ def main():
             if not(keep_dereplication):
                 shutil.rmtree(SKDER_OUT)
     
-    print(f"All done! Results can be found in {work_dir}")
+    print(f"\nAll done! Results can be found in {work_dir}")
             
 
 if __name__ == "__main__":
