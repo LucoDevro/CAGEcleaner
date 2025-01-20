@@ -9,7 +9,7 @@
 """
 Usage: `cagecleaner <options>`
 
-cageclear cleans up redundant hits from the cblaster tool. It has primarly been developed and tested for usage with the NCBI nr database.
+cageclear removes redundant hits from the cblaster tool by dereplicating the hosting genomes.
 
 In its simplest use case, it takes the binary and summary output files as arguments, 
 along with a percent identity cutoff to dereplicate the genomes using the skDER tool.
@@ -85,10 +85,10 @@ def parse_arguments():
     It can also recover hits that would have been omitted by this dereplication if they have a different gene cluster content
     or an outlier cblaster score.
     
-    cagecleaner has been designed for usage with the NCBI nr database. It first retrieves the assembly accession IDs
-    of each cblaster hit via NCBI Entrez-Direct utilities, then downloads these assemblies using NCBI Datasets CLI,
-    and then dereplicates these assemblies using skDER. If requested, cblaster hits that have an alternative gene cluster content
-    or an outlier cblaster score (calculated via z-scores) are recovered.
+    cagecleaner first retrieves the assembly accession IDs of each cblaster hit via NCBI Entrez-Direct utilities, 
+    then downloads these assemblies using NCBI Datasets CLI, and then dereplicates these assemblies using skDER.
+    If requested, cblaster hits that have an alternative gene cluster content or an outlier cblaster score 
+    (calculated via z-scores) are recovered.
                                      """,
                                      add_help = False
                                      )

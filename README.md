@@ -6,8 +6,6 @@
 
 Given the results files of a `cblaster` run (or a [`CAGECAT`](https://cagecat.bioinformatics.nl/) run), `cagecleaner` retrieves all hit-associated genome assemblies, groups these into assembly clusters and identifies a representative assembly for each assembly cluster using `skDER`. In addition, `cagecleaner` can reinclude hits that seem different at the gene cluster level despite the genomic redundancy, and this by different gene cluster content and/or by outlier `cblaster` scores. Finally, `cagecleaner` returns a filtered `cblaster` binary file and a list of retained gene cluster IDs for straightforward downstream analyses.
 
-This tool has primarily been developed for `cblaster` searches against the NCBI nr database, but should work for any result set containing NCBI Nucleotide accession codes.
-
 ![workflow](workflow.png)
 
 ## Output
@@ -71,10 +69,10 @@ pip install cagecleaner
     It can also recover hits that would have been omitted by this dereplication if they have a different gene cluster content
     or an outlier cblaster score.
     
-    cagecleaner has been designed for usage with the NCBI nr database. It first retrieves the assembly accession IDs
-    of each cblaster hit via NCBI Entrez-Direct utilities, then downloads these assemblies using NCBI Datasets CLI,
-    and then dereplicates these assemblies using skDER. If requested, cblaster hits that have an alternative gene cluster content
-    or an outlier cblaster score (calculated via z-scores) are recovered.
+    cagecleaner first retrieves the assembly accession IDs of each cblaster hit via NCBI Entrez-Direct utilities, 
+    then downloads these assemblies using NCBI Datasets CLI, and then dereplicates these assemblies using skDER.
+    If requested, cblaster hits that have an alternative gene cluster content or an outlier cblaster score 
+    (calculated via z-scores) are recovered.
                                      
 
 General:
@@ -117,11 +115,16 @@ Hit recovery:
 
 ## Example case
 
-We provide an example case in the folder `example` in this repo. In this case, 1155 hits from *Staphylococcus* sp. should be reduced to 30 non-redundant hits. Running the command for the inputs in subfolder `input`
+We provide two example cases in the folder `examples` in this repo.
+
+In the first case, 1155 gene cluster hits from *Staphylococcus* spp. should be reduced to 37 non-redundant hits. Running the command for the inputs in subfolder `input`
+
 ```
-cagecleaner -b N398V589S066P61_binary.txt -s N398V589S066P61_summary.txt -o output
+cd N398V589S066P61
+cagecleaner -b binary.txt -s summary.txt -o output
 ```
-should give the five output files in the subfolder `output`. This should take about 15' using 20 cores, depending on the download speed of your internet connection.
+should give the five output files in a new subfolder `output`. This should take about 10' using 20 cores, depending on the download speed of your internet connection.
+
 ```
 $ dir -1 output
 cleaned_binary.txt
@@ -131,11 +134,21 @@ genome_cluster_status.txt
 mappings.txt
 ```
 
+The second example case is substantially bigger. Here we queried MIBiG entry BGC0001171 (listeriolysinS), which yielded 16,762 gene cluster hits. `cagecleaner` should reduce this to 775 hits in about 8 h using 20 cores.
+
+**WARNING: This example requires over 100GB of disk space.**
+
+```
+cd BGC0001171
+cagecleaner -b binary.txt -s summary.txt -o output
+```
+
 ## Citations
 
-`cagecleaner` relies heavily on the `skDER` genome dereplication tool, so we give it proper credit.
+`cagecleaner` relies heavily on the `skDER` genome dereplication tool and its main dependendy `skani`, so we give these proper credit.
 ```
 Salamzade, R., & Kalan, L. R. (2023). skDER: microbial genome dereplication approaches for comparative and metagenomic applications. https://doi.org/10.1101/2023.09.27.559801
+Shaw, J., & Yu, Y. W. (2023). Fast and robust metagenomic sequence comparison through sparse chaining with skani. Nature Methods, 20(11), 1661–1665. https://doi.org/10.1038/s41592-023-02018-3
 ```
 
 Please cite the `cagecleaner` manuscript:
