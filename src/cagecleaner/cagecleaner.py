@@ -7,20 +7,22 @@
 ### KU Leuven, Department of Biology
 
 """
-Usage: `cagecleaner <options>`
+Usage: `cagecleaner -s cblaster_session.json <options>`
 
 cageclear removes redundant hits from the cblaster tool by dereplicating the hosting genomes.
 
-In its simplest use case, it takes the binary and summary output files as arguments, 
-along with a percent identity cutoff to dereplicate the genomes using the skDER tool.
+It only requires the cblaster session file of the run you would like to dereplicate. 
+You can set the ANI cutoff that skDER uses to dereplicate the genomes.
 In addition, it recovers some of the gene cluster diversity lost by the dereplication by assessing gene cluster content and hit score outliers.
 
-This tool will produce five final output files
-    - cleaned_binary.txt: a file structured in the same way as the cblaster binary output, containing only the retained hits. 
+This tool will produce seven final output files
+    - filtered_session.json: a filtered cblaster session file
+    - filtered_binary.txt: a cblaster binary presence/absence table, containing only the retained hits.
+    - filtered_summary.txt: a cblaster summary file, containing only the retained hits.
     - clusters.txt: the corresponding cluster IDs from the cblaster summary file for each retained hit.
     - genome_cluster_sizes.txt: the number of genomes in a dereplication genome cluster, referred to by the dereplication representative genome.
     - genome_cluster_status.txt: a table with scaffold IDs, their representative genome assembly and their dereplication status.
-    - mappings.txt: a table with scaffold IDs and the IDs of the genome assemblies of which they are part.
+    - scaffold_assembly_pairs.txt: a table with scaffold IDs and the IDs of the genome assemblies of which they are part.
     
 There are four possible dereplication statuses:
     - 'dereplication_representative': this scaffold is part of the genome assembly that has been selected as the representative of a genome cluster.
@@ -42,6 +44,8 @@ from Bio import SeqIO
 from scipy.stats import zscore
 from random import choice
 from importlib.metadata import version
+from copy import deepcopy
+from cblaster.classes import Session
 
 __version__ = version("cagecleaner")
 
@@ -87,8 +91,8 @@ def parse_arguments():
     
     cagecleaner first retrieves the assembly accession IDs of each cblaster hit via NCBI Entrez-Direct utilities, 
     then downloads these assemblies using NCBI Datasets CLI, and then dereplicates these assemblies using skDER.
-    If requested, cblaster hits that have an alternative gene cluster content or an outlier cblaster score 
-    (calculated via z-scores) are recovered.
+    By default, cblaster hits that have an alternative gene cluster content or an outlier cblaster score 
+    (calculated via z-scores) are recovered as well.
                                      """,
                                      add_help = False
                                      )
@@ -99,10 +103,8 @@ def parse_arguments():
     args_general.add_argument('-v', '--version', action = "version", version = "%(prog)s " + __version__)
     
     args_io = parser.add_argument_group('Input / Output')
+    args_io.add_argument('-s', '--session', dest = "session_file", type = check_exists, help = "Path to cblaster session file")
     args_io.add_argument('-o', '--output', dest = "output_dir", default = '.', help = "Output directory (default: current working directory)")
-    args_io.add_argument('-b', '--binary', dest = "binary_file", type = check_exists, help = "Path to cblaster binary file")
-    args_io.add_argument('-s', '--summary', dest = "summary_file", type = check_exists, help = "Path to cblaster summary file")
-    args_io.add_argument('--validate-files', dest = "validate_inputs", default = False, action = "store_true", help = "Validate cblaster input files")
     args_io.add_argument('--keep-downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
     args_io.add_argument('--keep-dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
     args_io.add_argument('--keep-intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
@@ -114,8 +116,8 @@ def parse_arguments():
     args_dereplication.add_argument('-a', '--ani', dest = 'ani', default = 99.0, type = check_percentage, help = "ANI dereplication threshold (default: 99.0)")
     
     args_recovery = parser.add_argument_group('Hit recovery')
-    args_recovery.add_argument('--no-content-revisit', dest = 'no_revisit_by_content', default = False, action = "store_true", help = "Do not recover hits by cluster content")
-    args_recovery.add_argument('--no-score-revisit', dest = 'no_revisit_by_score', default = False, action = "store_true", help = "Do not recover hits by outlier scores")
+    args_recovery.add_argument('--no-content-revisit', dest = 'no_revisit_by_content', default = False, action = "store_true", help = "Skip recovering hits by cluster content")
+    args_recovery.add_argument('--no-score-revisit', dest = 'no_revisit_by_score', default = False, action = "store_true", help = "Skip recovering hits by outlier scores")
     args_recovery.add_argument('--min-z-score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
     args_recovery.add_argument('--min-score-diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum cblaster score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
 
@@ -123,57 +125,39 @@ def parse_arguments():
         
     return args
 
-
-def validate_input_files(path_to_binary: str, path_to_summary:str) -> bool:
+    
+def load_session(path_to_session: str) -> Session:
     """
-    This function takes the path to a binary and summary file as input and validates if the files are useable for downstream analysis.
-
-    :param:path_to_binary: Path to the binary file.
-    :param:path_to_summary: Path to summary file.
-    :rtype bool: True if all checks pass.
+    This function loads the cblaster session object.
+    
+    :param str path_to_session: Path to the cblaster session json file
+    :rtype dict: A cblaster Session object
     """
+    print("--- STEP 0: Loading session file. ---")
     
-    try:
-        
-        print("--- STEP 0: Validating input files. ---")
-        print("Validating binary file.")
-        data = pd.read_table(path_to_binary, sep = "\\s{2,}", engine = 'python')
-        
-        # Check if the minimally required columns are present (Scaffold & Score):
-        assert {"Scaffold", "Score"} < set(data.columns), "The minimally required columns do not seem to be present. Please make sure you have a 'Scaffold' and a 'Score' column."
+    session = Session.from_file(path_to_session)
     
-        # Check if there are at least two hits (3 because of header):
-        assert len(data.index) > 3, "At least two hits are expected in the cblaster binary output file."
-        
-        print("CHECK") 
-        
-        print("Validating summary file.")
-        
-        # The amount of appearances of the word "Cluster" in the summary file should correspond to the amount of lines
-        # in the binary file:
-        with open (path_to_summary, 'r') as file:
-            assert len(re.findall("Cluster", file.read())) == len(data.index), "The numbers of identifiers in the binary and the summary file do no match." 
-        
-        print("CHECK")
-        
-        return True
-    
-    # In case an unknown error occurs, return that the validation did not succeed.
-    except:
-        return False 
-   
+    return session
 
-def get_scaffolds(path_to_binary: str) -> list:
+
+def get_scaffolds(session: Session) -> list:
     """
-    This function extracts the scaffold IDs from the cblaster binary output file.
+    This function extracts the scaffold IDs from a temporary copy of the cblaster binary output file.
     
-    :param str path_to_binary: Path to the cblaster binary output file.
+    :param Session session: cblaster session object
     :rtype list: A list containing Genbank and RefSeq Nucleotide IDs.
     """
     print("\n--- STEP 1: Extracting scaffold IDs. ---")
+    
+    # Make a temporary copy of the binary table
+    with open("binary.txt", "w") as handle:
+        session.format("binary", fp = handle)
 
     # Read the file using a variable series of spaces as separator and extract the second column (containing the scaffold IDs)
-    scaffolds = pd.read_table(path_to_binary, sep = "\\s{2,}", engine = 'python', usecols = [1])['Scaffold'].to_list()
+    scaffolds = pd.read_table("binary.txt", sep = "\\s{2,}", engine = 'python', usecols = [1])['Scaffold'].to_list()
+    
+    # Remove the temporary cblaster binary table
+    os.remove("binary.txt")
 
     print(f"Extracted {len(scaffolds)} scaffold IDs")
     
@@ -302,7 +286,7 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
                 print(f'No corresponding scaffold accession ID could be found for {assmbl}!')
     
     # Write scaffold-assembly pairs to report file
-    with open('pairs.txt', 'w') as handle:
+    with open('scaffold_assembly_pairs.txt', 'w') as handle:
         handle.write('\n'.join([s + '\t' + a for s,a in mappings.items()]))
     
     print(f"Found {len(mappings)} scaffold-assembly links")
@@ -391,7 +375,7 @@ def parse_dereplication_clusters(scaffold_assembly_pairs: dict) -> pd.DataFrame:
     return genome_clusters
 
 
-def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not_by_content: bool = False, not_by_score: bool = False, outlier_z: float = 2, min_score_diff: float = 0.1) -> pd.DataFrame:
+def recover_hits(session: Session, genome_clusters_mapping: pd.DataFrame, not_by_content: bool = False, not_by_score: bool = False, outlier_z: float = 2, min_score_diff: float = 0.1) -> pd.DataFrame:
     """
     This function recovers some variation in gene clusters that was lost due to dereplicating the hosting genomes. It offers two approaches to
     flag interesting gene clusters that will be kept in the output.
@@ -407,7 +391,7 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
     this genome cluster, or a remarkably fast evolving gene cluster. In any case, it is interesting to retain this hit.
     Signficance is currently determined using z-scores for each cluster content group.
     
-    :param str path_to_binary: path to the cblaster binary result table
+    :param Session session: cblaster session object
     :param pandas Dataframe genome_clusters_mapping: dataframe returned by the parse_dereplication_clusters() function, containing the dereplication
                                                      status and representative of each assembly
     :param bool not_by_content: flag to disable recovering gene clusters by gene cluster content, also disables recovery by outlier score [default: False]
@@ -428,11 +412,12 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
     # Skip this if not recovering by gene cluster content
     if not(not_by_content):
         
-        # Read the relevant columns from the cblaster binary table
-        with open(path_to_binary, 'r'):
-            hits = pd.read_table(path_to_binary, sep = "\\s{2,}", engine = 'python', 
-                                 usecols = lambda x: x not in ['Organism', 'Start', 'End'],
-                                 index_col = "Scaffold")
+        # Read the relevant columns from a temporary copy of the cblaster binary table
+        with open("binary.txt", "w") as handle:
+            session.format("binary", fp = handle)
+        hits = pd.read_table("binary.txt", sep = "\\s{2,}", engine = 'python', 
+                             usecols = lambda x: x not in ['Organism', 'Start', 'End'],
+                             index_col = "Scaffold")
         
         ## Hits are recovered within dereplication clusters so we will check the hits of each dereplication cluster
         # Get the IDs of all assemblies grouped by their dereplication representative
@@ -517,6 +502,9 @@ def recover_hits(path_to_binary: str, genome_clusters_mapping: pd.DataFrame, not
     # Write report file
     updated_mapping.reset_index(names = 'scaffold').to_csv('genome_cluster_status.txt', sep = "\t", index = False)
     
+    # Remove the temporary cblaster binary table
+    os.remove("binary.txt")
+    
     print(f"Recovered {recovered} scaffolds")
     
     return updated_mapping
@@ -538,56 +526,58 @@ def get_dereplicated_scaffolds(genome_clusters: pd.DataFrame) -> list:
     return dereplicated_scaffolds
 
 
-def write_output(dereplicated_scaffolds:list, path_to_summary:str, path_to_binary:str) -> None:
+def generate_output(dereplicated_scaffolds:list, session:Session) -> None:
     """
-    This function takes a list of retained scaffold IDs and the cblaster summary and binary output files.
-    It writes the corresponding Cluster IDs and cblaster hit entries to a file.
+    This function takes a list of retained scaffold IDs and the cblaster session object.
+    From this object, it generates the filtered session, binary and summary file,
+    as well as a list of cluster number of the retained gene clusters.
 
     :param list dereplicated_scaffolds: A list containing the retained scaffold IDs.
-    :param str path_to_summary: Path to summary file.
-    :param str path_to_binary: Path to binary file.
+    :param Session session: cblaster session object of the unfiltered session
     """
     print("\n--- STEP 9: Generating output files. ---")
     
-    ## First we do the binary file:
-
-    # Create intermediary list to store the cleaned hits:
-    cleaned_hits = []
-
-    with open(path_to_binary, 'r',) as file:
-        file_content = file.read()
-        # We also capture the header to write to our cleaned file later:
-        header = file_content.split("\n")[0] + "\n" 
-
-        # Loop over the cleaned scaffold IDs and match them in the binary file using regex.
-        for scaffold in dereplicated_scaffolds:
-            pattern = f".*{scaffold}.*"
-            # Append to the list of cleaned hits:
-            cleaned_hits.append(re.search(pattern, file_content).group(0))
-        
-    with open('cleaned_binary.txt', 'w') as file:
-        file.write(header)
-        for cleaned_hit in cleaned_hits:
-            file.write(f"{cleaned_hit}\n")    
-
-    ## Secondly, the cluster IDs. Same principle but then with the summary file:
-
-    # Create an intermediary list to store the cluster IDs:
-    clusters = []
+    # Get a dictionary export of the session object
+    session_dict = session.to_dict()
     
-    with open(path_to_summary, 'r') as file:
-        file_content = file.read()
-        
-        # Loop over each scaffold ID
-        for scaffold in dereplicated_scaffolds:
-            pattern = f"({scaffold}\n[-]*\n)(Cluster \\d*)"
-            clusters.append(re.search(pattern, file_content).group(2))
+    # Make a deep copy to start carving out the new session
+    filtered_session_dict = deepcopy(session)
     
-    with open('clusters.txt', 'w') as file:
-        for cluster in clusters:
-            file.write(f"{cluster}\n")
+    ## Filtering the json session file
+    # Remove all cluster hits that do not link with a dereplicated scaffold
+    # Remove strains that have no hits left
+    for org_idx, org in reversed(list(enumerate(session_dict['organisms']))):
+        for hit_idx, hit in reversed(list(enumerate(org['scaffolds']))):
+            if hit['accession'] not in dereplicated_scaffolds:
+                filtered_session_dict['organisms'][org_idx]['scaffolds'].pop(hit_idx)
+                if not filtered_session_dict['organisms'][org_idx]['scaffolds']:
+                    filtered_session_dict['organisms'].pop(org_idx)
+                
+    # Create the filtered cblaster session object
+    filtered_session = Session.from_dict(filtered_session_dict)
+    
+    # Generate the outputs
+    # session file
+    with open("filtered_session.json", "w") as session_handle:
+        filtered_session.to_json(fp = session_handle)
+        
+    # binary table
+    with open("filtered_binary.txt", 'w') as filtered_binary_handle:
+        filtered_session.format(form = "binary", fp = filtered_binary_handle)
+        
+    # summary file
+    with open("filtered_summary.txt", "w") as filtered_summary_handle:
+        filtered_session.format(form = "summary", fp = filtered_summary_handle)    
+        
+    # list of cluster numbers
+    filtered_cluster_numbers = [cluster['number'] 
+                                for organism in filtered_session_dict['organisms'] 
+                                for scaffold in organism['scaffolds'] 
+                                for cluster in scaffold['clusters']]
+    with open("clusters.txt", "w") as numbers_handle:
+        numbers_handle.write(','.join(filtered_cluster_numbers))
             
-    print("Done!")
+    print("Output generated!")
             
     return None
 
@@ -596,11 +586,12 @@ def main():
     """
     Main function
     """
+    
+    ## Parse arguments
     args = parse_arguments()
     
     work_dir = args.output_dir.rstrip('/')
-    path_to_binary = os.path.join(os.getcwd(), args.binary_file)
-    path_to_summary = os.path.join(os.getcwd(), args.summary_file)
+    path_to_session = os.path.join(os.getcwd(), args.session_file)
     nb_cores = int(args.cores)
     ani_threshold = float(args.ani)
     no_revisit_by_content = args.no_revisit_by_content
@@ -608,21 +599,19 @@ def main():
     outlier_z = float(args.zscore_outlier_threshold)
     min_score_diff = float(args.minimal_score_difference)
     download_batch_size = int(args.download_batch)
-    validate_inputs = args.validate_inputs
     keep_downloads = args.keep_downloads
     keep_intermediate = args.keep_intermediate
     keep_dereplication = args.keep_dereplication
     
+    ## Set up working directory
     os.makedirs(work_dir, exist_ok = True)
     os.chdir(work_dir)
-     
-    # Validate the input files. If a covered assertation fails, it will fail inside the function. An unknown error is captured by this
-    # main assert statement
-    if validate_inputs:
-        assert validate_input_files(path_to_binary, path_to_summary), "Something was wrong with the input files! Please check them and try again."
     
+    ## Execute the workflow
+    # load session file and generate cluster tables
+    session = load_session(path_to_session)
     # extract scaffold IDs from the cblaster output
-    scaffolds = get_scaffolds(path_to_binary)
+    scaffolds = get_scaffolds(session)
     # link to assembly IDs via the NCBI E-utilities
     assemblies = get_assemblies(scaffolds)
     # download assemblies using the NCBI Datasets CLI
@@ -634,13 +623,13 @@ def main():
     # parse the secondary clustering from the skDER output and construct a dereplication status table
     genome_cluster_composition = parse_dereplication_clusters(scaffold_assembly_pairs)
     # recover gene cluster hits and update status table
-    updated_status = recover_hits(path_to_binary, genome_cluster_composition, no_revisit_by_content, no_revisit_by_score, outlier_z, min_score_diff)
+    updated_status = recover_hits(session, genome_cluster_composition, no_revisit_by_content, no_revisit_by_score, outlier_z, min_score_diff)
     # retrieve the finally retained scaffold IDs from the updated status table
     dereplicated_scaffolds = get_dereplicated_scaffolds(updated_status)
     # generate final output files
-    write_output(dereplicated_scaffolds, path_to_summary, path_to_binary)
+    generate_output(dereplicated_scaffolds, session)
     
-    # Finish by removing intermediate results if requested
+    ## Finish by removing intermediate results if allowed
     if not(keep_intermediate):
         if not(keep_downloads) and not(keep_dereplication):
             shutil.rmtree('data')

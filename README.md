@@ -4,23 +4,26 @@
 
 `cagecleaner` removes genomic redundancy from gene cluster hit sets identified by [`cblaster`](https://github.com/gamcil/cblaster). The redundancy in target databases used by `cblaster` often propagates into the result set, requiring extensive manual curation before downstream analyses and visualisation can be carried out.
 
-Given the results files of a `cblaster` run (or a [`CAGECAT`](https://cagecat.bioinformatics.nl/) run), `cagecleaner` retrieves all hit-associated genome assemblies, groups these into assembly clusters and identifies a representative assembly for each assembly cluster using `skDER`. In addition, `cagecleaner` can reinclude hits that seem different at the gene cluster level despite the genomic redundancy, and this by different gene cluster content and/or by outlier `cblaster` scores. Finally, `cagecleaner` returns a filtered `cblaster` binary file and a list of retained gene cluster IDs for straightforward downstream analyses.
+Given a session file from a `cblaster` run (or from a [`CAGECAT`](https://cagecat.bioinformatics.nl/) run), `cagecleaner` retrieves all hit-associated genome assemblies, groups these into assembly clusters by ANI and identifies a representative assembly for each assembly cluster using `skDER`. In addition, `cagecleaner` can reinclude hits that are different at the gene cluster level despite the genomic redundancy, and this by different gene cluster content and/or by outlier `cblaster` scores. Finally, `cagecleaner` returns a filtered `cblaster` session file as well as a list of retained gene cluster IDs for easier downstream analysis.
 
 ![workflow](workflow.png)
 
 ## Output
-This tool will produce five final output files:
-- `cleaned_binary.txt`: a file structured in the same way as the cblaster binary output, containing only the retained hits. 
-- `clusters.txt`: the corresponding cluster IDs from the cblaster summary file for each retained hit.
-- `genome_cluster_sizes.txt`: the number of genomes in a dereplication genome cluster, referred to by the dereplication representative genome.
-- `genome_cluster_status.txt`: a table with scaffold IDs, their representative genome assembly and their dereplication status.
-- `mappings.txt`: a table with scaffold IDs and the IDs of the genome assemblies of which they are part.
+
+This tool will produce seven final output files
+    - filtered_session.json: a filtered cblaster session file
+    - filtered_binary.txt: a cblaster binary presence/absence table, containing only the retained hits.
+    - filtered_summary.txt: a cblaster summary file, containing only the retained hits.
+    - clusters.txt: the corresponding cluster IDs from the cblaster summary file for each retained hit.
+    - genome_cluster_sizes.txt: the number of genomes in a dereplication genome cluster, referred to by the dereplication representative genome.
+    - genome_cluster_status.txt: a table with scaffold IDs, their representative genome assembly and their dereplication status.
+    - scaffold_assembly_pairs.txt: a table with scaffold IDs and the IDs of the genome assemblies of which they are part.
     
 There are four possible dereplication statuses:
-- `dereplication_representative`: this scaffold is part of the genome assembly that has been selected as the representative of a genome cluster.
-- `readded_by_content`: this scaffold has been kept as it contains a hit that is different in content from the one of the dereplication representative.
-- `readded_by_score`: this scaffold has been kept as it contains a hit that has an outlier cblaster score.
-- `redundant`: this scaffold has not been retained and is therefore removed from the final output.
+    - 'dereplication_representative': this scaffold is part of the genome assembly that has been selected as the representative of a genome cluster.
+    - 'readded_by_content': this scaffold has been kept as it contains a hit that is different in content from the one of the dereplication representative.
+    - 'readded_by_score': this scaffold has been kept as it contains a hit that has an outlier cblaster score.
+    - 'redundant': this scaffold has not been retained and is therefore removed from the final output.
 
 ## Installation
 
@@ -134,7 +137,7 @@ genome_cluster_status.txt
 mappings.txt
 ```
 
-The second example case is substantially bigger. Here we queried MIBiG entry BGC0001171 (listeriolysinS), which yielded 16,762 gene cluster hits. `cagecleaner` should reduce this to 775 hits in about 8 h using 20 cores.
+The second example case is substantially bigger. Here we queried MIBiG entry BGC0001171 (listeriolysinS), which yielded 18,610 gene cluster hits. `cagecleaner` should reduce this to 775 hits in about 12 h using 20 cores.
 
 **WARNING: This example requires over 100GB of disk space.**
 

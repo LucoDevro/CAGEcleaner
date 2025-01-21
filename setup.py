@@ -6,7 +6,7 @@ with open("README.md") as readme:
     long_description = readme.read()
 
 setup(name = "cagecleaner",
-      version = "0.0.5",
+      version = "0.0.9.2",
       author="Lucas De Vrieze",
       author_email="lucas.devrieze@kuleuven.be",
       license = "MIT",
