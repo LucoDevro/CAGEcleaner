@@ -30,7 +30,7 @@ There are four possible dereplication statuses:
 First set up a `conda` environment using the `env.yml` file in this repo, and activate the environment.
 
 ```
-conda env create -y -f env.yml
+conda env create -f env.yml
 conda activate cagecleaner
 ```
 
