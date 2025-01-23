@@ -118,37 +118,37 @@ Hit recovery:
 
 ## Example case
 
-We provide two example cases in the folder `examples` in this repo.
+We provide two example cases in the folder `examples` in this repo. We have already provided the `cblaster` output files as well as the original query `fasta`.
 
-In the first case, 1155 gene cluster hits from *Staphylococcus* spp. should be reduced to 37 non-redundant hits. Running the command for the inputs in subfolder `input`
+In the first case, 1146 gene cluster hits from *Staphylococcus* spp. should be reduced to 22 non-redundant hits. Running the `cagecleaner` for this example is done like below
 
 ```
 cd N398V589S066P61
-cagecleaner -b binary.txt -s summary.txt -o output
+cagecleaner -s session.json -o output -c 20
 ```
-should give the five output files in a new subfolder `output`. This should take about 10' using 20 cores, depending on the download speed of your internet connection.
+This should give the seven output files in a new subfolder `output`. This should take about 10' using 20 cores, depending on the download speed of your internet connection. This requires 1.2 GB of disk space and 1.7 GB of RAM.
 
 ```
 $ dir -1 output
-cleaned_binary.txt
 clusters.txt
+filtered_binary.txt
+filtered_session.txt
+filtered_summary.txt
 genome_cluster_sizes.txt
 genome_cluster_status.txt
-mappings.txt
+scaffold_assembly_pairs.txt
 ```
 
-The second example case is substantially bigger. Here we queried MIBiG entry BGC0001171 (listeriolysinS), which yielded 18,610 gene cluster hits. `cagecleaner` should reduce this to 775 hits in about 12 h using 20 cores.
-
-**WARNING: This example requires over 100GB of disk space.**
+In the second case, we queried four genes from MIBiG entry BGC0000194 (actinorhodin from *Streptomyces coelicolor A3(2)*), which yielded 8934 gene cluster hits. `cagecleaner` should reduce this to 4847 hits in about 1.5 h using 20 cores. 28.5 GB of disk space and 27.6 GB of RAM are required for this example case.
 
 ```
-cd BGC0001171
-cagecleaner -b binary.txt -s summary.txt -o output
+cd actinorhodin
+cagecleaner -s session.json -o output -c 20
 ```
 
 ## Citations
 
-`cagecleaner` relies heavily on the `skDER` genome dereplication tool and its main dependendy `skani`, so we give these proper credit.
+`cagecleaner` relies heavily on the `skDER` genome dereplication tool and its main dependendy `skani`, so we give these tools proper credit.
 ```
 Salamzade, R., & Kalan, L. R. (2023). skDER: microbial genome dereplication approaches for comparative and metagenomic applications. https://doi.org/10.1101/2023.09.27.559801
 Shaw, J., & Yu, Y. W. (2023). Fast and robust metagenomic sequence comparison through sparse chaining with skani. Nature Methods, 20(11), 1661–1665. https://doi.org/10.1038/s41592-023-02018-3
