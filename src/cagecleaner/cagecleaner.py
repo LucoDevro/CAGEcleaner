@@ -541,7 +541,7 @@ def generate_output(dereplicated_scaffolds:list, session:Session) -> None:
     session_dict = session.to_dict()
     
     # Make a deep copy to start carving out the new session
-    filtered_session_dict = deepcopy(session)
+    filtered_session_dict = deepcopy(session_dict)
     
     ## Filtering the json session file
     # Remove all cluster hits that do not link with a dereplicated scaffold
@@ -575,7 +575,7 @@ def generate_output(dereplicated_scaffolds:list, session:Session) -> None:
                                 for scaffold in organism['scaffolds'] 
                                 for cluster in scaffold['clusters']]
     with open("clusters.txt", "w") as numbers_handle:
-        numbers_handle.write(','.join(filtered_cluster_numbers))
+        numbers_handle.write(','.join([str(nb) for nb in filtered_cluster_numbers]))
             
     print("Output generated!")
             
