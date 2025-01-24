@@ -53,6 +53,7 @@ pip install cagecleaner
  - scipy (v1.14.1)
  - BioPython (v1.84)
  - more-itertools (v10.5)
+ - cblaster
 
  ## Usage
 
