@@ -6,11 +6,11 @@ with open("README.md") as readme:
     long_description = readme.read()
 
 setup(name = "cagecleaner",
-      version = "0.0.9.2",
+      version = "1.0.2",
       author="Lucas De Vrieze",
       author_email="lucas.devrieze@kuleuven.be",
       license = "MIT",
-      description = "Redundancy removal tool for cblaster hit sets",
+      description = "Genomic redundancy removal tool for cblaster hit sets",
       long_description = long_description,
       long_description_content_type = "text/markdown",
       python_requires = ">=3.10",
@@ -24,5 +24,12 @@ setup(name = "cagecleaner",
       entry_points = {"console_scripts": ['cagecleaner = cagecleaner.cagecleaner:main']},
       scripts = ['src/cagecleaner/dereplicate_assemblies.sh',
                  'src/cagecleaner/download_assemblies.sh',
-                 'src/cagecleaner/get_accessions.sh']
+                 'src/cagecleaner/get_accessions.sh'],
+      install_requires=[
+          "scipy",
+          "more-itertools",
+          "Biopython",
+          "cblaster",
+          "pandas"
+      ],
       )
