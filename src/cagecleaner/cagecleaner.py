@@ -105,21 +105,21 @@ def parse_arguments():
     args_io = parser.add_argument_group('Input / Output')
     args_io.add_argument('-s', '--session', dest = "session_file", type = check_exists, help = "Path to cblaster session file")
     args_io.add_argument('-o', '--output', dest = "output_dir", default = '.', help = "Output directory (default: current working directory)")
-    args_io.add_argument('--keep-downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
-    args_io.add_argument('--keep-dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
-    args_io.add_argument('--keep-intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
+    args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
+    args_io.add_argument('--keep_dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
+    args_io.add_argument('--keep_intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
     
     args_download = parser.add_argument_group('Download')
-    args_download.add_argument('--download-batch', dest = 'download_batch', default = 300, type = int, help = "Number of genomes to download in one batch (default: 300)")
+    args_download.add_argument('--download_batch', dest = 'download_batch', default = 300, type = int, help = "Number of genomes to download in one batch (default: 300)")
     
     args_dereplication = parser.add_argument_group('Dereplication')
     args_dereplication.add_argument('-a', '--ani', dest = 'ani', default = 99.0, type = check_percentage, help = "ANI dereplication threshold (default: 99.0)")
     
     args_recovery = parser.add_argument_group('Hit recovery')
-    args_recovery.add_argument('--no-content-revisit', dest = 'no_revisit_by_content', default = False, action = "store_true", help = "Skip recovering hits by cluster content")
-    args_recovery.add_argument('--no-score-revisit', dest = 'no_revisit_by_score', default = False, action = "store_true", help = "Skip recovering hits by outlier scores")
-    args_recovery.add_argument('--min-z-score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
-    args_recovery.add_argument('--min-score-diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum cblaster score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
+    args_recovery.add_argument('--no_recovery_content', dest = 'no_recovery_by_content', default = False, action = "store_true", help = "Skip recovering hits by cluster content")
+    args_recovery.add_argument('--no_recovery_score', dest = 'no_recovery_by_score', default = False, action = "store_true", help = "Skip recovering hits by outlier scores")
+    args_recovery.add_argument('--min_z_score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
+    args_recovery.add_argument('--min_score_diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum cblaster score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
 
     args = parser.parse_args()
         
@@ -594,8 +594,8 @@ def main():
     path_to_session = os.path.join(os.getcwd(), args.session_file)
     nb_cores = int(args.cores)
     ani_threshold = float(args.ani)
-    no_revisit_by_content = args.no_revisit_by_content
-    no_revisit_by_score = args.no_revisit_by_score
+    no_recovery_by_content = args.no_recovery_by_content
+    no_recovery_by_score = args.no_recovery_by_score
     outlier_z = float(args.zscore_outlier_threshold)
     min_score_diff = float(args.minimal_score_difference)
     download_batch_size = int(args.download_batch)
@@ -623,7 +623,7 @@ def main():
     # parse the secondary clustering from the skDER output and construct a dereplication status table
     genome_cluster_composition = parse_dereplication_clusters(scaffold_assembly_pairs)
     # recover gene cluster hits and update status table
-    updated_status = recover_hits(session, genome_cluster_composition, no_revisit_by_content, no_revisit_by_score, outlier_z, min_score_diff)
+    updated_status = recover_hits(session, genome_cluster_composition, no_recovery_by_content, no_recovery_by_score, outlier_z, min_score_diff)
     # retrieve the finally retained scaffold IDs from the updated status table
     dereplicated_scaffolds = get_dereplicated_scaffolds(updated_status)
     # generate final output files
