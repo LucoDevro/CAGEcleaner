@@ -491,6 +491,9 @@ def recover_hits(session: Session, genome_clusters_mapping: pd.DataFrame, not_by
                         content_group_representative = choice(non_outliers_this_content_group)
                         updated_mapping.at[content_group_representative, 'dereplication_status'] = 'readded_by_cluster_content'
                         recovered += 1
+                        
+        # Remove the temporary cblaster binary table
+        os.remove("binary.txt")
     
     # There is nothing to recover in this case
     else:
@@ -501,9 +504,6 @@ def recover_hits(session: Session, genome_clusters_mapping: pd.DataFrame, not_by
     
     # Write report file
     updated_mapping.reset_index(names = 'scaffold').to_csv('genome_cluster_status.txt', sep = "\t", index = False)
-    
-    # Remove the temporary cblaster binary table
-    os.remove("binary.txt")
     
     print(f"Recovered {recovered} scaffolds")
     

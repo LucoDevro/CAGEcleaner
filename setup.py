@@ -6,7 +6,7 @@ with open("README.md") as readme:
     long_description = readme.read()
 
 setup(name = "cagecleaner",
-      version = "1.0.2",
+      version = "1.1.0",
       author="Lucas De Vrieze",
       author_email="lucas.devrieze@kuleuven.be",
       license = "MIT",
@@ -30,6 +30,7 @@ setup(name = "cagecleaner",
           "more-itertools",
           "Biopython",
           "cblaster",
-          "pandas"
+          "clinker",
+          "pandas",
       ],
       )
