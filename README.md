@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/904110273.svg)](https://doi.org/10.5281/zenodo.14726119)
 
-**>>> `cagecleaner` has now been integrated into [`cblaster`](https://github.com/gamcil/cblaster)! <<<**
+**>>> `cagecleaner` will be integrated into [`cblaster`](https://github.com/gamcil/cblaster)! <<<**
 
 ## Outline
 
