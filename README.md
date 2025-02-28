@@ -18,7 +18,7 @@ For installation instructions, usage, explanations and more, head over to the [`
 If you found `CAGEcleaner` useful, please cite our manuscript:
 
 ```
-Coming soon!
+De Vrieze, L., Biltjes, M., Lukashevich, S., Tsurumi, K., Masschelein, J. (2025) CAGEcleaner: reducing genomic redundancy in gene cluster mining. bioRxiv https://doi.org/10.1101/2025.02.19.639057
 ```
 
 `CAGEcleaner` relies heavily on the `skDER` genome dereplication tool and its main dependency `skani`, so please give these proper credit as well.
