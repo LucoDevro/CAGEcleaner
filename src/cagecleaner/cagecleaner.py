@@ -36,10 +36,11 @@ import sys
 import subprocess
 import re
 import os
-from more_itertools import batched
+from itertools import batched
 import gzip
 import shutil
 import argparse
+import tempfile
 from Bio import SeqIO
 from scipy.stats import zscore
 from random import choice
@@ -53,8 +54,9 @@ ACCESSIONS_SCRIPT = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 
 DOWNLOAD_SCRIPT = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'download_assemblies.sh')
 DEREPLICATE_SCRIPT = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'dereplicate_assemblies.sh')
 
-GENOMES = "data/genomes"
-SKDER_OUT = "data/skder_out"
+global TEMP_DIR
+global GENOMES
+global SKDER_OUT
 
 
 def parse_arguments():
@@ -105,6 +107,7 @@ def parse_arguments():
     args_io = parser.add_argument_group('Input / Output')
     args_io.add_argument('-s', '--session', dest = "session_file", type = check_exists, help = "Path to cblaster session file")
     args_io.add_argument('-o', '--output', dest = "output_dir", default = '.', help = "Output directory (default: current working directory)")
+    args_io.add_argument('-t', '--temp', dest = "temp_dir", default = tempfile.gettempdir(), help = "Path to store temporary files (default: your system's default temporary directory)")
     args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
     args_io.add_argument('--keep_dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
     args_io.add_argument('--keep_intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
@@ -150,14 +153,11 @@ def get_scaffolds(session: Session) -> list:
     print("\n--- STEP 1: Extracting scaffold IDs. ---")
     
     # Make a temporary copy of the binary table
-    with open("binary.txt", "w") as handle:
+    with open(_temp("binary.txt"), "w") as handle:
         session.format("binary", fp = handle)
 
     # Read the file using a variable series of spaces as separator and extract the second column (containing the scaffold IDs)
-    scaffolds = pd.read_table("binary.txt", sep = "\\s{2,}", engine = 'python', usecols = [1])['Scaffold'].to_list()
-    
-    # Remove the temporary cblaster binary table
-    os.remove("binary.txt")
+    scaffolds = pd.read_table(_temp("binary.txt"), sep = "\\s{2,}", engine = 'python', usecols = [1])['Scaffold'].to_list()
 
     print(f"Extracted {len(scaffolds)} scaffold IDs")
     
@@ -176,19 +176,18 @@ def get_assemblies(scaffolds: list) -> list:
     print("\n--- STEP 2: Retrieving genome assembly IDs. ---")
     
     # save the scaffold list in a temporary file
-    with open('scaffolds.txt', 'w') as handle:
+    with open(_temp('scaffolds.txt'), 'w') as handle:
         handle.writelines('\n'.join(scaffolds))
     
     # map to assembly IDs using E-utilities
+    home = os.getcwd()
+    os.chdir(TEMP_DIR.name)
     subprocess.run(['bash', ACCESSIONS_SCRIPT, 'scaffolds.txt'], check = True)
+    os.chdir(home)
     
     # read the result file
-    with open('assembly_accessions', 'r') as handle:
+    with open(_temp('assembly_accessions'), 'r') as handle:
         assemblies = [l.rstrip() for l in handle.readlines()]
-        
-    # remove the temporary files
-    os.remove('scaffolds.txt')
-    os.remove('assembly_accessions')
     
     return assemblies
 
@@ -210,16 +209,16 @@ def download_genomes(assemblies: list, batch_size: int = 300) -> None:
     versionless_assemblies = [acc.split('.')[0] for acc in assemblies]
     
     # Prepare the batches and save them in a temporary file
-    with open('download_batches.txt', 'w') as file:
-            download_batches = list(batched(versionless_assemblies, batch_size))
-            for batch in download_batches:
-                file.write(' '.join(batch) + '\n')
+    with open(_temp('download_batches.txt'), 'w') as file:
+        download_batches = list(batched(versionless_assemblies, batch_size))
+        for batch in download_batches:
+            file.write(' '.join(batch) + '\n')
 
     # Run the bash script to download genomes:
+    home = os.getcwd()
+    os.chdir(TEMP_DIR.name)
     subprocess.run(["bash", DOWNLOAD_SCRIPT], check=True)
-    
-    # Remove temporary files
-    os.remove('download_batches.txt')
+    os.chdir(home)
     
     return None
 
@@ -307,7 +306,10 @@ def dereplicate_genomes(ani_threshold: float = 99.0, nb_cores: int = 1) -> None:
     """
     print("\n--- STEP 5: Dereplicating genomes. ---")
     
+    home = os.getcwd()
+    os.chdir(TEMP_DIR.name)
     subprocess.run(['bash', DEREPLICATE_SCRIPT, str(ani_threshold), str(nb_cores)], check = True)
+    os.chdir(home)
     
     return None
 
@@ -413,9 +415,9 @@ def recover_hits(session: Session, genome_clusters_mapping: pd.DataFrame, not_by
     if not(not_by_content):
         
         # Read the relevant columns from a temporary copy of the cblaster binary table
-        with open("binary.txt", "w") as handle:
+        with open(_temp("binary_recovery.txt"), "w") as handle:
             session.format("binary", fp = handle)
-        hits = pd.read_table("binary.txt", sep = "\\s{2,}", engine = 'python', 
+        hits = pd.read_table(_temp("binary_recovery.txt"), sep = "\\s{2,}", engine = 'python', 
                              usecols = lambda x: x not in ['Organism', 'Start', 'End'],
                              index_col = "Scaffold")
         
@@ -438,7 +440,7 @@ def recover_hits(session: Session, genome_clusters_mapping: pd.DataFrame, not_by
             for content_group in hits_this_group_by_content_group:
                 scores_this_content_group = hits_this_group.loc[content_group, 'Score'] # cblaster scores
                 mode_score_this_content_group = float(scores_this_content_group.mode().iloc[0]) # modal cblaster score
-                zscores_this_content_group = scores_this_content_group.transform(zscore) # zscores
+                zscores_this_content_group = scores_this_content_group.apply(zscore, by_row = False) # zscores
                 
                 # If the result of the z-score calculation yields all NaNs, all cblaster scores were identical, implying there is no score outlier.
                 # In that case, we can continue flagging different gene cluster contents, if any
@@ -491,9 +493,6 @@ def recover_hits(session: Session, genome_clusters_mapping: pd.DataFrame, not_by
                         content_group_representative = choice(non_outliers_this_content_group)
                         updated_mapping.at[content_group_representative, 'dereplication_status'] = 'readded_by_cluster_content'
                         recovered += 1
-                        
-        # Remove the temporary cblaster binary table
-        os.remove("binary.txt")
     
     # There is nothing to recover in this case
     else:
@@ -581,16 +580,30 @@ def generate_output(dereplicated_scaffolds:list, session:Session) -> None:
             
     return None
 
+def _temp(folder) -> os.path:
+    """
+    Internal auxiliary function to map a filename to the temporary workfolder.
+    """
+    if isinstance(folder, str):
+        path = [folder]
+    else:
+        path = folder
+    return os.path.join(TEMP_DIR.name, *path)
+    
 
 def main():
     """
     Main function
     """
+    global TEMP_DIR
+    global GENOMES
+    global SKDER_OUT
     
     ## Parse arguments
     args = parse_arguments()
-    
+
     work_dir = args.output_dir.rstrip('/')
+    temp_dir = args.temp_dir.rstrip('/')
     path_to_session = os.path.join(os.getcwd(), args.session_file)
     nb_cores = int(args.cores)
     ani_threshold = float(args.ani)
@@ -602,45 +615,45 @@ def main():
     keep_downloads = args.keep_downloads
     keep_intermediate = args.keep_intermediate
     keep_dereplication = args.keep_dereplication
-    
-    ## Set up working directory
+
+    ## Set up working and temporary directory
     os.makedirs(work_dir, exist_ok = True)
-    os.chdir(work_dir)
-    
-    ## Execute the workflow
-    # load session file and generate cluster tables
-    session = load_session(path_to_session)
-    # extract scaffold IDs from the cblaster output
-    scaffolds = get_scaffolds(session)
-    # link to assembly IDs via the NCBI E-utilities
-    assemblies = get_assemblies(scaffolds)
-    # download assemblies using the NCBI Datasets CLI
-    download_genomes(assemblies, download_batch_size)
-    # map the downloaded scaffold IDs to assembly IDs
-    scaffold_assembly_pairs = map_scaffolds_to_assemblies(scaffolds, assemblies)
-    # dereplicate the genomes using skDER
-    dereplicate_genomes(ani_threshold, nb_cores)
-    # parse the secondary clustering from the skDER output and construct a dereplication status table
-    genome_cluster_composition = parse_dereplication_clusters(scaffold_assembly_pairs)
-    # recover gene cluster hits and update status table
-    updated_status = recover_hits(session, genome_cluster_composition, no_recovery_by_content, no_recovery_by_score, outlier_z, min_score_diff)
-    # retrieve the finally retained scaffold IDs from the updated status table
-    dereplicated_scaffolds = get_dereplicated_scaffolds(updated_status)
-    # generate final output files
-    generate_output(dereplicated_scaffolds, session)
-    
-    ## Finish by removing intermediate results if allowed
-    if not(keep_intermediate):
-        if not(keep_downloads) and not(keep_dereplication):
-            shutil.rmtree('data')
-        else:
-            if not(keep_downloads):
-                shutil.rmtree(GENOMES)
-            if not(keep_dereplication):
-                shutil.rmtree(SKDER_OUT)
+    with tempfile.TemporaryDirectory(dir = temp_dir) as TEMP_DIR:
+        os.chdir(work_dir)
+        GENOMES = _temp(['data', 'genomes'])
+        SKDER_OUT = _temp(['data', 'skder_out'])
+        
+        ## Execute the workflow
+        # load session file and generate cluster tables
+        session = load_session(path_to_session)
+        # extract scaffold IDs from the cblaster output
+        scaffolds = get_scaffolds(session)
+        # link to assembly IDs via the NCBI E-utilities
+        assemblies = get_assemblies(scaffolds)
+        # download assemblies using the NCBI Datasets CLI
+        download_genomes(assemblies, download_batch_size)
+        # map the downloaded scaffold IDs to assembly IDs
+        scaffold_assembly_pairs = map_scaffolds_to_assemblies(scaffolds, assemblies)
+        # dereplicate the genomes using skDER
+        dereplicate_genomes(ani_threshold, nb_cores)
+        # parse the secondary clustering from the skDER output and construct a dereplication status table
+        genome_cluster_composition = parse_dereplication_clusters(scaffold_assembly_pairs)
+        # recover gene cluster hits and update status table
+        updated_status = recover_hits(session, genome_cluster_composition, no_recovery_by_content, no_recovery_by_score, outlier_z, min_score_diff)
+        # retrieve the finally retained scaffold IDs from the updated status table
+        dereplicated_scaffolds = get_dereplicated_scaffolds(updated_status)
+        # generate final output files
+        generate_output(dereplicated_scaffolds, session)
+        
+        ## Finish by copying over intermediate results if flagged, and removing the temporary folder
+        if keep_intermediate or keep_downloads:
+            shutil.copytree(GENOMES, os.path.join('data', 'genomes'), dirs_exist_ok = True)
+        if keep_intermediate or keep_dereplication:
+            shutil.copytree(SKDER_OUT, os.path.join('data', 'skder_out'), dirs_exist_ok = True)
     
     print(f"\nAll done! Results can be found in {work_dir}")
-            
+
 
 if __name__ == "__main__":
     main()
+    

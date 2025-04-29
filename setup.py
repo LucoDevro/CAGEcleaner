@@ -6,16 +6,16 @@ with open("README.md") as readme:
     long_description = readme.read()
 
 setup(name = "cagecleaner",
-      version = "1.1.0",
+      version = "1.2.0",
       author="Lucas De Vrieze",
       author_email="lucas.devrieze@kuleuven.be",
       license = "MIT",
       description = "Genomic redundancy removal tool for cblaster hit sets",
       long_description = long_description,
       long_description_content_type = "text/markdown",
-      python_requires = ">=3.10",
+      python_requires = ">=3.12",
       classifiers = [
-          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.12",
           "License :: OSI Approved :: MIT License",
           "Operating System :: OS Independent",
           "Intended Audience :: Science/Research",
@@ -26,11 +26,12 @@ setup(name = "cagecleaner",
                  'src/cagecleaner/download_assemblies.sh',
                  'src/cagecleaner/get_accessions.sh'],
       install_requires=[
-          "scipy",
-          "more-itertools",
-          "Biopython",
+          "scipy <=1.14.1",
+          "biopython",
           "cblaster",
-          "clinker",
           "pandas",
+          "ncbi-datasets-cli",
+          "entrez-direct",
+          "skder"
       ],
       )
