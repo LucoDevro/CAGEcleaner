@@ -181,7 +181,7 @@ def get_assemblies(scaffolds: list) -> list:
     
     # map to assembly IDs using E-utilities
     home = os.getcwd()
-    os.chdir(TEMP_DIR.name)
+    os.chdir(ASSIGNED_TEMP_DIR)
     subprocess.run(['bash', ACCESSIONS_SCRIPT, 'scaffolds.txt'], check = True)
     os.chdir(home)
     
@@ -216,7 +216,7 @@ def download_genomes(assemblies: list, batch_size: int = 300) -> None:
 
     # Run the bash script to download genomes:
     home = os.getcwd()
-    os.chdir(TEMP_DIR.name)
+    os.chdir(ASSIGNED_TEMP_DIR)
     subprocess.run(["bash", DOWNLOAD_SCRIPT], check=True)
     os.chdir(home)
     
@@ -307,7 +307,7 @@ def dereplicate_genomes(ani_threshold: float = 99.0, nb_cores: int = 1) -> None:
     print("\n--- STEP 5: Dereplicating genomes. ---")
     
     home = os.getcwd()
-    os.chdir(TEMP_DIR.name)
+    os.chdir(ASSIGNED_TEMP_DIR)
     subprocess.run(['bash', DEREPLICATE_SCRIPT, str(ani_threshold), str(nb_cores)], check = True)
     os.chdir(home)
     
@@ -588,14 +588,14 @@ def _temp(folder) -> os.path:
         path = [folder]
     else:
         path = folder
-    return os.path.join(TEMP_DIR.name, *path)
+    return os.path.join(ASSIGNED_TEMP_DIR, *path)
     
 
 def main():
     """
     Main function
     """
-    global TEMP_DIR
+    global ASSIGNED_TEMP_DIR
     global GENOMES
     global SKDER_OUT
     
@@ -618,7 +618,7 @@ def main():
 
     ## Set up working and temporary directory
     os.makedirs(work_dir, exist_ok = True)
-    with tempfile.TemporaryDirectory(dir = temp_dir) as TEMP_DIR:
+    with tempfile.TemporaryDirectory(dir = temp_dir) as ASSIGNED_TEMP_DIR:
         os.chdir(work_dir)
         GENOMES = _temp(['data', 'genomes'])
         SKDER_OUT = _temp(['data', 'skder_out'])
@@ -650,7 +650,7 @@ def main():
             shutil.copytree(GENOMES, os.path.join('data', 'genomes'), dirs_exist_ok = True)
         if keep_intermediate or keep_dereplication:
             shutil.copytree(SKDER_OUT, os.path.join('data', 'skder_out'), dirs_exist_ok = True)
-    
+            
     print(f"\nAll done! Results can be found in {work_dir}")
 
 
