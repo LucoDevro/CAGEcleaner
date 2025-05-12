@@ -1,5 +1,6 @@
 # CAGEcleaner
 
+[![Preprint](https://img.shields.io/badge/Manuscript-bioRxiv-darkblue?style=flat-square&maxAge=2678400)](https://doi.org/10.1101/2025.02.19.639057)
 [![DOI](https://zenodo.org/badge/904110273.svg)](https://doi.org/10.5281/zenodo.14726119)
 
 **>>> `CAGEcleaner` will be integrated into [`cblaster`](https://github.com/gamcil/cblaster)! <<<**
@@ -10,9 +11,10 @@
 
 Given a session file from a `cblaster` run (or from a [`CAGECAT`](https://cagecat.bioinformatics.nl/) run), `CAGEcleaner` retrieves all hit-associated genome assemblies, groups these into assembly clusters by ANI and identifies a representative assembly for each assembly cluster using `skDER`. In addition, `CAGEcleaner` can reinclude hits that are different at the gene cluster level despite the genomic redundancy, and this by different gene cluster content and/or by outlier `cblaster` scores. Finally, `CAGEcleaner` returns a filtered `cblaster` session file as well as a list of retained gene cluster IDs for easier downstream analysis.
 
-For installation instructions, usage, explanations and more, head over to the [`CAGEcleaner` wiki](https://github.com/LucoDevro/CAGEcleaner/wiki)!
-
 ![workflow](workflow.png)
+
+## Installation and more
+For installation instructions, usage, explanations and more, head over to the [`CAGEcleaner` wiki](https://github.com/LucoDevro/CAGEcleaner/wiki)!
 
 ## Citations
 If you found `CAGEcleaner` useful, please cite our manuscript:
