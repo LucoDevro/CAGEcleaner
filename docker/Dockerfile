@@ -10,5 +10,5 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get install -y libmoosex-role-timer-perl unzip
 
 # Install CAGEcleaner and add environment to PATH
-RUN conda install -c bioconda -c conda-forge cagecleaner skder>=1.3.1 -y
+RUN conda install -c bioconda -c conda-forge cagecleaner -y
 ENV PATH=/usr/miniconda3/envs/cagecleaner/bin/:$PATH
