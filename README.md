@@ -5,7 +5,7 @@
 [![DOI](https://zenodo.org/badge/904110273.svg)](https://doi.org/10.5281/zenodo.14726119)
 
 > [!NOTE]
-> `CAGEcleaner` currently only has full support for sessions from `cblaster`'s remote mode!
+> `CAGEcleaner` currently only has full support for sessions from `cblaster`'s remote mode! Local mode support coming soon!
 
 > [!TIP]
 > `CAGEcleaner` will be integrated into `cblaster`! You can already check out the development version at [this fork](https://github.com/LucoDevro/cblaster).
@@ -27,13 +27,13 @@ For installation instructions, usage, explanations and more, head over to the [`
 If you found `CAGEcleaner` useful, please cite our manuscript:
 
 ```
-De Vrieze, L., Biltjes, M., Lukashevich, S., Tsurumi, K., Masschelein, J. (2025) CAGEcleaner: reducing genomic redundancy in gene cluster mining. bioRxiv https://doi.org/10.1101/2025.02.19.639057
+De Vrieze, L., Biltjes, M., Lukashevich, S., Tsurumi, K., Masschelein, J. (2025) CAGEcleaner: reducing genomic redundancy in gene cluster mining. Bioinformatics https://doi.org/10.1093/bioinformatics/btaf373
 ```
 
 `CAGEcleaner` relies heavily on the `skDER` genome dereplication tool and its main dependency `skani`, so please give these proper credit as well.
 
 ```
-Salamzade, R., & Kalan, L. R. (2023). skDER: microbial genome dereplication approaches for comparative and metagenomic applications. https://doi.org/10.1101/2023.09.27.559801`
+Salamzade, R., & Kalan, L. R. (2023). skDER: microbial genome dereplication approaches for comparative and metagenomic applications. bioRxiv https://doi.org/10.1101/2023.09.27.559801`
 Shaw, J., & Yu, Y. W. (2023). Fast and robust metagenomic sequence comparison through sparse chaining with skani. Nature Methods, 20(11), 1661–1665. https://doi.org/10.1038/s41592-023-02018-3
 ```
 
