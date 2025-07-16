@@ -108,6 +108,8 @@ def parse_arguments():
     args_io.add_argument('-s', '--session', dest = "session_file", type = check_exists, help = "Path to cblaster session file")
     args_io.add_argument('-o', '--output', dest = "output_dir", default = '.', help = "Output directory (default: current working directory)")
     args_io.add_argument('-t', '--temp', dest = "temp_dir", default = tempfile.gettempdir(), help = "Path to store temporary files (default: your system's default temporary directory)")
+    args_io.add_argument('-exs', '--exclude_scaffolds', dest = 'excluded_scaffolds', default = '', help = "Scaffolds IDs to be excluded from the hit set (comma-separated)")
+    args_io.add_argument('-exa', '--exclude_assemblies', dest = 'excluded_assemblies', default = '', help = "Assembly IDs to be excluded from the hit set (comma-seperated)")
     args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
     args_io.add_argument('--keep_dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
     args_io.add_argument('--keep_intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
@@ -143,7 +145,7 @@ def load_session(path_to_session: str) -> Session:
     return session
 
 
-def get_scaffolds(session: Session) -> list:
+def get_scaffolds(session: Session, excluded: list = []) -> list:
     """
     This function extracts the scaffold IDs from a temporary copy of the cblaster binary output file.
     
@@ -158,13 +160,16 @@ def get_scaffolds(session: Session) -> list:
 
     # Read the file using a variable series of spaces as separator and extract the second column (containing the scaffold IDs)
     scaffolds = pd.read_table(_temp("binary.txt"), sep = "\\s{2,}", engine = 'python', usecols = [1])['Scaffold'].to_list()
+    
+    # Exclude requested scaffolds
+    scaffolds = list(set(scaffolds) - set(excluded))
 
     print(f"Extracted {len(scaffolds)} scaffold IDs")
     
     return scaffolds
         
 
-def get_assemblies(scaffolds: list) -> list:
+def get_assemblies(scaffolds: list, excluded: list = []) -> list:
     """
     This function obtains the genome assembly ID for each scaffold ID obtained by get_scaffolds().
     It uses the NCBI Entrez-Direct utilities via a bash subprocess.
@@ -188,6 +193,9 @@ def get_assemblies(scaffolds: list) -> list:
     # read the result file
     with open(_temp('assembly_accessions'), 'r') as handle:
         assemblies = [l.rstrip() for l in handle.readlines()]
+        
+    # Excluded requested assemblies
+    assemblies = list(set(assemblies) - set(excluded))
     
     return assemblies
 
@@ -615,6 +623,8 @@ def main():
     keep_downloads = args.keep_downloads
     keep_intermediate = args.keep_intermediate
     keep_dereplication = args.keep_dereplication
+    excluded_scaffolds = [i.strip() for i in args.excluded_scaffolds.split(',')]
+    excluded_assemblies = [i.strip() for i in args.excluded_assemblies.split(',')]
 
     ## Set up working and temporary directory
     os.makedirs(work_dir, exist_ok = True)
@@ -627,9 +637,9 @@ def main():
         # load session file and generate cluster tables
         session = load_session(path_to_session)
         # extract scaffold IDs from the cblaster output
-        scaffolds = get_scaffolds(session)
+        scaffolds = get_scaffolds(session, excluded_scaffolds)
         # link to assembly IDs via the NCBI E-utilities
-        assemblies = get_assemblies(scaffolds)
+        assemblies = get_assemblies(scaffolds, excluded_assemblies)
         # download assemblies using the NCBI Datasets CLI
         download_genomes(assemblies, download_batch_size)
         # map the downloaded scaffold IDs to assembly IDs
