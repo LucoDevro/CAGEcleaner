@@ -54,10 +54,11 @@ ACCESSIONS_SCRIPT = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 
 DOWNLOAD_SCRIPT = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'download_assemblies.sh')
 DEREPLICATE_SCRIPT = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'dereplicate_assemblies.sh')
 
-global TEMP_DIR
+global ASSIGNED_TEMP_DIR
 global GENOMES
 global SKDER_OUT
 global VERBOSE
+global MODE
 
 def parse_arguments():
     """
@@ -107,6 +108,10 @@ def parse_arguments():
     
     args_io = parser.add_argument_group('Input / Output')
     args_io.add_argument('-s', '--session', dest = "session_file", type = check_exists, help = "Path to cblaster session file")
+    
+    #! Add argument for path to local genome folder
+    args_io.add_argument('-g', '--genomes', dest = "local_genome_folder", default = '.', type = check_exists, help = "Path to local genome folder (only when cblaster was run in local mode)")
+    
     args_io.add_argument('-o', '--output', dest = "output_dir", default = '.', help = "Output directory (default: current working directory)")
     args_io.add_argument('-t', '--temp', dest = "temp_dir", default = tempfile.gettempdir(), help = "Path to store temporary files (default: your system's default temporary directory)")
     args_io.add_argument('-exs', '--exclude_scaffolds', dest = 'excluded_scaffolds', default = '', help = "Scaffolds IDs to be excluded from the hit set (comma-separated)")
@@ -131,7 +136,7 @@ def parse_arguments():
         
     return args
 
-    
+
 def load_session(path_to_session: str) -> Session:
     """
     This function loads the cblaster session object.
@@ -148,7 +153,7 @@ def load_session(path_to_session: str) -> Session:
     
     return session
 
-
+    
 def get_scaffolds(session: Session, excluded: list = []) -> list:
     """
     This function extracts the scaffold IDs from a temporary copy of the cblaster binary output file.
@@ -179,13 +184,33 @@ def get_scaffolds(session: Session, excluded: list = []) -> list:
     
     return scaffolds
         
+def get_assemblies_LOCAL(path_to_genome_folder: str, excluded: list = []) -> list:
+            
+    print("\n--- STEP 2: Retrieving genome assembly IDs. ---")
 
+    assemblies = os.listdir(path_to_genome_folder)
+    
+    # Assert that the files are indeed in FASTA format
+    for asmbl in assemblies:
+        assert asmbl.endswith('.fna') or asmbl.endswith('.fasta') or asmbl.endswith('.fasta.gz') or asmbl.endswith('.fna.gz'), \
+            "Files in the genome folder are not recognized as FASTA (ends with .fna or .fasta)"
+    
+    # Excluded requested assemblies
+    if excluded != ['']:
+        if VERBOSE:
+            print(f"Excluding assemblies {', '.join(excluded)}")
+        assemblies = list(set(assemblies) - set(excluded))
+        
+    return assemblies
+    
+    
 def get_assemblies(scaffolds: list, excluded: list = []) -> list:
     """
     This function obtains the genome assembly ID for each scaffold ID obtained by get_scaffolds().
     It uses the NCBI Entrez-Direct utilities via a bash subprocess.
 
     :param list scaffolds: A list containing Genbank and RefSeq Nucleotide IDs.
+    :param list excluded: A list of assembly IDs to exclude.
     :rtype list: A list of Genbank and RefSeq Assembly IDs.
     """        
 
@@ -272,7 +297,10 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
     
     # Auxiliary function to split off prefixes from Nucleotide accession IDs
     def split_off_prefix(txt: str) -> str:
-        if '_' not in txt:
+        if MODE == 'local':
+            #! In local mode, naming conventions should be left unaltered.
+            return txt
+        elif '_' not in txt:
             return txt
         else:
             return '_'.join(txt.split('_')[1:])
@@ -284,6 +312,8 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
     scaffolds_set = set([split_off_prefix(s) for s in scaffolds]) # scaffolds from cblaster, deprefixed
     mappings = {}
     
+    print(os.listdir(GENOMES))
+
     for assmbl in assemblies:
         if VERBOSE:
             print(f"Mapping {assmbl}")
@@ -295,31 +325,43 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
             print(f'No assembly file found for {assmbl}!')
             continue
         
-        # All genomes were gzip-compressed
-        with gzip.open(os.path.join(GENOMES, assmbl_file), "rt") as genome:
-            try:
-                # get all scaffold Nucleotide accession IDs in this assembly
-                scaffolds_in_this_assembly = [record.id for record in SeqIO.parse(genome, 'fasta')]
-                
-                # split off any prefix
-                scaffolds_in_this_assembly = [split_off_prefix(i) for i in scaffolds_in_this_assembly]
-                
-                # find the ones we have a cblaster hit for
-                scaffolds_in_this_assembly = set(scaffolds_in_this_assembly)
-                found_scaffolds_no_prefix = list(scaffolds_set.intersection(scaffolds_in_this_assembly))
-                
-                # map the deprefixed IDs back to the original ones
-                found_scaffolds = [map_back(s, scaffolds) for s in found_scaffolds_no_prefix]
-                
-                if VERBOSE:
-                    print(f"Found scaffolds {', '.join(found_scaffolds)}")
-                
-                # add a mapping item for all scaffolds with a cblaster hit
-                for scaff in found_scaffolds:
-                    mappings[scaff] = assmbl
-                    
-            except IndexError:
-                print(f'No corresponding scaffold accession ID could be found for {assmbl}!')
+        print(assmbl)
+        print(assmbl_file)
+        
+        #! Differentiate between compressed and uncompressed genome files:
+        if assmbl_file.endswith('.gz'):
+            genome = gzip.open(os.path.join(GENOMES, assmbl_file), "rt")
+        
+        elif assmbl_file.endswith('.fna') or assmbl_file.endswith('.fasta'):
+            genome = open(os.path.join(GENOMES, assmbl_file), "r")
+
+        try:
+            # get all scaffold Nucleotide accession IDs in this assembly
+            scaffolds_in_this_assembly = [record.id for record in SeqIO.parse(genome, 'fasta')]
+        
+            # split off any prefix
+            scaffolds_in_this_assembly = [split_off_prefix(i) for i in scaffolds_in_this_assembly]
+        
+            # find the ones we have a cblaster hit for
+            scaffolds_in_this_assembly = set(scaffolds_in_this_assembly)
+            found_scaffolds_no_prefix = list(scaffolds_set.intersection(scaffolds_in_this_assembly))
+            
+            # map the deprefixed IDs back to the original ones
+            found_scaffolds = [map_back(s, scaffolds) for s in found_scaffolds_no_prefix]
+        
+            if VERBOSE:
+                print(f"Found scaffolds {', '.join(found_scaffolds)}")
+        
+            # add a mapping item for all scaffolds with a cblaster hit
+            for scaff in found_scaffolds:
+                mappings[scaff] = assmbl
+            
+        except IndexError:
+            print(f'No corresponding scaffold accession ID could be found for {assmbl}!')
+
+        #! Close the handle
+        genome.close()
+ 
     
     # Write scaffold-assembly pairs to report file
     if VERBOSE:
@@ -349,7 +391,7 @@ def dereplicate_genomes(ani_threshold: float = 99.0, nb_cores: int = 1) -> None:
         print("Calling skDER")
     home = os.getcwd()
     os.chdir(ASSIGNED_TEMP_DIR)
-    subprocess.run(['bash', DEREPLICATE_SCRIPT, str(ani_threshold), str(nb_cores)], check = True)
+    subprocess.run(['bash', DEREPLICATE_SCRIPT, str(ani_threshold), str(nb_cores), str(GENOMES)], check = True)
     os.chdir(home)
     
     return None
@@ -690,13 +732,15 @@ def main():
     global GENOMES
     global SKDER_OUT
     global VERBOSE
+    global MODE
     
     ## Parse arguments
     args = parse_arguments()
 
-    work_dir = args.output_dir.rstrip('/')
+    out_dir = args.output_dir.rstrip('/')
     temp_dir = args.temp_dir.rstrip('/')
     path_to_session = os.path.join(os.getcwd(), args.session_file)
+    path_to_local_genome_folder = os.path.join(os.getcwd(), args.local_genome_folder) #! path to local genome folder (local mode)
     nb_cores = int(args.cores)
     VERBOSE = args.verbose
     ani_threshold = float(args.ani)
@@ -712,45 +756,69 @@ def main():
     excluded_assemblies = [i.strip() for i in args.excluded_assemblies.split(',')]
 
     ## Set up working and temporary directory
-    os.makedirs(work_dir, exist_ok = True)
+    os.makedirs(out_dir, exist_ok = True)
     with tempfile.TemporaryDirectory(dir = temp_dir) as ASSIGNED_TEMP_DIR:
-        os.chdir(work_dir)
-        GENOMES = _temp(['data', 'genomes'])
-        SKDER_OUT = _temp(['data', 'skder_out'])
         
-        ## Execute the workflow
-        # load session file and generate cluster tables
+        # Travel to output directory
+        os.chdir(out_dir)
+        
+        # Define folder where skder output will reside:
+        SKDER_OUT = _temp(['data', 'skder_out'])
+
+        ## Execute the workflow ##
+        # Load session file 
         session = load_session(path_to_session)
-        # extract scaffold IDs from the cblaster output
+        #! Define mode (local or remote)
+        MODE = session.params['mode']
+        # Extract scaffold IDs from the cblaster output
         scaffolds = get_scaffolds(session, excluded_scaffolds)
-        # link to assembly IDs via the NCBI E-utilities
-        assemblies = get_assemblies(scaffolds, excluded_assemblies)
-        # download assemblies using the NCBI Datasets CLI
-        download_genomes(assemblies, download_batch_size)
+        
+        #! If mode is local, the workflow starts to differ at this point
+        if MODE == 'local':
+            if VERBOSE:
+                print("Detected local mode")
+            #! Redirect GENOMES to local genome folder
+            GENOMES = path_to_local_genome_folder
+            #! Get the assembly IDs in a list. These are basically the names of the files
+            assemblies = get_assemblies_LOCAL(path_to_local_genome_folder)
+            
+        else:    
+            if VERBOSE:
+                print("Detected remote mode")
+            # Genomes will be stored in temporary data directory
+            GENOMES = _temp(['data', 'genomes'])
+            # link to assembly IDs via the NCBI E-utilities
+            assemblies = get_assemblies(scaffolds, excluded_assemblies)
+            # download assemblies using the NCBI Datasets CLI
+            download_genomes(assemblies, download_batch_size)
+            
+            
         # map the downloaded scaffold IDs to assembly IDs
         scaffold_assembly_pairs = map_scaffolds_to_assemblies(scaffolds, assemblies)
+        
         # dereplicate the genomes using skDER
         dereplicate_genomes(ani_threshold, nb_cores)
+        
         # parse the secondary clustering from the skDER output and construct a dereplication status table
-        genome_cluster_composition = parse_dereplication_clusters(scaffold_assembly_pairs)
+        ##genome_cluster_composition = parse_dereplication_clusters(scaffold_assembly_pairs)
         # recover gene cluster hits and update status table
-        updated_status = recover_hits(session, genome_cluster_composition, no_recovery_by_content, no_recovery_by_score, outlier_z, min_score_diff)
+        ##updated_status = recover_hits(session, genome_cluster_composition, no_recovery_by_content, no_recovery_by_score, outlier_z, min_score_diff)
         # retrieve the finally retained scaffold IDs from the updated status table
-        dereplicated_scaffolds = get_dereplicated_scaffolds(updated_status)
+        ##dereplicated_scaffolds = get_dereplicated_scaffolds(updated_status)
         # generate final output files
-        generate_output(dereplicated_scaffolds, session)
+        ##generate_output(dereplicated_scaffolds, session)
         
         ## Finish by copying over intermediate results if flagged, and removing the temporary folder
-        if keep_intermediate or keep_downloads:
-            if VERBOSE:
-                print('Copying downloaded genomes to output folder')
-            shutil.copytree(GENOMES, os.path.join('data', 'genomes'), dirs_exist_ok = True)
-        if keep_intermediate or keep_dereplication:
-            if VERBOSE:
-                print("Copying skDER results to output folder")
-            shutil.copytree(SKDER_OUT, os.path.join('data', 'skder_out'), dirs_exist_ok = True)
+        ##if keep_intermediate or keep_downloads:
+            ##if VERBOSE:
+                ##print('Copying downloaded genomes to output folder')
+            ##shutil.copytree(GENOMES, os.path.join('data', 'genomes'), dirs_exist_ok = True)
+        ##if keep_intermediate or keep_dereplication:
+            ##if VERBOSE:
+                ##print("Copying skDER results to output folder")
+            ##shutil.copytree(SKDER_OUT, os.path.join('data', 'skder_out'), dirs_exist_ok = True)
             
-    print(f"\nAll done! Results can be found in {work_dir}")
+    print(f"\nAll done! Results can be found in {out_dir}")
 
 
 if __name__ == "__main__":
