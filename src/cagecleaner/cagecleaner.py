@@ -123,6 +123,11 @@ def parse_arguments():
     args_io.add_argument('-t', '--temp', dest = "temp_dir", default = tempfile.gettempdir(), help = "Path to store temporary files (default: your system's default temporary directory).")
     args_io.add_argument('-exs', '--exclude_scaffolds', dest = 'excluded_scaffolds', default = '', help = "Scaffolds IDs to be excluded from the hit set (comma-separated). For local cblaster sessions, duplicate scaffold IDs can be further specified using the following format: <assembly_ID>:<scaffold_ID>.")
     args_io.add_argument('-exa', '--exclude_assemblies', dest = 'excluded_assemblies', default = '', help = "Assembly IDs to be excluded from the hit set (comma-seperated).")
+    
+    #! Arguments for by-pass scaffolds or assemblies:
+    args_io.add_argument('-ks', '--keep_scaffolds', dest = "scaffolds_to_keep", default = '', help = "Scaffold IDs to retain from the hit set (comma-separated). These IDs will not be filtered and end up in the final output in any case.")
+    args_io.add_argument('-ka', '--keep_assemblies', dest = "assemblies_to_keep", default = '', help = "Assembly IDs to retain from the hit set (comma-separated). These IDs will not filtered and end up in the final output in any case.")
+
     args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
     args_io.add_argument('--keep_dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
     args_io.add_argument('--keep_intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
@@ -754,7 +759,7 @@ def recover_hits(session: Session, genome_clusters_mapping: pd.DataFrame, not_by
                     else:
                         content_group_representative = choice(non_outliers_this_content_group)
                         if VERBOSE:
-                            print(f"Picked {content_group_representative} as representative for content subgroup")
+                            print(f"Picked {content_group_representative.replace('+$+', ':')} as representative for content subgroup")
                         updated_mapping.at[content_group_representative, 'dereplication_status'] = 'readded_by_cluster_content'
                         recovered += 1
     
@@ -771,13 +776,14 @@ def recover_hits(session: Session, genome_clusters_mapping: pd.DataFrame, not_by
     
     # If mode is local we have to remove the prefixes in the scaffold column for cleaner output:
     if MODE=='local':
-        print(updated_mapping.columns)
-        #! Reset the index
-        updated_mapping = updated_mapping.reset_index(names='scaffold')
         #! Replace internal prefix with ':'
-        updated_mapping['scaffold'] = updated_mapping['scaffold'].apply(lambda x: x.replace('+$+', ':'))
+        updated_mapping.index = updated_mapping.index.map(lambda x: x.replace('+$+', ':'))
+
         #! Write to file
-        updated_mapping.to_csv('genome_cluster_status.txt', sep = "\t", index = False) 
+        updated_mapping.to_csv('genome_cluster_status.txt', sep = "\t", index = True) 
+
+        #! Undo the previous change
+        updated_mapping.index = updated_mapping.index.map(lambda x: x.replace(':', '+$+'))
 
     elif MODE=='remote':
         # Write to file:
@@ -804,7 +810,7 @@ def get_dereplicated_scaffolds(genome_clusters: pd.DataFrame) -> list:
     return dereplicated_scaffolds
 
 
-def generate_output(dereplicated_scaffolds:list, session:Session) -> None:
+def generate_output(dereplicated_scaffolds:list, session:Session, assemblies_to_keep:list, scaffolds_to_keep:list) -> None:
     """
     This function takes a list of retained scaffold IDs and the cblaster session object.
     From this object, it generates the filtered session, binary and summary file,
@@ -828,12 +834,24 @@ def generate_output(dereplicated_scaffolds:list, session:Session) -> None:
     # Remove strains that have no hits left
     if VERBOSE:
         print("Filtering session file")
+        if scaffolds_to_keep != ['']:
+            print(f"Retaining scaffolds {', '.join(scaffolds_to_keep)}")
+        if assemblies_to_keep != ['']:
+            print(f"Retaining assemblies {', '.join(assemblies_to_keep)}")
+
     for org_idx, org in reversed(list(enumerate(session_dict['organisms']))):
         for hit_idx, hit in reversed(list(enumerate(org['scaffolds']))):
-            #! If duplicate scaffolds were found, they were prefixed with the organism name
-            if MODE=='local':
-                hit['accession'] = _remove_suffixes(org['name']) + '+$+' + hit['accession']
+            #! If mode is local, they were prefixed with the organism name
+            hit['accession'] = _remove_suffixes(org['name']) + '+$+' + hit['accession'] if MODE=='local' else hit['accession']
             if hit['accession'] not in dereplicated_scaffolds:
+                #! Here we check if the assembly ID is in the retained list:
+                if assemblies_to_keep != ['']:
+                    if _is_retained_assembly(org['name'], assemblies_to_keep):
+                        continue
+                #! Here we check if the scaffold ID is in the retained list:
+                if scaffolds_to_keep != ['']:
+                    if _is_retained_scaffold(hit['accession'], scaffolds_to_keep):
+                        continue
                 filtered_session_dict['organisms'][org_idx]['scaffolds'].pop(hit_idx)
                 if not filtered_session_dict['organisms'][org_idx]['scaffolds']:
                     filtered_session_dict['organisms'].pop(org_idx)
@@ -927,7 +945,27 @@ def _is_genbank(file: str) -> bool:
         return False
     else:
         return True
-       
+    
+def _is_retained_scaffold(scaffold_id: str, scaffolds_to_keep: list) -> bool:
+    """
+    Function to check if a given scaffold ID is present in the list of scaffolds to be retained
+    """
+    if MODE=='local':
+        #! We loop over the list instead of checking if scaffold_id is in the list because the user might provide a scaffold ID without assembly prefix.
+        #! In that case we want every scaffold ID contaning the provided non-prefixed scaffold to be removed
+        for s in scaffolds_to_keep:
+            if s in scaffold_id:
+                return True
+    # in remote mode we can simply check if the scaffold id is in the provided list:
+    elif MODE=='remote':
+        return scaffold_id in scaffolds_to_keep
+    
+        
+def _is_retained_assembly(assembly_id: str, assemblies_to_keep: list) -> bool:
+    """
+    Function to check if a given assembly ID is present in the list of scaffolds to be retained
+    """
+    return _remove_suffixes(assembly_id) in assemblies_to_keep
    
 def main():
     """
@@ -959,7 +997,10 @@ def main():
     keep_dereplication = args.keep_dereplication
     excluded_scaffolds = [i.strip() for i in args.excluded_scaffolds.split(',')]
     excluded_assemblies = [i.strip() for i in args.excluded_assemblies.split(',')]
-   
+    #! List of scaffolds and assemblies to retain:
+    scaffolds_to_keep = [i.strip() for i in args.scaffolds_to_keep.split(',')]
+    assemblies_to_keep = [i.strip() for i in args.assemblies_to_keep.split(',')]
+    
     ## Set up working and temporary directory
     os.makedirs(out_dir, exist_ok = True)
     with tempfile.TemporaryDirectory(dir = temp_dir) as ASSIGNED_TEMP_DIR:
@@ -993,7 +1034,7 @@ def main():
         # retrieve the finally retained scaffold IDs from the updated status table
         dereplicated_scaffolds = get_dereplicated_scaffolds(updated_status)
         # generate final output files
-        generate_output(dereplicated_scaffolds, session)
+        generate_output(dereplicated_scaffolds, session, assemblies_to_keep, scaffolds_to_keep)
         
         ## Finish by copying over intermediate results if flagged, and removing the temporary folder
         if keep_intermediate or keep_downloads:
