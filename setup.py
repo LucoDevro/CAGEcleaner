@@ -6,7 +6,7 @@ with open("README.md") as readme:
     long_description = readme.read()
 
 setup(name = "cagecleaner",
-      version = "1.2.2",
+      version = "1.3.0",
       author="Lucas De Vrieze",
       author_email="lucas.devrieze@kuleuven.be",
       license = "MIT",
@@ -30,8 +30,9 @@ setup(name = "cagecleaner",
           "biopython",
           "cblaster >=1.3.20",
           "pandas",
-          "ncbi-datasets-cli",
           "entrez-direct",
-          "skder >=1.3.1"
+          "skder >=1.3.1",
+          "ncbi-datasets-cli",
+          "any2fasta"
       ],
       )
