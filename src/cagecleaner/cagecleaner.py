@@ -36,7 +36,7 @@ import sys
 import subprocess
 import re
 import os
-from itertools import batched #!, chain
+from itertools import batched
 import gzip
 import shutil
 import argparse
@@ -74,13 +74,13 @@ def parse_arguments():
     def check_percentage(value: str):
         """
         Auxiliary function to check the value range of the ANI threshold.
-        The program exits if it is below 82. This leads to inaccurate estimates - see skani documentation.
+        The program exits if it is below 82, as this leads to inaccurate estimates - see skani documentation.
         """
         if 0 <= float(value) <= 100:
             if 82 <= float(value) <= 100:
                 return value
             else:
-                warnings.warn("ANI cutoff requested is less than 82.0. This might lead to inaccurate estimates - see skani documentation. Exiting.", stacklevel=2)
+                print("ANI cutoff requested is less than 82.0. This leads to inaccurate estimates - see skani documentation. Exiting.", stacklevel=2)
                 sys.exit()
         else:
             raise argparse.ArgumentTypeError("%s should be a percentage value between 0 and 100" % value)
@@ -106,11 +106,6 @@ def parse_arguments():
     cagecleaner reduces redundancy in cblaster hit sets by dereplicating the genomes containing the hits. 
     It can also recover hits that would have been omitted by this dereplication if they have a different gene cluster content
     or an outlier cblaster score.
-    
-    cagecleaner first retrieves the assembly accession IDs of each cblaster hit via NCBI Entrez-Direct utilities, 
-    then downloads these assemblies using NCBI Datasets CLI, and then dereplicates these assemblies using skDER.
-    By default, cblaster hits that have an alternative gene cluster content or an outlier cblaster score 
-    (calculated via z-scores) are recovered as well.
                                      """,
                                      add_help = False
                                      )
@@ -123,10 +118,10 @@ def parse_arguments():
     
     args_io = parser.add_argument_group('Input / Output')
     args_io.add_argument('-s', '--session', dest = "session_file", type = check_exists, help = "Path to cblaster session file")
-    args_io.add_argument('-g', '--genomes', dest = "local_genome_folder", default = '.', type = check_exists, help = "Path to local genome folder containing genome files. Accepted formats are FASTA and GenBank [.fasta; .fna; .fa; .gbff; .gbk; .gb]. Files can be gzipped and can also contain .gff files. Only relevant if cblaster was run in local mode and the same local database is present. (default: None)")
+    args_io.add_argument('-g', '--genomes', dest = "local_genome_folder", default = '.', type = check_exists, help = "[Only relevant for local cblaster sessions] Path to local genome folder containing genome files. Accepted formats are FASTA and GenBank [.fasta; .fna; .fa; .gbff; .gbk; .gb]. Files can be gzipped. Folder can contain other files. (default: current working directory)")
     args_io.add_argument('-o', '--output', dest = "output_dir", default = '.', help = "Output directory (default: current working directory)")
     args_io.add_argument('-t', '--temp', dest = "temp_dir", default = tempfile.gettempdir(), help = "Path to store temporary files (default: your system's default temporary directory).")
-    args_io.add_argument('-exs', '--exclude_scaffolds', dest = 'excluded_scaffolds', default = '', help = "Scaffolds IDs to be excluded from the hit set (comma-separated). If in local mode and there are duplicate scaffold IDs, please provide them in the following format: <assembly_name>:<scaffold_name>, where assembly_name is the name of the corresponding assembly file without any suffices (omit .fasta or .fna.gz etc.)")
+    args_io.add_argument('-exs', '--exclude_scaffolds', dest = 'excluded_scaffolds', default = '', help = "Scaffolds IDs to be excluded from the hit set (comma-separated). For local cblaster sessions, duplicate scaffold IDs can be further specified using the following format: <assembly_ID>:<scaffold_ID>.")
     args_io.add_argument('-exa', '--exclude_assemblies', dest = 'excluded_assemblies', default = '', help = "Assembly IDs to be excluded from the hit set (comma-seperated).")
     args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
     args_io.add_argument('--keep_dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
@@ -173,10 +168,8 @@ def load_session(path_to_session: str) -> Session:
 
 def prepare_genomes(path_to_genomes: str) -> None:
     """
-    This function is only called in local mode. It checks if the genome folder contains FASTA files or genbank files.
-    If a FASTA file is found, the program will proceed with the FASTA files in the specified directory.
-    If no FASTA files are found, and there is a GenBank file, the program will proceed by converting the GenBank files to FASTA format and storing them in the temp GENOMES folder.
-    If no FASTA or GenBank is found, the program exits.
+    This function is only called in local mode. It ensures all genomes in the genome folder are in FASTA format and converts Genbank
+    files using any2fasta if necessary.
     """
     print("\nStaging genomes for dereplication.")
     # Specify that we might change the global GENOMES variable.
@@ -215,11 +208,12 @@ def prepare_genomes(path_to_genomes: str) -> None:
 
 def get_scaffolds(session: Session, excluded: list = ['']) -> list:
     """
-    This function extracts the scaffold IDs from a temporary copy of the cblaster binary output file.
+    This function extracts the scaffold IDs from a temporary copy of the cblaster binary output file, and excludes requested scaffolds.
+    For local mode sessions, IDs are prepended internally with the associated assembly ID.
     
     :param Session session: cblaster session object
     :param list excluded: A list of scaffold IDs to be excluded. 
-    :rtype list: A list containing Genbank and RefSeq Nucleotide IDs.
+    :rtype list: A list of scaffold IDs
     """
     print("\n--- STEP 1: Extracting scaffold IDs. ---")
     #####
@@ -270,7 +264,7 @@ def get_scaffolds(session: Session, excluded: list = ['']) -> list:
             if VERBOSE:
                 print(f"Excluding scaffolds: {', '.join(excluded)}")
             if not duplicates.empty:
-                warnings.warn("Some scaffold IDs were found across multiple different assemblies (see above). Please provide the scaffolds you wish to exclude in the following format:<assembly_name>:<scaffold_name>, where assembly_name is the file name of the assembly without any suffices (omit .fna, .gff3, .gff.gz etc.). Note that this should also correspond to the 'Organism' name (without suffices) in the cblaster binary output. If no assembly prefix is specified, all the scaffolds will be removed", stacklevel=2)
+                warnings.warn("Detected identical scaffold IDs in multiple assemblies! All these scaffolds will be removed. If you wish to exclude a specific one, please use the following format:<assembly_ID>:<scaffold_ID>.", stacklevel=2)
                 #! Replace the ':' provided by the user with the internal prefix +$+
                 excluded=[ex.replace(':', '+$+') for ex in excluded]
                 # Update the scaffolds list:
@@ -300,12 +294,13 @@ def get_scaffolds(session: Session, excluded: list = ['']) -> list:
   
 def get_assemblies(scaffolds: list = [''], excluded: list = ['']) -> list:
     """
-    This function obtains the genome assembly ID for each scaffold ID obtained by get_scaffolds().
-    It uses the NCBI Entrez-Direct utilities via a bash subprocess.
+    This function obtains the genome assembly ID for each scaffold ID obtained by get_scaffolds(), excluding any requested assemblies.
+    For remote mode sessions, it uses the NCBI Entrez-Direct utilities via a bash subprocess.
+    For local mode sessions, it retrieves the assembly ID from the extended internal scaffold ID.
 
     :param list scaffolds: A list containing Genbank and RefSeq Nucleotide IDs.
     :param list excluded: A list of assembly IDs to exclude.
-    :rtype list: A list of Genbank and RefSeq Assembly IDs.
+    :rtype list: A list of assembly IDs.
     """        
 
     print("\n--- STEP 2: Retrieving genome assembly IDs. ---")
@@ -403,10 +398,12 @@ def download_genomes(assemblies: list, batch_size: int = 300) -> None:
 
 def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
     """
-    This function maps the scaffolds in the list of cblaster hits to the genome assembly they are part of. To get the exact scaffold IDs of each assembly,
-    scaffolds are retrieved from the headers of the assembly fasta files. Prefixes are split off from both scaffold ID sets (the one from cblaster,
-    and the one from the NCBI download) during mapping as scaffold IDs mapped by the E-utilities sometimes do not correspond with the ones
+    This function maps the scaffolds in the list of cblaster hits to the genome assembly they are part of.
+    For remote mode sessions, scaffolds are retrieved from the headers of the assembly fasta files.
+    Prefixes are split off from both scaffold ID sets (the one from cblaster, and the one from the NCBI download) 
+    during mapping as scaffold IDs mapped by the E-utilities sometimes do not correspond with the ones
     in the downloaded fasta files.
+    For local mode sessions, it exploits the internal scaffold ID to infer the mapping.
     It generates a report text file with the scaffold-assembly pairs.
         
     :param list scaffolds: A list containing Genbank and RefSeq Nucleotide IDs.
@@ -416,7 +413,8 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
     
     print("\n--- STEP 4: Mapping local scaffold IDs to assembly IDs. ---")
     
-    # Auxiliary function to split off prefixes from NCBI Nucleotide accession IDs
+    # Auxiliary function to split off prefixes from NCBI Nucleotide accession IDs for remote mode sessions. 
+    # Passes on the input for local mode sessions.
     def split_off_prefix(txt: str) -> str:
         if MODE == 'local':
             #! In local mode, naming conventions should be left unaltered.
@@ -426,11 +424,12 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
         else:
             return '_'.join(txt.split('_')[1:])
         
-    # Auxiliary function to link the Nucleotide accession ID without prefix back to the original ID
+    # Auxiliary function to map the Nucleotide accession ID without prefix back to the original ID for remote mode sessions.
+    # Returns the same list for local mode sessions.
     def map_back(no_prefix: str, scaffolds: list) -> str:
         return [s for s in scaffolds if no_prefix in s][0]
     
-    scaffolds_set = set([split_off_prefix(s) for s in scaffolds]) # scaffolds from cblaster, deprefixed
+    scaffolds_set = set([split_off_prefix(s) for s in scaffolds]) # scaffolds from cblaster, deprefixed in case of remote mode
     mappings = {}
         
     for assmbl in assemblies:
@@ -440,7 +439,7 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
         # Find the path to the downloaded fasta file for this assembly ID, ignoring version digits
         try:
             assmbl_file = [a for a in os.listdir(GENOMES) if assmbl.split('.')[0] in a]
-            # Extract only the fasta files. Should only be relevant in local mode
+            # Select FASTA files for processing. Only relevant in local mode
             assmbl_file = [a for a in assmbl_file if _is_fasta(a)][0]
         except IndexError:
             print(f'No assembly file found for {assmbl}!')
@@ -464,9 +463,9 @@ def map_scaffolds_to_assemblies(scaffolds: list, assemblies: list) -> dict:
                 #! In local mode, scaffolds found in get_scaffolds() are prefixed with the Organism name found in the cblaster session file to handle duplicate scaffold IDs.
                 # This Organism name is derived from the .gff or .gbk file when using 'cblaster makedb'.
                 # The file extension is cut off such that f.e. assembly1.gff is reported as 'assembly1' in the Organism column
-                # If the file was named assembly1.gff.gz, the Organism name is reported as assembly1.gff. Only the last suffix is removed.
+                # If the file was named assembly1.gff.gz, cblaster reports the Organism name as assembly1.gff. It removed only the last suffix.
                 # The get_assemblies() function makes sure that Organism name correpsonds to the pure assembly name (without any suffixes) such that the prefix and mapping holds.
-                scaffolds_in_this_assembly = [assmbl + '+$+' + scaffolds_in_this_assembly[i] for i in range(len(scaffolds_in_this_assembly))]
+                scaffolds_in_this_assembly = [assmbl + '+$+' + s for s in scaffolds_in_this_assembly]
                 
             # find the ones we have a cblaster hit for
             scaffolds_in_this_assembly = set(scaffolds_in_this_assembly)
@@ -558,7 +557,7 @@ def parse_dereplication_clusters(scaffold_assembly_pairs: dict) -> pd.DataFrame:
                    'within_cutoffs_requested': 'redundant'}
         return mapping[label]
     
-    # Auxiliary function to retrieve all scaffold Nucleotide IDs with a cblaster hit for a certain assembly ID
+    # Auxiliary function to retrieve all scaffold IDs with a cblaster hit for a certain assembly ID using the earlier constructed mapping table
     def map_scaffolds(assembly: str, scaffold_assembly_pairs: dict) -> list:
         return [s for s,a in scaffold_assembly_pairs.items() if a == assembly]
     
@@ -831,7 +830,7 @@ def generate_output(dereplicated_scaffolds:list, session:Session) -> None:
         print("Filtering session file")
     for org_idx, org in reversed(list(enumerate(session_dict['organisms']))):
         for hit_idx, hit in reversed(list(enumerate(org['scaffolds']))):
-            #! If dup scaffolds were found, they were prefixed with the organism name
+            #! If duplicate scaffolds were found, they were prefixed with the organism name
             if MODE=='local':
                 hit['accession'] = _remove_suffixes(org['name']) + '+$+' + hit['accession']
             if hit['accession'] not in dereplicated_scaffolds:
@@ -946,7 +945,7 @@ def main():
     out_dir = os.path.abspath(args.output_dir)
     temp_dir = os.path.abspath(args.temp_dir)
     path_to_session = os.path.abspath(args.session_file)
-    path_to_local_genome_folder = os.path.abspath(args.local_genome_folder) #! path to local genome folder (local mode)
+    path_to_local_genome_folder = os.path.abspath(args.local_genome_folder)
     nb_cores = int(args.cores)
     VERBOSE = args.verbose
     ani_threshold = float(args.ani)
@@ -964,11 +963,11 @@ def main():
     ## Set up working and temporary directory
     os.makedirs(out_dir, exist_ok = True)
     with tempfile.TemporaryDirectory(dir = temp_dir) as ASSIGNED_TEMP_DIR:
-        # Travel to output directory
+        # Navigate to output directory
         os.chdir(out_dir)
         # Define folder where skder output and genomes will reside:
         SKDER_OUT = _temp(['data', 'skder_out'])
-        # By default genomes will reside in the temp folder, unless a local database is specified.
+        # By default genomes will reside in the temp folder, unless a local genome database is specified.
         GENOMES=_temp(['data', 'genomes'])
 
         ## Execute the workflow ##
