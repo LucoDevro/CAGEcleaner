@@ -5,10 +5,10 @@
 [![DOI](https://zenodo.org/badge/904110273.svg)](https://doi.org/10.5281/zenodo.14726119)
 
 > [!NOTE]
-> `CAGEcleaner` currently only has full support for sessions from `cblaster`'s remote mode! Local mode support coming soon!
+> `CAGEcleaner` supports all functional `cblaster` modes (remote, local, hmm). We do not recommend using one of the combi modes as we have found bugs in it.
 
 > [!TIP]
-> `CAGEcleaner` will be integrated into `cblaster`! You can already check out the development version at [this fork](https://github.com/LucoDevro/cblaster).
+> `CAGEcleaner` will be integrated into `cblaster`! You can already check out the development version at [this fork](https://github.com/LucoDevro/cblaster) (currently integrates CAGECleaner v1.2.3).
 ## Outline
 
 `CAGEcleaner` removes genomic redundancy from gene cluster hit sets identified by [`cblaster`](https://github.com/gamcil/cblaster). The redundancy in target databases used by `cblaster` often propagates into the result set, requiring extensive manual curation before downstream analyses and visualisation can be carried out.
@@ -20,8 +20,8 @@ Given a session file from a `cblaster` run (or from a [`CAGECAT`](https://cageca
 ## Installation and more
 For installation instructions, usage, explanations and more, head over to the [`CAGEcleaner` wiki](https://github.com/LucoDevro/CAGEcleaner/wiki)!
 
-> [!NOTE]
-> `CAGEcleaner` has no direct Windows support. If you happen to have it installed successfully on your Windows system, you probably just installed v1.1.0, an older version with known bugs! There are alternative options to run CAGEcleaner on Windows.
+> [!IMPORTANT]
+> `CAGEcleaner` has no direct Windows support. If you seem to have it installed successfully on your Windows system, you probably have just installed v1.1.0, an old version with known bugs! There are alternative options to run CAGEcleaner on Windows.
 
 ## Citations
 If you found `CAGEcleaner` useful, please cite our manuscript:
