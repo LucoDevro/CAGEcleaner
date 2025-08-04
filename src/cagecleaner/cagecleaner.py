@@ -125,8 +125,8 @@ def parse_arguments():
     args_io.add_argument('-exa', '--exclude_assemblies', dest = 'excluded_assemblies', default = '', help = "Assembly IDs to be excluded from the hit set (comma-seperated).")
     
     #! Arguments for by-pass scaffolds or assemblies:
-    args_io.add_argument('-ks', '--keep_scaffolds', dest = "scaffolds_to_keep", default = '', help = "Scaffold IDs to retain from the hit set (comma-separated). These IDs will not be filtered and end up in the final output in any case.")
-    args_io.add_argument('-ka', '--keep_assemblies', dest = "assemblies_to_keep", default = '', help = "Assembly IDs to retain from the hit set (comma-separated). These IDs will not filtered and end up in the final output in any case.")
+    args_io.add_argument('-bs', '--bypass_scaffolds', dest = "scaffolds_to_keep", default = '', help = "Scaffold IDs to retain from the hit set (comma-separated). These IDs will not be filtered and end up in the final output in any case.")
+    args_io.add_argument('-ba', '--bypass_assemblies', dest = "assemblies_to_keep", default = '', help = "Assembly IDs to retain from the hit set (comma-separated). These IDs will not filtered and end up in the final output in any case.")
 
     args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
     args_io.add_argument('--keep_dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
@@ -168,6 +168,10 @@ def load_session(path_to_session: str) -> Session:
         print("Session loaded!")
     
     print(f"Detected {MODE} mode.")
+    
+    # HMM mode works exactly the same as local mode:
+    if MODE=='hmm':
+        MODE='local'
         
     return session  
 
@@ -916,7 +920,7 @@ def _remove_suffixes(string: str) -> str:
 
 def _is_fasta(file: str) -> bool:
     """
-    Returns true if any if the file ends in any of the accepted fasta suffices
+    Returns true if the file ends in any of the accepted fasta suffices
     """
     # ? = might occur but does not have to
     # $ = this should be the end of the string
@@ -928,7 +932,7 @@ def _is_fasta(file: str) -> bool:
 
 def _is_gff(file: str) -> bool:
     """
-    Returns true if any if the file ends in any of the accepted gff suffices
+    Returns true if the file ends in any of the accepted gff suffices
     """
     pattern = r'\.(gff|gff3)(\.gz)?$'
     if re.search(pattern, file) is None:
@@ -938,7 +942,7 @@ def _is_gff(file: str) -> bool:
 
 def _is_genbank(file: str) -> bool:
     """
-    Returns true if any if the file ends in any of the accepted genbank suffices
+    Returns true if the file ends in any of the accepted genbank suffices
     """
     pattern = r'\.(gbff|gbk|gb)(\.gz)?$'
     if re.search(pattern, file)==None:
