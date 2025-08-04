@@ -116,22 +116,22 @@ def parse_arguments():
     args_general.add_argument('-v', '--version', action = "version", version = "%(prog)s " + __version__)
     args_general.add_argument('--verbose', dest = 'verbose', default = False, action = 'store_true', help = "Enable verbose logging")
     
-    args_io = parser.add_argument_group('Input / Output')
+    args_io = parser.add_argument_group('File inputs and outputs')
     args_io.add_argument('-s', '--session', dest = "session_file", type = check_exists, help = "Path to cblaster session file")
     args_io.add_argument('-g', '--genomes', dest = "local_genome_folder", default = '.', type = check_exists, help = "[Only relevant for local cblaster sessions] Path to local genome folder containing genome files. Accepted formats are FASTA and GenBank [.fasta; .fna; .fa; .gbff; .gbk; .gb]. Files can be gzipped. Folder can contain other files. (default: current working directory)")
     args_io.add_argument('-o', '--output', dest = "output_dir", default = '.', help = "Output directory (default: current working directory)")
     args_io.add_argument('-t', '--temp', dest = "temp_dir", default = tempfile.gettempdir(), help = "Path to store temporary files (default: your system's default temporary directory).")
-    args_io.add_argument('-exs', '--exclude_scaffolds', dest = 'excluded_scaffolds', default = '', help = "Scaffolds IDs to be excluded from the hit set (comma-separated). For local cblaster sessions, duplicate scaffold IDs can be further specified using the following format: <assembly_ID>:<scaffold_ID>.")
-    args_io.add_argument('-exa', '--exclude_assemblies', dest = 'excluded_assemblies', default = '', help = "Assembly IDs to be excluded from the hit set (comma-seperated).")
-    
-    #! Arguments for by-pass scaffolds or assemblies:
-    args_io.add_argument('-bys', '--bypass_scaffolds', dest = "scaffolds_to_bypass", default = '', help = "Scaffold IDs that should bypass dereplication (comma-separated). These IDs will not be filtered and end up in the final output in any case.")
-    args_io.add_argument('-bya', '--bypass_assemblies', dest = "assemblies_to_bypass", default = '', help = "Assembly IDs that should bypass dereplication (comma-separated). These IDs will not be filtered and end up in the final output in any case.")
-
     args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
     args_io.add_argument('--keep_dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep skDER output")
     args_io.add_argument('--keep_intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
-    
+ 
+    #! Arguments for by-pass scaffolds or assemblies:
+    args_id_io = parser.add_argument_group('Analysis inputs and outputs', description = "For local cblaster sessions, duplicate scaffold IDs can be further specified using the following format: <assembly_ID>:<scaffold_ID>.")
+    args_id_io.add_argument('-bys', '--bypass_scaffolds', dest = "scaffolds_to_bypass", default = '', help = "Scaffold IDs that should bypass dereplication (comma-separated). These IDs will end up in the final output in any case.")
+    args_id_io.add_argument('-bya', '--bypass_assemblies', dest = "assemblies_to_bypass", default = '', help = "Assembly IDs that should bypass dereplication (comma-separated). These IDs will end up in the final output in any case.")
+    args_id_io.add_argument('-exs', '--exclude_scaffolds', dest = 'excluded_scaffolds', default = '', help = "Scaffolds IDs to be excluded from the hit set (comma-separated). ")
+    args_id_io.add_argument('-exa', '--exclude_assemblies', dest = 'excluded_assemblies', default = '', help = "Assembly IDs to be excluded from the hit set (comma-seperated).")
+  
     args_download = parser.add_argument_group('Download')
     args_download.add_argument('--download_batch', dest = 'download_batch', default = 300, type = int, help = "Number of genomes to download in one batch (default: 300)")
     
