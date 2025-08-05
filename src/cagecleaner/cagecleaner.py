@@ -282,10 +282,9 @@ def get_scaffolds(session: Session, excluded: list = ['']) -> list:
                     for j in range(len(excluded)):
                         if excluded[j] in scaffold:
                             scaffolds.remove(scaffold)  # Use remove() to avoid index issues
-       
-        else:
-            # Now the excluded scaffolds were presumably provided by the user without a prefix:
-            scaffolds=[s for s in scaffolds if s.split('+$+')[-1] not in excluded]
+            else:
+                # Now the excluded scaffolds were presumably provided by the user without a prefix:
+                scaffolds=[s for s in scaffolds if s.split('+$+')[-1] not in excluded]
 
     elif MODE=='remote':
         # Exclude requested scaffolds
