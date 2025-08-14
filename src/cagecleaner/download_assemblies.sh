@@ -14,7 +14,7 @@ batch_count=$(cat download_batches.txt | wc -l)  # Each line is one batch. Enfor
 echo Got $assembly_count assembly IDs. Downloading genomes in $batch_count batches...
 
 # Create the directory to store all genomes
-mkdir -p data/genomes data/downloads
+mkdir genomes downloads
 
 # Here we loop over each line in the 'download_batches.txt' file:
 batch_counter=1
@@ -25,25 +25,25 @@ while read line; do
     datasets download genome accession $(echo "$line" | xargs) --dehydrated
 
     # Unzip the file in a folder called "genomes". This folder is located two steps up in the data folder
-    unzip -d data/downloads ncbi_dataset.zip && rm ncbi_dataset.zip
+    unzip -d downloads ncbi_dataset.zip && rm ncbi_dataset.zip
 
     # Rehydrate:
-    datasets rehydrate --directory data/downloads --gzip
+    datasets rehydrate --directory downloads --gzip
 
     # Put all genomes from this batch into one directory
-    mv data/downloads/ncbi_dataset/data/GC*/* data/genomes/
+    mv downloads/ncbi_dataset/data/GC*/* genomes/
     
     # Clean up
-    rm -rf data/downloads
+    rm -rf downloads
     
     batch_counter=$((batch_counter+1))
- done < download_batches.txt
+done < download_batches.txt
 
 echo -e "\nDownloading finished!"
 
 # Print amount of files in the /genomes/all/ folder. This should equal the initial amount of assembly IDs
-echo $(ls data/genomes | wc -w) genomes in $(pwd)/data/genomes.
-echo Directory size: $(du --human-readable -s data/genomes).  # Size of the genomes folder
+echo $(ls genomes | wc -w) genomes in $(pwd)/genomes.
+echo Directory size: $(du --human-readable -s genomes/).  # Size of the genomes folder
 
 # Cleaning up
 rm -rf data/downloads
