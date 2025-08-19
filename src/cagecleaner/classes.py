@@ -23,20 +23,20 @@ from cblaster.classes import Session
 
 class Run(ABC):
     """
-    This is an abstract class representing a typical CAGECLEANER Run.
+    This is an abstract class representing a typical CAGEcleaner Run.
     A Run is either a LocalRun or a RemoteRun, depending on the mode in which cblaster was executed.
     It contains an initializer, shared by both LocalRun and RemoteRun, that internally parses and stores the arguments given through the command line.
     The static method fromArgs() is used to initialize a LocalRun or RemoteRun based on the mode of the provided session file.
         
     One can visualize the workflow as follows:
         
-       -- Remote -> fetchAssemblyIDs() -> downloadGenomes() -> mapAssembliesToBinary() -> UPDATED_BINARY -> |
-      |                                                                                                     |
-Run --|                                                                                                      -> dereplicateGenomes() -> mapSkderOutToBinary() -> recoverHits() -> filterSession() -> generateOutput()
-      |                                                                                                     |
-       -- Local/HMM ------------------------------------> prepareGenomes() -------------------------------> |
+       -- Remote -> fetchAssemblyIDs() -> downloadGenomes() -> mapAssembliesToBinary() -> EXTENDED_BINARY -> |
+      |                                                                                                      |
+Run --|                                                                                                       -> dereplicateGenomes() -> mapSkderOutToBinary() -> recoverHits() -> filterSession() -> generateOutput()
+      |                                                                                                      |
+       -- Local/HMM ------------------------------------> prepareGenomes() --------------------------------> |
         
-        With UPDATED_BINARY containing links to the corresponding genome file for each row.
+        With EXTENDED_BINARY containing links to the corresponding genome file for each row.
         (In local mode this link essentially already exists through the 'Organism' column)
         
     """                                                         
@@ -47,10 +47,10 @@ Run --|                                                                         
         assert args.session_file.exists() and args.session_file.is_file(), "Provided session file does not exist or is not a file."
         assert args.output_dir.exists() and args.output_dir.is_dir(), "Provided output directory does not exist or is not a directory."
         assert args.temp_dir.exists() and args.temp_dir.is_dir(), "Provided temp directory does not exist or is not a directory."
-        assert args.genome_dir.exists() and args.genome_dir.is_dir(), "Provided genome directory is not a directory."
+        assert args.genome_dir.exists() and args.genome_dir.is_dir(), "Provided genome directory does not exist or is not a directory."
         assert args.ani >= 82 and args.ani <= 100, "ANI threshold should be a number between 82 and 100 (see skani documentation)."
         assert args.zscore_outlier_threshold > 0, "Z-score threshold for recovery should be greater than zero."
-        assert args.minimal_score_difference > 0, "Minimal score difference for recovery should be greater than zero."
+        assert args.minimal_score_difference >= 0, "Minimal score difference for recovery cannot be smaller than zero."
         assert args.cores > 0, "Amount of CPU cores to use should be greater than zero."
         
         ## User-defined variables: ##
@@ -59,11 +59,11 @@ Run --|                                                                         
         self.verbose: bool = args.verbose
         
         # Parse IO arguments:
-        self.session: Session = Session.from_file(args.session_file.absolute().resolve())  # Stores the session file as a Session object
-        self.OUT_DIR: Path = args.output_dir.absolute().resolve()  # Output directory
-        self.TEMP_DIR: Path = Path(tempfile.TemporaryDirectory(dir = args.temp_dir).name).absolute().resolve()  # Temporary directory (within the given temporary directory)
+        self.session: Session = Session.from_file(args.session_file.resolve())  # Stores the session file as a Session object
+        self.OUT_DIR: Path = args.output_dir.resolve()  # Output directory
+        self.TEMP_DIR: Path = Path(tempfile.TemporaryDirectory(dir = args.temp_dir).name).resolve()  # Temporary directory (within the given temporary directory)
         self.TEMP_DIR.mkdir(exist_ok=True)
-        self.USER_GENOME_DIR: Path = args.genome_dir.absolute().resolve()  # Genome directory provided by the user
+        self.USER_GENOME_DIR: Path = args.genome_dir.resolve()  # Genome directory provided by the user
         self.keep_dereplication: bool = args.keep_dereplication
         self.keep_downloads: bool = args.keep_downloads
         self.keep_intermediate: bool = args.keep_intermediate
@@ -101,7 +101,7 @@ Run --|                                                                         
         self.filtered_session: Session = None
         
         # Set directory for skDER output and Path to dereplication script
-        self.SKDER_OUT_DIR: Path = self.TEMP_DIR / 'skder_out'  # Folder where skder will place its output. The directory will be made by dereplication script when it is called.
+        self.SKDER_OUT_DIR: Path = self.TEMP_DIR / 'skder_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
         self.GENOME_DIR: Path = self.TEMP_DIR / 'genomes'  # Default path where genomes will be stored. In local mode this can change to USER_GENOME_DIR.
         self.DEREPLICATE_SCRIPT: Path = Path(__file__).parent / 'dereplicate_assemblies.sh'  # Path to the dereplication script
 
@@ -123,7 +123,7 @@ Run --|                                                                         
             return RemoteRun(args)
         
         else:
-            print(f"CAGECLEANER does not support cblaster {mode} mode for the moment. Exiting the program.")
+            print(f"CAGEcleaner does not support cblaster {mode} mode for the moment. Exiting the program.")
             sys.exit()
             
     def dereplicateGenomes(self):
@@ -151,14 +151,15 @@ Run --|                                                                         
         """
         This function groups the binary_df by representatives.
         This grouping is then further subdivided into groups based on the gene absence/presence (gene cluster content)
-        Within each grouping, hits are recoverd based on z-scores and their content (if a grouping does not contain a representative, we pick a random one to retain).
+        Within each structural grouping, outliers are recoverd based on z-scores and a representative is picked (unless the dereplication representative is part of that structural subgroup).
         
         Mutates:
             self.binary_df: pd.DataFrame: Binary table derived from the cblaster Session object.
         """
+        
         def recoverHitsByScore(df: pd.DataFrame) -> pd.DataFrame():
             """
-            Function that takes a dataframe (cluster grouping in this context) and calculates z_scores and minimal difference. 
+            Auxiliary function that takes a dataframe (structural subgroup in this context) and calculates z_scores and minimal difference. 
             It then alters the OG binary table at the correct index and returns the updated grouping to recoverByContent()
             
             Input:
@@ -172,9 +173,9 @@ Run --|                                                                         
             """
             # Add a column with the z-scores based on the Score in each row:
             df['z_scores'] = zscore(df['Score'])
-            # Get the modal score. Mean because it migth return multiple values
+            # Get the mean modal score. Mean because there migth be multiple modal values
             modal_score = df['Score'].mode().mean()
-            # Alter the OG binary df at the indices where Score and z_score pass the thresholds
+            # Alter the OG binary df at the indices where the score difference and the z_score pass the thresholds
             for index, row in df.iterrows():
                 if (abs(row['Score'] - modal_score) >= self.minimal_score_difference) and (abs(row['z_score']) >= self.zscore_outlier_threshold):
                     # Alter the df that was passed as argument such that recoverByContent has this information. Only do this if that row is not already a dereplication representative, in which case the hit is retained anyway.
@@ -183,6 +184,8 @@ Run --|                                                                         
                     self.binary_df.at[index, 'dereplication_status'] = 'readded_by_score' if row['dereplication_status'] != 'dereplication_representative' else row['dereplication_status']
         
             return df
+        
+        
         # If the user is not interested in recovering by content, skip this workflow.
         if self.no_recovery_by_content == True:
             print("Skipping hit recovery.")
@@ -199,7 +202,7 @@ Run --|                                                                         
                 # Loop over the grouping:
                 grouped_by_content = cluster.groupby(self.session.queries)
                 self.VERBOSE(f"-> {len(grouped_by_content)} subgroups based on gene cluster composition.")
-                for cluster, group in grouped_by_content:
+                for _, group in grouped_by_content:
                     # Now we want to recover by cblaster score:
                     if self.no_recovery_by_score == False:
                         group = recoverHitsByScore(group)  # This group now contains rows that are 'readded_by_score'
@@ -217,10 +220,10 @@ Run --|                                                                         
         
             if self.no_recovery_by_content == False:
                 recovered_by_content = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_content']['dereplication_status'].to_list())
-                print(f"Total hits recovered by deviating gene cluster composition: {recovered_by_content}")
+                print(f"Total hits recovered by alternative gene cluster composition: {recovered_by_content}")
                 if self.no_recovery_by_score == False:
                     recovered_by_score = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_score']['dereplication_status'].to_list())
-                    print(f"Total hits recovered by deviating cblaster score: {recovered_by_score}")
+                    print(f"Total hits recovered by outlier cblaster score: {recovered_by_score}")
 
         return None
     
@@ -249,21 +252,21 @@ Run --|                                                                         
         
         scaffolds_removed_total = 0  # Counter to keep track of deleted hits
         # Loop over the list of organisms. This list contains dictionaries
-        # Does the index change after popping? No because we travel through the list in reverse
+        # Going in reverse so the index doesn't change by popping items
         for org_idx, org in reversed(list(enumerate(session_dict['organisms']))):
             scaffolds_removed = 0  # Counter
             # Get the full name of the organism, with strain (if it is not empty):
             org_full_name = f"{org['name']} {org['strain']}".strip()
             self.VERBOSE(f"Carving out organism {org_full_name}")
-            # First we check if we need to bypass this assembly. If yes, go to the next iteration
-            if org_full_name in self.bypass_organisms and self.bypass_organisms != {''}:
+            # First we check whether we need to bypass this assembly. If yes, don't pop this one and proceed with the next one
+            if self.bypass_organisms != {''} and org_full_name in self.bypass_organisms:
                 self.VERBOSE("-> Bypassing")
                 continue
             # Now we go to the scaffold level and loop over each scaffold associated with this organism
             for hit_idx, hit in reversed(list(enumerate(org['scaffolds']))):
                 # Obtain the prefixed hit for proper exclusion (in local mode, the user provides scaffolds to exclude in the form of <assembly:scaffold> to prevent issues with duplicate scaffold IDs)
                 prefixed_scaffold = org_full_name + ':' + hit['accession']
-                # If we have to bypass it, continue
+                # If we have to bypass it, jump to the next one in line
                 if self.bypass_scaffolds != {''} and prefixed_scaffold.endswith(tuple(self.bypass_scaffolds)):
                     self.VERBOSE(f"-> Bypassing scaffold {hit['accession']}")
                     continue
@@ -272,8 +275,8 @@ Run --|                                                                         
                     filtered_session_dict['organisms'][org_idx]['scaffolds'].pop(hit_idx)
                     scaffolds_removed += 1  # Update counter
             # Tell the user how many scaffolds were removed in this organism:
-            self.VERBOSE(f"-> Removed {scaffolds_removed} scaffolds")
-            # If the scaffold list for this organism is now empty, remove the entire thing:
+            self.VERBOSE(f"-> Removed {scaffolds_removed} scaffolds for {org_full_name}")
+            # If the scaffold list for this organism is now empty, remove the entire organism:
             if not filtered_session_dict['organisms'][org_idx]['scaffolds']:
                 filtered_session_dict['organisms'].pop(org_idx)
             # Update the total counter
@@ -294,7 +297,7 @@ Run --|                                                                         
             - Filtered_summary
             - List of retained cluster numbers
             - Cluster sizes for each representative genome
-            - Extended binary?
+            - Extended binary table
         
         Optional:
             - skDER output
@@ -342,7 +345,7 @@ Run --|                                                                         
             
         # Extended binary:
         self.VERBOSE("Writing extended binary.")
-        self.binary_df.to_csv('extended_binary.txt', sep='\t')
+        self.binary_df.to_csv('extended_binary_table.txt', sep='\t')
         
         print(f"Finished! Output files can be found in {self.OUT_DIR}.")
                 
@@ -380,9 +383,9 @@ class LocalRun(Run):
         # Make sure there is no exotic stuff in the provided genome folder
         for file in self.USER_GENOME_DIR.iterdir():
             assert file.is_file(), f"The following object in the genome folder is not a file: {file}. Please move or remove it."
-            assert (util.isFasta(str(file)) or util.isGff(str(file)) or util.isGenbank(str(file))), f"The following file is not in the correct format: {file}.\nWe only accept the following suffices: [.fasta, .fna, .fa, .gff3, .gff, .gbff, .gbk, .gb]. '.gz' extension are also allowed"
+            assert (util.isFasta(str(file)) or util.isGff(str(file)) or util.isGenbank(str(file))), f"The following file is not in the correct format: {file}.\nWe only accept the following suffices: [.fasta, .fna, .fa, .gff3, .gff, .gbff, .gbk, .gb]. The '.gz' extension is allowed."
         
-        # Remove organisms that the user wants excluded:
+        # Remove organisms that the user wants to be excluded:
         if self.excluded_organisms != {''}:
             self.VERBOSE(f"Excluding the following organisms: {', '.join(self.excluded_organisms)}")
             self.binary_df = self.binary_df[~self.binary_df['Organism'].isin(self.excluded_organisms)]
@@ -401,10 +404,10 @@ class LocalRun(Run):
     def prepareGenomes(self) -> None:
         """
         This function is called to inspect the provided genome folder and convert GenBank files to FASTA files if necessary.
-        If a FASTA file is found, it is presumed that all genomes are stored in the provided folder in FASTA format.
-        If no FASTA is found, but instead a GenBank is found, it is presumed that all genomes are in GenBank format.
-        The GenBank files will then be converted to FASTA files and redirected to the TEMP folder.
-        These FASTA files can then be passed to skder.
+        If a FASTA file is found, it is assumed that all genomes are stored in the provided folder in FASTA format.
+        If no FASTA is found, but instead a GenBank is found, it is assumed that all genomes are in GenBank format.
+        Temporary FASTA-converted copies of these GenBank files will be placed in the temporary folders.
+        Only FASTA files can be passed on to skDER.
         If neither GenBank nor FASTA is found, the program exits.
     
         Mutates:
@@ -415,10 +418,9 @@ class LocalRun(Run):
         files_in_genomes_dir: set = {util.removeSuffixes(file) for file in os.listdir(self.USER_GENOME_DIR)}
         organisms_in_session: set = {util.removeSuffixes(organism.name) for organism in self.session.organisms}
         
-        assert files_in_genomes_dir == organisms_in_session, "Organisms in session and files in genome directory do not correspond. Cagecleaner leverages the fact that the Organism column of a cblaster binary table contains the file names of the genomes. Please make sure you havent changed the genome file names between a cblaster run and a cagecleaner run. Alternatively, make sure that there are no other files or folders in the provided genome directory."
+        assert files_in_genomes_dir == organisms_in_session, "Organisms in session and files in genome directory do not correspond. CAGEcleaner leverages the fact that the Organism column of a cblaster binary table contains the file names of the genomes. Please make sure you havent changed the genome file names between a cblaster run and a CAGEcleaner run. Alternatively, make sure that there are no other files or folders in the provided genome directory."
         
         # Check if there are FASTA files in the genome folder:
-        # TODO: is there a better way of doing this?
         fasta_in_folder = [util.isFasta(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
         genbank_in_folder = [util.isGenbank(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
 
@@ -446,9 +448,9 @@ class LocalRun(Run):
     
     def mapSkderOutToBinary(self) -> None:
         """
-        This function maps the skDER cluster table to the binary table.
-        Each row in the binary table is coupled to a representative genome and its status (redundant or representative).
-        This is done by leveraging the fact that the entries in the 'Organism' column are derived from the file names of the genomes from which they come (given that the user has not changed these names between a cblaster and ccleaner run).
+        This function maps the skDER clustering table to our binary table.
+        Each row in our binary table is coupled to a representative genome and its status (redundant or representative).
+        This is done by leveraging the fact that the entries in the 'Organism' column are derived from the file names of the genomes from which they come (given that the user has not changed these names between a cblaster and CAGEcleaner run).
         If an 'Organism' and assembly file name are stripped from their suffices (.gz, .gbk, .fasta...), they should be identical. Thus permitting a simple join operation.
         
         Input:
@@ -510,7 +512,7 @@ class LocalRun(Run):
         print("\n--- STEP 4: Recovering hit diversity. ---")
         self.recoverHits()
         
-        print("\n--- STEP 5: Filtering original session file. ---")
+        print("\n--- STEP 5: Filtering session file. ---")
         self.filterSession()
         
         print("\n--- STEP 6: Generating output files")
@@ -529,7 +531,7 @@ class RemoteRun(Run):
         super().__init__(args)
         
         # Defensive check:
-        assert args.download_batch > 0 and args.download_batch <= 300, "Download batch should be between 0 and 300."
+        assert args.download_batch > 0, "Download batch should be larger than 0."
         
         # Set path to accessions and download script:
         self.ACCESSIONS_SCRIPT: Path = Path(__file__).parent / 'get_accessions.sh'  # Path to the script that maps scaffold IDs to assembly IDs
@@ -552,7 +554,7 @@ class RemoteRun(Run):
         # Remove scaffolds that the user wants excluded:
         if self.excluded_scaffolds != {''}:
             self.VERBOSE(f"Excluding the following scaffolds: {', '.join(self.excluded_scaffolds)}")
-            self.binary_df = self.binary_df[~self.binary_df['Scaffold'].isin(self.excluded_scaffolds)]  # '~' symbol to negate the isin() statement, so keep all rows where scaffold is not in 'excluded_scaffolds'
+            self.binary_df = self.binary_df[~self.binary_df['Scaffold'].isin(self.excluded_scaffolds)]
         
         # Replace colons in the bypass assemblies as wel:
         if self.bypass_organisms != {''}:
@@ -561,7 +563,7 @@ class RemoteRun(Run):
     def fetchAssemblyIDs(self) -> None:
         """
         This function writes the scaffold IDs from the binary table to a file.
-        It then calls a bach script that fetches the assembly ID for each scaffold ID using NCBI entrez-direct utilities.
+        It then calls a bash script that fetches the assembly ID for each scaffold ID using NCBI entrez-direct utilities.
         The results are then written to a file by the bash script, read by this python file, and stored internally as a list of assembly IDs.
         
         Mutates:
@@ -591,9 +593,9 @@ class RemoteRun(Run):
     
     def downloadGenomes(self) -> None:
         """
-        This function writes the assembly IDs found by fetchAssemblyIDs to a file in batches of 300 (default). Each line in the file is a batch.
+        This function writes the assembly IDs found by fetchAssemblyIDs to a file in batches (default size of 300). Each line in the file is a batch.
         It then calls a bash script that downloads the genomes for each line of assembly IDs.
-        Genome files are placed in the temp/genomes folder (in gzipped format)
+        Genome files are placed in the TEMP_DIR/genomes folder (in gzipped format)
         """
         # First we cut off the version digits of our assembly IDs, and rely on NCBI datatsets to fetch the latest version:
         versionless_assemblies = [acc.split('.')[0] for acc in self.assembly_accessions]
@@ -669,7 +671,7 @@ class RemoteRun(Run):
                 
     def mapAssembliesToBinary(self) -> None:
         """
-        This function maps each row in the binary table to a correpsonding assembly file based on the mapping obtained by mapScaffoldsToAssemblies().
+        This function maps each row in the binary table to a corresponding assembly file based on the mapping obtained by mapScaffoldsToAssemblies().
         
         Mutates:
             self.binary_df: pd.DataFrame: Internal representation of the binary table.
@@ -762,14 +764,4 @@ class RemoteRun(Run):
         shutil.rmtree(self.TEMP_DIR)
         
         return None
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         

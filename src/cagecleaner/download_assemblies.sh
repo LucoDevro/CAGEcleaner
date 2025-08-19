@@ -24,13 +24,13 @@ while read line; do
     # Download the dehydrated genome package. xargs removes the trailing whitespace:
     datasets download genome accession $(echo "$line" | xargs) --dehydrated
 
-    # Unzip the file in a folder called "genomes". This folder is located two steps up in the data folder
+    # Unzip the files
     unzip -d downloads ncbi_dataset.zip && rm ncbi_dataset.zip
 
-    # Rehydrate:
+    # Rehydrate
     datasets rehydrate --directory downloads --gzip
 
-    # Put all genomes from this batch into one directory
+    # Put all genomes from this batch into the collection directory
     mv downloads/ncbi_dataset/data/GC*/* genomes/
     
     # Clean up
@@ -41,7 +41,7 @@ done < download_batches.txt
 
 echo -e "\nDownloading finished!"
 
-# Print amount of files in the /genomes/all/ folder. This should equal the initial amount of assembly IDs
+# Print amount of files in the genomes folder. This should equal the initial amount of assembly IDs
 echo $(ls genomes | wc -w) genomes in $(pwd)/genomes.
 echo Directory size: $(du --human-readable -s genomes/).  # Size of the genomes folder
 

@@ -20,8 +20,8 @@ def parseArguments():
         prog = 'cagecleaner',
                 epilog = 
                 """
-                Lucas De Vrieze, 2025
-                (c) Masschelein lab, VIB
+                Lucas De Vrieze, Miguel Biltjes
+                (c) 2025 Masschelein lab, VIB
                 """,
                 formatter_class = argparse.RawDescriptionHelpFormatter,
                 description = 
