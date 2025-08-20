@@ -1,6 +1,6 @@
 
 # Internal imports:
-from .util import *
+from cagecleaner import util
 
 # External libraries:
 import pandas as pd
@@ -19,6 +19,7 @@ from random import choice
 from itertools import batched
 from Bio import SeqIO
 from cblaster.classes import Session
+from importlib import resources
 
 
 class Run(ABC):
@@ -103,7 +104,7 @@ Run --|                                                                         
         # Set directory for skDER output and Path to dereplication script
         self.SKDER_OUT_DIR: Path = self.TEMP_DIR / 'skder_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
         self.GENOME_DIR: Path = self.TEMP_DIR / 'genomes'  # Default path where genomes will be stored. In local mode this can change to USER_GENOME_DIR.
-        self.DEREPLICATE_SCRIPT: Path = Path(__file__).parent / 'dereplicate_assemblies.sh'  # Path to the dereplication script
+        self.DEREPLICATE_SCRIPT: Path = Path(resources.files(__name__)) / 'dereplicate_assemblies.sh'  # Path to the dereplication script
 
     @staticmethod
     def fromArgs(args):
@@ -345,7 +346,7 @@ Run --|                                                                         
             
         # Extended binary:
         self.VERBOSE("Writing extended binary.")
-        self.binary_df.to_csv('extended_binary_table.txt', sep='\t')
+        self.binary_df.to_csv('extended_binary.txt', sep='\t', index = False)
         
         print(f"Finished! Output files can be found in {self.OUT_DIR}.")
                 
@@ -534,8 +535,8 @@ class RemoteRun(Run):
         assert args.download_batch > 0, "Download batch should be larger than 0."
         
         # Set path to accessions and download script:
-        self.ACCESSIONS_SCRIPT: Path = Path(__file__).parent / 'get_accessions.sh'  # Path to the script that maps scaffold IDs to assembly IDs
-        self.DOWNLOAD_SCRIPT: Path = Path(__file__).parent / 'download_assemblies.sh'  # Path to the script that download the genomes from given assembly IDs
+        self.ACCESSIONS_SCRIPT: Path = Path(resources.files(__name__)) / 'get_accessions.sh'  # Path to the script that maps scaffold IDs to assembly IDs
+        self.DOWNLOAD_SCRIPT: Path = Path(resources.files(__name__)) / 'download_assemblies.sh'  # Path to the script that download the genomes from given assembly IDs
         
         # Variable to store assembly accessions:
         self.assembly_accessions: list = []
