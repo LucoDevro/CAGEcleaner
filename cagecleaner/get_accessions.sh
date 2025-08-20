@@ -35,8 +35,8 @@ echo "Got $(cat wgs_assembly_accessions | wc -l) WGS Assembly accession codes"
 
 ## concatenating the retrieved accession codes
 echo "Merging results..."
-cat non_wgs_assembly_accessions wgs_assembly_accessions | sort -u > assembly_accessions
-echo "Found $(cat assembly_accessions | wc -l) accession codes after removing duplicates"
+cat non_wgs_assembly_accessions wgs_assembly_accessions | sort -u > assembly_accessions.txt
+echo "Found $(cat assembly_accessions.txt | wc -l) accession codes after removing duplicates"
 
 ## Cleaning up
 rm *wgs_*
