@@ -1,6 +1,6 @@
 
 # Internal imports:
-import util
+from .util import *
 
 # External libraries:
 import pandas as pd

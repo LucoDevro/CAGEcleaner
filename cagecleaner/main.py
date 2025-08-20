@@ -6,7 +6,7 @@ import argparse
 import tempfile
 from pathlib import Path
 from importlib.metadata import version
-from classes import Run
+from .classes import Run
 
 __version__ = version("cagecleaner")
 
@@ -26,9 +26,9 @@ def parseArguments():
                 formatter_class = argparse.RawDescriptionHelpFormatter,
                 description = 
                 """
-                cagecleaner: A tool to remove redundancy from cblaster hits.
+                CAGEcleaner: A tool to remove redundancy from cblaster hits.
    
-                cagecleaner reduces redundancy in cblaster hit sets by dereplicating the genomes containing the hits. 
+                CAGEcleaner reduces redundancy in cblaster hit sets by dereplicating the genomes containing the hits. 
                 It can also recover hits that would have been omitted by this dereplication if they have a different gene cluster content
                 or an outlier cblaster score.
                 """,
@@ -51,7 +51,7 @@ def parseArguments():
     args_io.add_argument('--keep_intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
  
     #! Arguments for by-pass scaffolds or assemblies:
-    args_id_io = parser.add_argument_group('Analysis inputs and outputs', description = "For local cblaster sessions, duplicate scaffold IDs can be further specified using the following format: <assembly_ID>:<scaffold_ID>.")
+    args_id_io = parser.add_argument_group('Analysis inputs and outputs', description = "For local cblaster sessions, duplicate scaffold IDs can be further specified using the following format: <organism_ID>:<scaffold_ID>. Discard any file extension.")
     args_id_io.add_argument('-bys', '--bypass_scaffolds', dest = "bypass_scaffolds", default = '', help = "Scaffold IDs in the binary table that should bypass dereplication (comma-separated). These will end up in the final output in any case.")
     args_id_io.add_argument('-byo', '--bypass_organisms', dest = "bypass_organisms", default = '', help = "Organisms in the binary table that should bypass dereplication (comma-separated). These will end up in the final output in any case.")
     args_id_io.add_argument('-exs', '--exclude_scaffolds', dest = 'excluded_scaffolds', default = '', help = "Scaffolds IDs in the binary table to be excluded from the hit set (comma-separated). ")
