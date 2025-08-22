@@ -173,7 +173,7 @@ Run --|                                                                         
                 pd.DataFrame: An updated dataframe containing rows 'readded_by_score'
             """
             # Add a column with the z-scores based on the Score in each row:
-            df['z_scores'] = zscore(df['Score'])
+            df['z_score'] = zscore(df['Score'])
             # Get the mean modal score. Mean because there migth be multiple modal values
             modal_score = df['Score'].mode().mean()
             # Alter the OG binary df at the indices where the score difference and the z_score pass the thresholds
