@@ -1,23 +1,22 @@
-Organism                                     Scaffold              Start    End      Score   STS_Dehydrogenase  STS_E1-like  STS_StsA  STS_YcaO
-Staphylococcus lugdunensis CGMH-SL118        NZ_CP048008.1         422391   425036   3.1767  1                  1            0         1       
-Staphylococcus lugdunensis                   JAWEBE010000030.1     16484    19612    3.1759  1                  1            0         1       
-Staphylococcus aureus NGA102                 NZ_CP051191.1         478747   481875   3.1683  1                  1            0         1       
-Staphylococcus aureus 364                    NZ_JABTVH010000001.1  1053503  1056631  3.1683  1                  1            0         1       
-Staphylococcus aureus SA356                  NZ_JAGSCC010000001.1  369722   372851   3.1421  1                  1            0         1       
-Staphylococcus aureus Q1                     JBGIYM010000001.1     484382   487510   3.1678  1                  1            0         1       
-Staphylococcus aureus LS127                  JBGNVK010000058.1     832      3960     3.1683  1                  1            0         1       
-Staphylococcus aureus 12-G-51                NZ_CP102959.1         1532101  1535229  3.1678  1                  1            0         1       
-Staphylococcus aureus 03-RR-88               NZ_CP102961.1         1602994  1606122  3.1676  1                  1            0         1       
-Staphylococcus aureus Gar NS 11              NZ_JAMWTB010000001.1  335786   338914   3.1684  1                  1            0         1       
-Staphylococcus aureus M3842                  NZ_OGAE01000010.1     150893   154021   3.1679  1                  1            0         1       
-Staphylococcus aureus 057403_SL152           NZ_JBBNDM010000001.1  228711   231839   3.1678  1                  1            0         1       
-Staphylococcus aureus NCTC12880              NZ_UGZS01000001.1     2764662  2767789  3.1338  1                  1            0         1       
-Staphylococcus aureus PYP/02                 NZ_JALSEQ010000003.1  67480    70173    3.1393  1                  1            0         1       
-Staphylococcus epidermidis UMB7933           NZ_JASPCW010000031.1  17389    20517    3.1757  1                  1            0         1       
-Staphylococcus argenteus RIVM_M046968        NZ_CP086574.1         1534459  1537587  3.1688  1                  1            0         1       
-Staphylococcus argenteus PR02                NZ_KZ984531.1         902692   905820   3.1691  1                  1            0         1       
-Staphylococcus aureus subsp. aureus JKD6159  NC_017338.2           1586517  1589645  3.1681  1                  1            0         1       
-Staphylococcus schweitzeri NCTC13712         NZ_LR134304.1         1589996  1593124  3.1685  1                  1            0         1       
-Staphylococcus ureilyticus 656-2             NZ_JBFTBU010000001.1  685506   688634   3.1645  1                  1            0         1       
-Staphylococcus cohnii 1645                   JBETMS010000007.1     99472    102600   3.1645  1                  1            0         1       
-Staphylococcus cohnii 1649                   JBETMR010000002.1     55506    58634    3.1645  1                  1            0         1       
+Organism                             Scaffold              Start    End      Score   STS_Dehydrogenase  STS_E1-like  STS_StsA  STS_YcaO
+Staphylococcus lugdunensis JONWP143  NZ_JBBLTI010000002.1  300096   303224   3.1762  1                  1            0         1       
+Staphylococcus sp. GDX8P65P          NZ_JAESML010000031.1  13741    16869    3.1645  1                  1            0         1       
+Staphylococcus aureus                DAKVDL010000042.1     2202     5330     3.1680  1                  1            0         1       
+Staphylococcus aureus GE-MSSA33      NZ_CP123123.1         2246485  2249613  3.1554  1                  1            0         1       
+Staphylococcus aureus 364            NZ_JABTVH010000001.1  1053503  1056631  3.1683  1                  1            0         1       
+Staphylococcus aureus SA49           NZ_JAGSCR010000002.1  144982   148111   3.1421  1                  1            0         1       
+Staphylococcus aureus P271           NZ_VRPW01000044.1     19852    22980    3.1681  1                  1            0         1       
+Staphylococcus aureus 26-G-G         NZ_CP102956.1         1528341  1531469  3.1676  1                  1            0         1       
+Staphylococcus aureus 12-G-51        NZ_CP102959.1         1532101  1535229  3.1678  1                  1            0         1       
+Staphylococcus aureus 17-H-61        NZ_CP102967.1         1545552  1548680  3.1681  1                  1            0         1       
+Staphylococcus aureus 01-RR-86       NZ_CP102974.1         1532474  1535602  3.1682  1                  1            0         1       
+Staphylococcus aureus Gar NS 11      NZ_JAMWTB010000001.1  335786   338914   3.1684  1                  1            0         1       
+Staphylococcus aureus 057403_SL152   NZ_JBBNDM010000001.1  228711   231839   3.1678  1                  1            0         1       
+Staphylococcus aureus CM50           DBAHYK010000002.1     613      3741     3.1462  1                  1            0         1       
+Staphylococcus aureus PYP/02         NZ_JALSEQ010000003.1  67480    70173    3.1393  1                  1            0         1       
+Staphylococcus epidermidis UMB7933   NZ_JASPCW010000031.1  17389    20517    3.1757  1                  1            0         1       
+Staphylococcus argenteus PHL5740     NZ_JADANG010000004.1  40080    43208    3.1691  1                  1            0         1       
+Staphylococcus argenteus S078        NZ_JAVKRM010000001.1  24812    27940    3.1691  1                  1            0         1       
+Staphylococcus schweitzeri FSA084    NZ_CCEL01000003.1     201497   204625   3.1685  1                  1            0         1       
+Staphylococcus cohnii 1645           JBETMS010000007.1     99472    102600   3.1645  1                  1            0         1       
+Staphylococcus cohnii 1649           JBETMR010000002.1     55506    58634    3.1645  1                  1            0         1       

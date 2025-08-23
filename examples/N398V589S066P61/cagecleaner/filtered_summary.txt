@@ -1,36 +1,47 @@
 cblaster search
 ===============
-Staphylococcus lugdunensis CGMH-SL118
-=====================================
-NZ_CP048008.1
--------------
-Cluster 10, score 3.1767:
+Staphylococcus lugdunensis JONWP143
+===================================
+NZ_JBBLTI010000002.1
+--------------------
+Cluster 139, score 3.1762:
 Query              Subject         Identity  Coverage  E-value   Bitscore  Start   End     Strand
-STS_Dehydrogenase  WP_002479176.1  100       99.2424   8.81e-90  260       422391  422787  +     
-STS_YcaO           WP_002479175.1  100       99.6678   0         603       422821  423724  +     
-STS_E1-like        WP_002460968.1  99.773    99.7738   0         904       423710  425036  +     
+STS_E1-like        WP_062078359.1  99.093    99.7738   0         899       300096  301422  -     
+STS_YcaO           WP_062078361.1  99.667    99.6678   0         600       301408  302338  -     
+STS_Dehydrogenase  WP_062078363.1  99.231    98.4848   1.19e-88  263       302345  303224  -     
 
 
-Staphylococcus lugdunensis
-==========================
-JAWEBE010000030.1
+Staphylococcus sp. GDX8P65P
+===========================
+NZ_JAESML010000031.1
+--------------------
+Cluster 316, score 3.1645:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start  End    Strand
+STS_Dehydrogenase  WP_046206893.1  93.846    98.4848   1.48e-82  248       13741  14620  +     
+STS_YcaO           WP_046206894.1  89.667    99.6678   0         550       14627  15557  +     
+STS_E1-like        WP_046206895.1  92.517    99.7738   0         847       15543  16869  +     
+
+
+Staphylococcus aureus
+=====================
+DAKVDL010000042.1
 -----------------
-Cluster 49, score 3.1759:
-Query              Subject       Identity  Coverage  E-value  Bitscore  Start  End    Strand
-STS_E1-like        MDU1594136.1  99.093    99.7738   0        899       16484  17810  -     
-STS_YcaO           MDU1594137.1  99        99.6678   0        596       17796  18726  -     
-STS_Dehydrogenase  MDU1594138.1  99.231    98.4848   1e-88    264       18733  19612  -     
+Cluster 444, score 3.1680:
+Query              Subject       Identity  Coverage  E-value   Bitscore  Start  End   Strand
+STS_Dehydrogenase  HCY4449733.1  96.923    98.4848   1.16e-86  258       2202   3081  +     
+STS_YcaO           HCY4449734.1  93        99.6678   0         563       3088   4018  +     
+STS_E1-like        HCY4449735.1  94.331    99.7738   0         859       4004   5330  +     
 
 
-Staphylococcus aureus NGA102
-============================
-NZ_CP051191.1
+Staphylococcus aureus GE-MSSA33
+===============================
+NZ_CP123123.1
 -------------
-Cluster 916, score 3.1683:
-Query              Subject         Identity  Coverage  E-value   Bitscore  Start   End     Strand
-STS_Dehydrogenase  WP_000611635.1  96.923    98.4848   1.16e-86  258       478747  479626  +     
-STS_YcaO           WP_000846700.1  93.667    99.6678   0         568       479633  480563  +     
-STS_E1-like        WP_000627618.1  94.104    99.7738   0         857       480549  481875  +     
+Cluster 936, score 3.1554:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start    End      Strand
+STS_E1-like        WP_371092645.1  92.857    85.5204   0         728       2246485  2247622  -     
+STS_YcaO           WP_000846700.1  93.667    99.6678   0         568       2247797  2248727  -     
+STS_Dehydrogenase  WP_000611635.1  96.923    98.4848   1.16e-86  258       2248734  2249613  -     
 
 
 Staphylococcus aureus 364
@@ -44,37 +55,37 @@ STS_YcaO           WP_000846700.1  93.667    99.6678   0         568       10548
 STS_Dehydrogenase  WP_000611635.1  96.923    98.4848   1.16e-86  258       1055752  1056631  -     
 
 
-Staphylococcus aureus SA356
-===========================
-NZ_JAGSCC010000001.1
+Staphylococcus aureus SA49
+==========================
+NZ_JAGSCR010000002.1
 --------------------
-Cluster 1050, score 3.1421:
+Cluster 1059, score 3.1421:
 Query              Subject         Identity  Coverage  E-value   Bitscore  Start   End     Strand
-STS_Dehydrogenase  WP_000611635.1  96.923    98.4848   1.16e-86  258       369722  370601  +     
-STS_YcaO           WP_103188498.1  93.333    99.6678   0         566       370608  371538  +     
-STS_E1-like        WP_250722496.1  92.258    70.1357   0         597       371918  372851  +     
+STS_Dehydrogenase  WP_000611635.1  96.923    98.4848   1.16e-86  258       144982  145861  +     
+STS_YcaO           WP_103188498.1  93.333    99.6678   0         566       145868  146798  +     
+STS_E1-like        WP_250722496.1  92.258    70.1357   0         597       147178  148111  +     
 
 
-Staphylococcus aureus Q1
-========================
-JBGIYM010000001.1
+Staphylococcus aureus P271
+==========================
+NZ_VRPW01000044.1
 -----------------
-Cluster 2213, score 3.1678:
-Query              Subject       Identity  Coverage  E-value   Bitscore  Start   End     Strand
-STS_Dehydrogenase  MEZ0720876.1  96.923    98.4848   1.16e-86  258       484382  485261  +     
-STS_YcaO           MEZ0720877.1  93        99.6678   0         563       485268  486198  +     
-STS_E1-like        MEZ0720878.1  94.104    99.7738   0         857       486184  487510  +     
+Cluster 1434, score 3.1681:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start  End    Strand
+STS_E1-like        WP_000627617.1  94.104    99.7738   0         860       19852  21178  -     
+STS_YcaO           WP_000846702.1  92.667    99.6678   0         563       21164  22094  -     
+STS_Dehydrogenase  WP_000611635.1  96.923    98.4848   1.16e-86  258       22101  22980  -     
 
 
-Staphylococcus aureus LS127
-===========================
-JBGNVK010000058.1
------------------
-Cluster 2216, score 3.1683:
-Query              Subject       Identity  Coverage  E-value   Bitscore  Start  End   Strand
-STS_E1-like        MFG1536187.1  94.104    99.7738   0         857       832    2158  -     
-STS_YcaO           MFG1536188.1  93.667    99.6678   0         568       2144   3074  -     
-STS_Dehydrogenase  MFG1536189.1  96.923    98.4848   1.16e-86  258       3081   3960  -     
+Staphylococcus aureus 26-G-G
+============================
+NZ_CP102956.1
+-------------
+Cluster 2253, score 3.1676:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start    End      Strand
+STS_E1-like        WP_258410034.1  94.104    99.7738   0         855       1528341  1529667  -     
+STS_YcaO           WP_258410035.1  93        99.6678   0         564       1529653  1530583  -     
+STS_Dehydrogenase  WP_103188499.1  95.385    98.4848   5.99e-86  257       1530590  1531469  -     
 
 
 Staphylococcus aureus 12-G-51
@@ -88,15 +99,26 @@ STS_YcaO           WP_258413388.1  93        99.6678   0         564       15334
 STS_Dehydrogenase  WP_103188499.1  95.385    98.4848   5.99e-86  257       1534350  1535229  -     
 
 
-Staphylococcus aureus 03-RR-88
-==============================
-NZ_CP102961.1
+Staphylococcus aureus 17-H-61
+=============================
+NZ_CP102967.1
 -------------
-Cluster 2257, score 3.1676:
+Cluster 2259, score 3.1681:
 Query              Subject         Identity  Coverage  E-value   Bitscore  Start    End      Strand
-STS_E1-like        WP_258410034.1  94.104    99.7738   0         855       1602994  1604320  -     
-STS_YcaO           WP_258410035.1  93        99.6678   0         564       1604306  1605236  -     
-STS_Dehydrogenase  WP_103188499.1  95.385    98.4848   5.99e-86  257       1605243  1606122  -     
+STS_E1-like        WP_258416178.1  94.104    99.7738   0         858       1545552  1546878  -     
+STS_YcaO           WP_103188498.1  93.333    99.6678   0         566       1546864  1547794  -     
+STS_Dehydrogenase  WP_103188499.1  95.385    98.4848   5.99e-86  257       1547801  1548680  -     
+
+
+Staphylococcus aureus 01-RR-86
+==============================
+NZ_CP102974.1
+-------------
+Cluster 2261, score 3.1682:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start    End      Strand
+STS_E1-like        WP_070002365.1  94.331    99.7738   0         859       1532474  1533800  -     
+STS_YcaO           WP_103188498.1  93.333    99.6678   0         566       1533786  1534716  -     
+STS_Dehydrogenase  WP_103188499.1  95.385    98.4848   5.99e-86  257       1534723  1535602  -     
 
 
 Staphylococcus aureus Gar NS 11
@@ -110,17 +132,6 @@ STS_YcaO           WP_250722500.1  93.667    99.6678   0         568       33669
 STS_E1-like        WP_070002365.1  94.331    99.7738   0         859       337588  338914  +     
 
 
-Staphylococcus aureus M3842
-===========================
-NZ_OGAE01000010.1
------------------
-Cluster 2266, score 3.1679:
-Query              Subject         Identity  Coverage  E-value   Bitscore  Start   End     Strand
-STS_E1-like        WP_103188497.1  93.878    99.7738   0         856       150893  152219  -     
-STS_YcaO           WP_103188498.1  93.333    99.6678   0         566       152205  153135  -     
-STS_Dehydrogenase  WP_103188499.1  95.385    98.4848   5.99e-86  257       153142  154021  -     
-
-
 Staphylococcus aureus 057403_SL152
 ==================================
 NZ_JBBNDM010000001.1
@@ -132,15 +143,15 @@ STS_YcaO           WP_070002364.1  93        99.6678   0         563       23002
 STS_Dehydrogenase  WP_340579727.1  96.154    98.4848   1.14e-85  256       230960  231839  -     
 
 
-Staphylococcus aureus NCTC12880
-===============================
-NZ_UGZS01000001.1
+Staphylococcus aureus CM50
+==========================
+DBAHYK010000002.1
 -----------------
-Cluster 2270, score 3.1338:
-Query              Subject         Identity  Coverage  E-value    Bitscore  Start    End      Strand
-STS_Dehydrogenase  WP_115206015.1  96.154    98.4848   1.17e-85   256       2764662  2765541  +     
-STS_YcaO           WP_001064651.1  92.513    62.1262   2.98e-124  357       2765914  2766478  +     
-STS_E1-like        WP_234697052.1  92.593    85.5204   0          725       2766652  2767789  +     
+Cluster 2343, score 3.1462:
+Query              Subject       Identity  Coverage  E-value    Bitscore  Start  End   Strand
+STS_E1-like        HFV9370835.1  93.878    99.7738   0          854       613    1939  -     
+STS_YcaO           HFV9370836.1  91.979    62.1262   1.09e-122  353       1925   2489  -     
+STS_Dehydrogenase  HFV9370838.1  96.154    98.4848   2.37e-85   255       2862   3741  -     
 
 
 Staphylococcus aureus PYP/02
@@ -165,59 +176,37 @@ STS_YcaO           WP_002492052.1  99        99.6678   0         596       18701
 STS_Dehydrogenase  WP_002492035.1  97.692    98.4848   2.57e-87  260       19638  20517  -     
 
 
-Staphylococcus argenteus RIVM_M046968
-=====================================
-NZ_CP086574.1
--------------
-Cluster 2402, score 3.1688:
-Query              Subject         Identity  Coverage  E-value   Bitscore  Start    End      Strand
-STS_E1-like        WP_250340806.1  93.878    99.7738   0         858       1534459  1535785  -     
-STS_YcaO           WP_047526674.1  94.333    99.6678   0         572       1535771  1536701  -     
-STS_Dehydrogenase  WP_047526677.1  96.923    98.4848   1.24e-86  258       1536708  1537587  -     
-
-
-Staphylococcus argenteus PR02
-=============================
-NZ_KZ984531.1
--------------
-Cluster 2449, score 3.1691:
-Query              Subject         Identity  Coverage  E-value   Bitscore  Start   End     Strand
-STS_E1-like        WP_047526672.1  94.331    99.7738   0         861       902692  904018  -     
-STS_YcaO           WP_047526674.1  94.333    99.6678   0         572       904004  904934  -     
-STS_Dehydrogenase  WP_047526677.1  96.923    98.4848   1.24e-86  258       904941  905820  -     
-
-
-Staphylococcus aureus subsp. aureus JKD6159
-===========================================
-NC_017338.2
------------
-Cluster 2472, score 3.1681:
-Query              Subject         Identity  Coverage  E-value   Bitscore  Start    End      Strand
-STS_E1-like        WP_000627617.1  94.104    99.7738   0         860       1586517  1587843  -     
-STS_YcaO           WP_000846702.1  92.667    99.6678   0         563       1587829  1588759  -     
-STS_Dehydrogenase  WP_000611635.1  96.923    98.4848   1.16e-86  258       1588766  1589645  -     
-
-
-Staphylococcus schweitzeri NCTC13712
-====================================
-NZ_LR134304.1
--------------
-Cluster 2488, score 3.1685:
-Query              Subject         Identity  Coverage  E-value   Bitscore  Start    End      Strand
-STS_E1-like        WP_047549242.1  94.558    99.7738   0         865       1589996  1591322  -     
-STS_YcaO           WP_047549240.1  92.333    99.6678   0         563       1591308  1592238  -     
-STS_Dehydrogenase  WP_047549238.1  96.923    98.4848   3.04e-86  257       1592245  1593124  -     
-
-
-Staphylococcus ureilyticus 656-2
+Staphylococcus argenteus PHL5740
 ================================
-NZ_JBFTBU010000001.1
+NZ_JADANG010000004.1
 --------------------
-Cluster 2493, score 3.1645:
+Cluster 2431, score 3.1691:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start  End    Strand
+STS_E1-like        WP_047526672.1  94.331    99.7738   0         861       40080  41406  -     
+STS_YcaO           WP_047526674.1  94.333    99.6678   0         572       41392  42322  -     
+STS_Dehydrogenase  WP_047526677.1  96.923    98.4848   1.24e-86  258       42329  43208  -     
+
+
+Staphylococcus argenteus S078
+=============================
+NZ_JAVKRM010000001.1
+--------------------
+Cluster 2435, score 3.1691:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start  End    Strand
+STS_Dehydrogenase  WP_047526677.1  96.923    98.4848   1.24e-86  258       24812  25691  +     
+STS_YcaO           WP_047526674.1  94.333    99.6678   0         572       25698  26628  +     
+STS_E1-like        WP_047526672.1  94.331    99.7738   0         861       26614  27940  +     
+
+
+Staphylococcus schweitzeri FSA084
+=================================
+NZ_CCEL01000003.1
+-----------------
+Cluster 2487, score 3.1685:
 Query              Subject         Identity  Coverage  E-value   Bitscore  Start   End     Strand
-STS_E1-like        WP_046206895.1  92.517    99.7738   0         847       685506  686832  -     
-STS_YcaO           WP_046206894.1  89.667    99.6678   0         550       686818  687748  -     
-STS_Dehydrogenase  WP_046206893.1  93.846    98.4848   1.48e-82  248       687755  688634  -     
+STS_Dehydrogenase  WP_047549238.1  96.923    98.4848   3.04e-86  257       201497  202376  +     
+STS_YcaO           WP_047549240.1  92.333    99.6678   0         563       202383  203313  +     
+STS_E1-like        WP_047549242.1  94.558    99.7738   0         865       203299  204625  +     
 
 
 Staphylococcus cohnii 1645
