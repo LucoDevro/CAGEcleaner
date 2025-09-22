@@ -80,6 +80,7 @@ Run --|                                                                         
         
         # Dereplication arguments:
         self.ani: float = args.ani
+        self.low_mem: bool = args.low_mem
         
         # Hit recovery arguments:
         self.no_recovery_by_content: bool = args.no_recovery_by_content
@@ -138,7 +139,7 @@ Run --|                                                                         
         os.chdir(self.TEMP_DIR)
         # Initiate the dereplication script:
         self.VERBOSE("Calling dereplication script.")
-        subprocess.run(['bash', str(self.DEREPLICATE_SCRIPT), str(self.ani), str(self.cores), str(self.GENOME_DIR)], check = True)
+        subprocess.run(['bash', str(self.DEREPLICATE_SCRIPT), str(self.ani), str(self.cores), str(self.GENOME_DIR), 'low_'*self.low_mem + 'mem'], check = True)
         # Go back home
         os.chdir(home)
         

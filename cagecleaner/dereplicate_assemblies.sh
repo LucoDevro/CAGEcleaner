@@ -12,8 +12,15 @@ fi
 pi_cutoff=$1
 nb_cores=$2
 genome_folder=$3
+low_mem=$4
 
 echo Dereplicating genomes in "$genome_folder" with percent identity cutoff of $pi_cutoff
+if [ $low_mem = "low_mem" ]; then
+    echo Using low-memory mode
+    mode="low_mem_greedy"
+else
+    mode="greedy"
+fi
 
 # Run skDER on the downloaded genomes and enable secondary clustering (-n flag):
 echo -e "Starting skDER\n"
@@ -22,7 +29,7 @@ echo -e "Starting skDER\n"
 shopt -s nullglob
 
 # Pass the genome files to skder
-skder -g $genome_folder/*.{fna,fa,fasta,fna.gz,fa.gz,fasta.gz} -o skder_out -i $pi_cutoff -c $nb_cores -n
+skder -g $genome_folder/*.{fna,fa,fasta,fna.gz,fa.gz,fasta.gz} -o skder_out -i $pi_cutoff -c $nb_cores -d $mode -n
 
 # skDER stores the dereplicated genomes in its own output folder. Compare the amount of files in skder_out folder with initial folder where
 # all genomes reside.

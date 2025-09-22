@@ -62,6 +62,7 @@ def parseArguments():
     
     args_dereplication = parser.add_argument_group('Dereplication')
     args_dereplication.add_argument('-a', '--ani', dest = 'ani', default = 99.0, type = float, help = "ANI dereplication threshold (default: 99.0)")
+    args_dereplication.add_argument('--low_mem', dest = "low_mem", default = False, action = 'store_true', help = "Use skDER's low-memory mode. Lowers memory requirements substantially at the cost of a slightly lower representative quality.")
     
     args_recovery = parser.add_argument_group('Hit recovery')
     args_recovery.add_argument('--no_recovery_content', dest = 'no_recovery_by_content', default = False, action = "store_true", help = "Skip recovering hits by cluster content (default: False)")
