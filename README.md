@@ -7,8 +7,6 @@
 > [!NOTE]
 > `CAGEcleaner` supports all functional `cblaster` modes (remote, local, hmm). We do not recommend using one of the combi modes as we have found bugs in it.
 
-> [!TIP]
-> `CAGEcleaner` will be integrated into `cblaster`! You can already check out the development version at [this fork](https://github.com/LucoDevro/cblaster) (currently integrates CAGECleaner v1.2.3).
 ## Outline
 
 `CAGEcleaner` removes genomic redundancy from gene cluster hit sets identified by [`cblaster`](https://github.com/gamcil/cblaster). The redundancy in target databases used by `cblaster` often propagates into the result set, requiring extensive manual curation before downstream analyses and visualisation can be carried out.
