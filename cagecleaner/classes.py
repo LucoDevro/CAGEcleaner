@@ -218,7 +218,6 @@ Run --|                                                                         
                         group = group[group['dereplication_status'] != 'readded_by_score']
                         # Update the OG binary table at a random index (choice()) from this group
                         self.binary_df.at[choice(group.index), 'dereplication_status'] = 'readded_by_content'
-                        pass
         
             if self.no_recovery_by_content == False:
                 recovered_by_content = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_content']['dereplication_status'].to_list())
@@ -236,9 +235,6 @@ Run --|                                                                         
         Mutates:
             self.filtered_session: Session: The filtered Session object.
         """
-        def bypassScaffold(scaffold) -> bool:
-            # Returns true if the given scaffold is contained within any of the scaffolds to be excluded.
-            return scaffold.endswith(tuple(self.bypass_scaffolds))
 
         dereplicated_scaffolds = [scaffold.strip() for scaffold in self.binary_df[self.binary_df['dereplication_status'] != 'redundant']['Scaffold'].to_list()]
         
@@ -420,7 +416,7 @@ class LocalRun(Run):
         files_in_genomes_dir: set = {util.removeSuffixes(file) for file in os.listdir(self.USER_GENOME_DIR)}
         organisms_in_session: set = {util.removeSuffixes(organism.name) for organism in self.session.organisms}
         
-        assert files_in_genomes_dir == organisms_in_session, "Organisms in session and files in genome directory do not correspond. CAGEcleaner leverages the fact that the Organism column of a cblaster binary table contains the file names of the genomes. Please make sure you havent changed the genome file names between a cblaster run and a CAGEcleaner run. Alternatively, make sure that there are no other files or folders in the provided genome directory."
+        assert files_in_genomes_dir >= organisms_in_session, "The genomes of all organisms in the cblaster session have not been found in the genome directory. Check the paths and please make sure you have not changed the genome filenames between a cblaster run and a CAGEcleaner run."
         
         # Check if there are FASTA files in the genome folder:
         fasta_in_folder = [util.isFasta(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
