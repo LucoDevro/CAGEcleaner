@@ -5,7 +5,7 @@
 [![DOI](https://zenodo.org/badge/904110273.svg)](https://doi.org/10.5281/zenodo.14726119)
 
 > [!NOTE]
-> `CAGEcleaner` supports all functional `cblaster` modes (remote, local, hmm). We do not recommend using one of the combi modes as we have found bugs in it.
+> `CAGEcleaner` supports all functional `cblaster` modes (remote, local, hmm). We do not recommend using sessions from one of the combi modes.
 
 ## Outline
 
