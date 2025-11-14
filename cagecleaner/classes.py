@@ -91,12 +91,11 @@ Run --|                                                                         
         ## Now some non-user defined variables follow: ##
         # Make a binary table file from the session object:
         with (self.TEMP_DIR / 'binary.txt').open('w') as handle:
-           self.session.format("binary", fp = handle)
+           self.session.format("binary", delimiter = "\t", fp = handle)
 
         # Store it internally as a dataframe:     
         self.binary_df = pd.read_table(self.TEMP_DIR / 'binary.txt', 
-                                       sep = "\\s{2,}", 
-                                       engine = 'python',
+                                       sep = "\t", 
                                        converters= {'Organism': util.removeSuffixes})  # removeSuffixes only relevant in local mode. 
                   
         # This variable will store the filtered session file, the end result.
@@ -313,7 +312,7 @@ Run --|                                                                         
         # Binary table
         self.VERBOSE("Writing filtered binary table.")
         with open("filtered_binary.txt", 'w') as filtered_binary_handle:
-            self.filtered_session.format(form = "binary", fp = filtered_binary_handle)
+            self.filtered_session.format(form = "binary", delimiter = "\t", fp = filtered_binary_handle)
             
         # Summary file
         self.VERBOSE("Writing filtered summary file.")
