@@ -36,7 +36,7 @@ def parseArguments():
                 )
 
     args_general = parser.add_argument_group('General')
-    args_general.add_argument('-c', '--cores', dest = 'cores', default = 1, type = int, help = "Number of cores to use (default: 1)")    
+    args_general.add_argument('--cores', dest = 'cores', default = 1, type = int, help = "Number of cores available to use (default: 1)")    
     args_general.add_argument('-v', '--version', action = "version", version = "%(prog)s " + __version__)
     args_general.add_argument('-h', '--help', action = 'help', help = "Show this help message and exit")      
     args_general.add_argument('--verbose', dest = 'verbose', default = False, action = 'store_true', help = "Enable verbose logging")
@@ -61,7 +61,10 @@ def parseArguments():
     args_download.add_argument('--download_batch', dest = 'download_batch', default = 300, type = int, help = "Number of genomes to download in one batch (default: 300)")
     
     args_dereplication = parser.add_argument_group('Dereplication')
-    args_dereplication.add_argument('-a', '--ani', dest = 'ani', default = 99.0, type = float, help = "ANI dereplication threshold (default: 99.0)")
+    args_dereplication.add_argument('--regions', dest = 'regions', default = False, action = "store_true", help = "Dereplicate based on surrounding region only. Switches to MMseqs2-based clustering. (default: False)")
+    args_dereplication.add_argument('-m', '--margin', dest = 'margin', default = 0, type = int, help = "Sequence margin to add to both sides of the cluster hit in bp. Required in case of region-based dereplication. (default: 0)")
+    args_dereplication.add_argument('-i', '--identity', dest = 'identity', default = 99.0, type = float, help = "Identity dereplication cutoff (default: 99.0)")
+    args_dereplication.add_argument('-c', '--coverage', dest = 'coverage', default = 80.0, type = float, help = "Coverage dereplication cutoff (default: 80.0)")
     args_dereplication.add_argument('--low_mem', dest = "low_mem", default = False, action = 'store_true', help = "Use skDER's low-memory mode. Lowers memory requirements substantially at the cost of a slightly lower representative quality.")
     
     args_recovery = parser.add_argument_group('Hit recovery')

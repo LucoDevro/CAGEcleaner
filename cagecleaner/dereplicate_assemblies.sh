@@ -4,17 +4,18 @@
 
 echo Preparing to dereplicate genomes...
 
-# If the skder_out_folder already exists, delete it:
-if [ -d skder_out ]; then
-    rm -rf skder_out
+# If the derep_out already exists, delete it:
+if [ -d derep_out ]; then
+    rm -rf derep_out
 fi
 
 pi_cutoff=$1
-nb_cores=$2
-genome_folder=$3
-low_mem=$4
+pc_cutoff=$2
+nb_cores=$3
+genome_folder=$4
+low_mem=$5
 
-echo Dereplicating genomes in "$genome_folder" with percent identity cutoff of $pi_cutoff
+echo Dereplicating genomes in "$genome_folder" with identity cutoff of $pi_cutoff % and coverage cutoff of $pc_cutoff %
 if [ $low_mem = "low_mem" ]; then
     echo Using low-memory mode
     mode="low_mem_greedy"
@@ -29,7 +30,7 @@ echo -e "Starting skDER\n"
 shopt -s nullglob
 
 # Pass the genome files to skder
-skder -g $genome_folder/*.{fna,fa,fasta,fna.gz,fa.gz,fasta.gz} -o skder_out -i $pi_cutoff -c $nb_cores -d $mode -n
+skder -g $genome_folder/*.{fna,fa,fasta,fna.gz,fa.gz,fasta.gz} -o derep_out -i $pi_cutoff -f $pc_cutoff -c $nb_cores -d $mode -n
 
 # skDER stores the dereplicated genomes in its own output folder. Compare the amount of files in skder_out folder with initial folder where
 # all genomes reside.

@@ -20,6 +20,8 @@ from itertools import batched
 from Bio import SeqIO
 from cblaster.classes import Session
 from importlib import resources
+from pymmseqs.config import EasyClusterConfig
+from pymmseqs.parsers import EasyClusterParser
 
 
 class Run(ABC):
@@ -46,14 +48,14 @@ Run --|                                                                         
         ## Some defensive checks: ##
         assert args is not None, "No arguments were given. ArgParse object is None."
         assert args.session_file.exists() and args.session_file.is_file(), "Provided session file does not exist or is not a file."
-        assert args.output_dir.exists() and args.output_dir.is_dir(), "Provided output directory does not exist or is not a directory."
-        assert args.temp_dir.exists() and args.temp_dir.is_dir(), "Provided temp directory does not exist or is not a directory."
         assert args.genome_dir.exists() and args.genome_dir.is_dir(), "Provided genome directory does not exist or is not a directory."
-        assert args.ani >= 82 and args.ani <= 100, "ANI threshold should be a number between 82 and 100 (see skani documentation)."
+        assert args.identity <= 100 and ((args.identity >= 82 and not(args.regions)) or (args.identity >= 0 and args.regions)), "Identity threshold should be between 82 and 100 in case of full-genome-based dereplication (see skani documentation) or between 0 and 100 in case of region-based dereplication."
+        assert args.coverage >= 0 and args.coverage <= 100, "Coverage threshold should be a number between 0 and 100."
         assert args.zscore_outlier_threshold > 0, "Z-score threshold for recovery should be greater than zero."
         assert args.minimal_score_difference >= 0, "Minimal score difference for recovery cannot be smaller than zero."
         assert args.cores > 0, "Amount of CPU cores to use should be greater than zero."
-        
+        assert not(args.regions) or args.margin >= 0, "Region margin cannot be negative when dereplication regions."
+
         ## User-defined variables: ##
         # Parse the general arguments:
         self.cores: int = args.cores   
@@ -62,8 +64,11 @@ Run --|                                                                         
         # Parse IO arguments:
         self.session: Session = Session.from_file(args.session_file.resolve())  # Stores the session file as a Session object
         self.OUT_DIR: Path = args.output_dir.resolve()  # Output directory
-        self.TEMP_DIR: Path = Path(tempfile.TemporaryDirectory(dir = args.temp_dir).name).resolve()  # Temporary directory (within the given temporary directory)
-        self.TEMP_DIR.mkdir(exist_ok=True)
+        if args.temp_dir == tempfile.gettempdir():
+            self.TEMP_DIR: Path = Path(tempfile.TemporaryDirectory().name).resolve()  # Temporary directory (within the given temporary directory)
+        else:
+            self.TEMP_DIR: Path = args.temp_dir.resolve()
+            self.TEMP_DIR.mkdir(parents = True, exist_ok = True)
         self.USER_GENOME_DIR: Path = args.genome_dir.resolve()  # Genome directory provided by the user
         self.keep_dereplication: bool = args.keep_dereplication
         self.keep_downloads: bool = args.keep_downloads
@@ -79,8 +84,11 @@ Run --|                                                                         
         self.download_batch: int = args.download_batch
         
         # Dereplication arguments:
-        self.ani: float = args.ani
+        self.regions: bool = args.regions
+        self.identity: float = args.identity
+        self.coverage: float = args.coverage
         self.low_mem: bool = args.low_mem
+        self.margin: int = args.margin
         
         # Hit recovery arguments:
         self.no_recovery_by_content: bool = args.no_recovery_by_content
@@ -102,9 +110,14 @@ Run --|                                                                         
         self.filtered_session: Session = None
         
         # Set directory for skDER output and Path to dereplication script
-        self.SKDER_OUT_DIR: Path = self.TEMP_DIR / 'skder_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
+        self.DEREP_OUT_DIR: Path = self.TEMP_DIR / 'derep_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
         self.GENOME_DIR: Path = self.TEMP_DIR / 'genomes'  # Default path where genomes will be stored. In local mode this can change to USER_GENOME_DIR.
         self.DEREPLICATE_SCRIPT: Path = Path(resources.files(__name__)) / 'dereplicate_assemblies.sh'  # Path to the dereplication script
+
+        # Make working subdirectories
+        self.OUT_DIR.mkdir(parents = True, exist_ok = True)
+        self.DEREP_OUT_DIR.mkdir(parents = True, exist_ok = True)
+        self.GENOME_DIR.mkdir(parents = True, exist_ok = True)
 
     @staticmethod
     def fromArgs(args):
@@ -127,10 +140,46 @@ Run --|                                                                         
             print(f"CAGEcleaner does not support cblaster {mode} mode for the moment. Exiting the program.")
             sys.exit()
             
+    def extractRegions(self):
+        """
+        This method extracts the genomic regions surrounding each cluster hit using the specified sequence margin.
+        The contents of the genome directory are replaced by the extracted genomic regions.
+        """
+        for _, row in self.binary_df.iterrows():
+            # Get the ID and coordinates of the genomic region
+            assembly = row['assembly_file']
+            scaffold = row['Scaffold']
+            begin = row['Start'] - self.margin
+            end = row['End'] + self.margin
+            # Extract from the assembly
+            with gzip.open(self.GENOME_DIR / assembly, "rt") as handle:
+                seqs = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
+            region = seqs[scaffold][begin:end]
+            # Write in a new fasta file
+            with gzip.open(self.TEMP_DIR / "regions" / assembly, "wt") as handle:
+                SeqIO.write(region, handle, "fasta")
+        # Replace the original genome folder by this genomic regions folder
+        shutil.rmtree(self.GENOME_DIR)
+        shutil.move(self.TEMP_DIR / "regions", self.GENOME_DIR)
+        
+        return None
+    
+    def dereplicate(self):
+        """
+        This method is the entry point for the dereplication.
+        It calls the appropriate dereplication method for the sequences being dereplicated (full genomes vs. regions).
+        """
+        if self.regions:
+            self.dereplicateRegions()
+        else:
+            self.dereplicateGenomes()
+            
+        return None
+        
     def dereplicateGenomes(self):
         """
         This method takes the path to a genome folder and dereplicates the genomes using skDER.
-        skDER output is stored in TEMP_DIR/skder_out.
+        skDER output is stored in TEMP_DIR/derep_out.
         """    
         # Define current working directory:
         home = os.getcwd()
@@ -138,9 +187,34 @@ Run --|                                                                         
         os.chdir(self.TEMP_DIR)
         # Initiate the dereplication script:
         self.VERBOSE("Calling dereplication script.")
-        subprocess.run(['bash', str(self.DEREPLICATE_SCRIPT), str(self.ani), str(self.cores), str(self.GENOME_DIR), 'low_'*self.low_mem + 'mem'], check = True)
+        subprocess.run(['bash', str(self.DEREPLICATE_SCRIPT),
+                        str(self.identity), str(self.coverage), 
+                        str(self.cores), str(self.GENOME_DIR), 'low_'*self.low_mem + 'mem'], 
+                       check = True)
         # Go back home
         os.chdir(home)
+        
+        return None
+    
+    def dereplicateRegions(self):
+        """
+        This method takes the path to a genomic regions folder and dereplicates them using MMseqs2.
+        MMseqs2 output is stored in TEMP_DIR/derep_out.
+        """
+        # Configure the MMseqs2 run
+        mmseqs2_config = EasyClusterConfig(
+            fasta_files = [str(p) for p in self.GENOME_DIR.glob('*')],
+            cluster_prefix = str(self.DEREP_OUT_DIR),
+            tmp_dir = str(self.DEREP_OUT_DIR / 'tmp'),
+            min_seq_id = self.identity/100,
+            c = self.coverage/100,
+            threads = self.cores)
+        # Execute and parse output
+        mmseqs2_config.run()
+        mmseqs2_parser = EasyClusterParser(mmseqs2_config)
+        mmseqs_df = mmseqs2_parser.to_pandas()
+        mmseqs_df.to_csv(str(self.DEREP_OUT_DIR / 'MMseqs_clustering.txt'), sep = "\t")
+        sys.exit()
         
         return None
     
@@ -338,7 +412,7 @@ Run --|                                                                         
             shutil.copytree(self.TEMP_DIR / 'genomes', 'genomes', dirs_exist_ok = True)
         if self.keep_intermediate or self.keep_dereplication:
             print("Copying skDER results to output folder.")
-            shutil.copytree(self.TEMP_DIR / 'skder_out', 'skder_out', dirs_exist_ok = True)
+            shutil.copytree(self.TEMP_DIR / 'derep_out', 'derep_out', dirs_exist_ok = True)
             
         # Extended binary:
         self.VERBOSE("Writing extended binary.")
@@ -441,7 +515,7 @@ class LocalRun(Run):
             print("No FASTA files or GenBank files were detected in the provided genome folder. Exiting the program.")
             sys.exit()
         
-        return None  
+        return None
     
     def mapSkderOutToBinary(self) -> None:
         """
@@ -466,7 +540,7 @@ class LocalRun(Run):
         
         self.VERBOSE("Reading skDER clustering table.")
         # Read the skder out clustering table:
-        path_to_cluster_file: Path = self.SKDER_OUT_DIR / 'skDER_Clustering.txt'
+        path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
         # Convert to dataframe:
         skder_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
                                  converters = {'assembly': extractAssembly,
@@ -710,7 +784,7 @@ class RemoteRun(Run):
         
         self.VERBOSE("Reading skDER clustering table.")
         # Read the skder out clustering table:
-        path_to_cluster_file: Path = self.SKDER_OUT_DIR / 'skDER_Clustering.txt'
+        path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
         # Convert to dataframe:
         skder_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
                                  converters = {'assembly': extractFileName,
@@ -731,18 +805,31 @@ class RemoteRun(Run):
         """
         Run the entire remote workflow.
         """
-        print("\n--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
-        self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
+        # print("\n--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
+        # self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
         
-        print("\n--- STEP 2: Downloading genomes for each assembly ID. ---")
-        self.downloadGenomes()  # Downloads genome for each assembly ID
+        # print("\n--- STEP 2: Downloading genomes for each assembly ID. ---")
+        # self.downloadGenomes()  # Downloads genome for each assembly ID
         
-        print("\n--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
-        self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
-        self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
+        # print("\n--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
+        # self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
+        # self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
         
-        print("\n--- STEP 4: Dereplicating genomes ---")
-        self.dereplicateGenomes()  # Dereplicate using skDER. Output is in self.SKDER_OUT
+        ##################
+        ### WIP BYPASS ###
+        ##################
+        self.OUT_DIR = Path("/home/lucas/bin/cagecleaner_mmseqs2/examples/test_case/out_dev")
+        self.TEMP_DIR = Path("/home/lucas/bin/cagecleaner_mmseqs2/examples/test_case/tmp")
+        self.GENOME_DIR = self.TEMP_DIR / "genomes"
+        self.DEREP_OUT_DIR = self.TEMP_DIR / "derep_out"
+        self.binary_df = pd.read_table("extended_binary.txt", sep = "\t")
+        self.binary_df = self.binary_df.drop(columns = ['representative', 'dereplication_status'])
+        ##################
+        ### WIP BYPASS ###
+        ##################
+                
+        print("\n--- STEP 4: Dereplicating ---")
+        self.dereplicate()  # Dereplicate using skDER. Output is in self.SKDER_OUT
         
         print("\n--- STEP 5: Mapping skDER output to binary table ---")
         self.mapSkderOutToBinary()  # Map each row in the binary with its representative genome
