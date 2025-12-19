@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # Internal imports:
 from cagecleaner import util
 
 # External libraries:
 import pandas as pd
+import numpy as np
 import os
 import sys
 import subprocess
@@ -21,7 +24,6 @@ from Bio import SeqIO
 from cblaster.classes import Session
 from importlib import resources
 from pymmseqs.config import EasyClusterConfig
-from pymmseqs.parsers import EasyClusterParser
 
 
 class Run(ABC):
@@ -35,7 +37,7 @@ class Run(ABC):
         
        -- Remote -> fetchAssemblyIDs() -> downloadGenomes() -> mapAssembliesToBinary() -> EXTENDED_BINARY -> |
       |                                                                                                      |
-Run --|                                                                                                       -> dereplicateGenomes() -> mapSkderOutToBinary() -> recoverHits() -> filterSession() -> generateOutput()
+Run --|                                                                                                       -> dereplicate() -> mapDereplicationOutToBinary() -> recoverHits() -> filterSession() -> generateOutput()
       |                                                                                                      |
        -- Local/HMM ------------------------------------> prepareGenomes() --------------------------------> |
         
@@ -85,6 +87,7 @@ Run --|                                                                         
         
         # Dereplication arguments:
         self.regions: bool = args.regions
+        self.strict_regions: bool = args.strict_regions
         self.identity: float = args.identity
         self.coverage: float = args.coverage
         self.low_mem: bool = args.low_mem
@@ -112,6 +115,8 @@ Run --|                                                                         
         # Set directory for skDER output and Path to dereplication script
         self.DEREP_OUT_DIR: Path = self.TEMP_DIR / 'derep_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
         self.GENOME_DIR: Path = self.TEMP_DIR / 'genomes'  # Default path where genomes will be stored. In local mode this can change to USER_GENOME_DIR.
+        self.REGION_DIR: Path = self.TEMP_DIR / 'regions' # Path where the genomic regions will be saved temporarily for region-based dereplication
+        
         self.DEREPLICATE_SCRIPT: Path = Path(resources.files(__name__)) / 'dereplicate_assemblies.sh'  # Path to the dereplication script
 
         # Make working subdirectories
@@ -126,7 +131,7 @@ Run --|                                                                         
         We read the session file, determine its mode, and return a corresponding LocalRun or RemoteRun
         """
         print("\n--- Loading session file. ---")
-        mode = Session.from_file(args.session_file).params['mode'] 
+        mode = Session.from_file(args.session_file).params['mode']
         
         if mode == 'local' or mode == 'hmm':
             print(f"Detected {mode} mode.")
@@ -139,30 +144,6 @@ Run --|                                                                         
         else:
             print(f"CAGEcleaner does not support cblaster {mode} mode for the moment. Exiting the program.")
             sys.exit()
-            
-    def extractRegions(self):
-        """
-        This method extracts the genomic regions surrounding each cluster hit using the specified sequence margin.
-        The contents of the genome directory are replaced by the extracted genomic regions.
-        """
-        for _, row in self.binary_df.iterrows():
-            # Get the ID and coordinates of the genomic region
-            assembly = row['assembly_file']
-            scaffold = row['Scaffold']
-            begin = row['Start'] - self.margin
-            end = row['End'] + self.margin
-            # Extract from the assembly
-            with gzip.open(self.GENOME_DIR / assembly, "rt") as handle:
-                seqs = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
-            region = seqs[scaffold][begin:end]
-            # Write in a new fasta file
-            with gzip.open(self.TEMP_DIR / "regions" / assembly, "wt") as handle:
-                SeqIO.write(region, handle, "fasta")
-        # Replace the original genome folder by this genomic regions folder
-        shutil.rmtree(self.GENOME_DIR)
-        shutil.move(self.TEMP_DIR / "regions", self.GENOME_DIR)
-        
-        return None
     
     def dereplicate(self):
         """
@@ -170,8 +151,12 @@ Run --|                                                                         
         It calls the appropriate dereplication method for the sequences being dereplicated (full genomes vs. regions).
         """
         if self.regions:
+            print("Extracting genomic regions.")
+            self.extractRegions()
+            print("Starting region-based dereplication.")
             self.dereplicateRegions()
         else:
+            print("Starting full genome dereplication.")
             self.dereplicateGenomes()
             
         return None
@@ -186,7 +171,6 @@ Run --|                                                                         
         # Navigate to the temp directory:
         os.chdir(self.TEMP_DIR)
         # Initiate the dereplication script:
-        self.VERBOSE("Calling dereplication script.")
         subprocess.run(['bash', str(self.DEREPLICATE_SCRIPT),
                         str(self.identity), str(self.coverage), 
                         str(self.cores), str(self.GENOME_DIR), 'low_'*self.low_mem + 'mem'], 
@@ -196,6 +180,49 @@ Run --|                                                                         
         
         return None
     
+    def extractRegions(self):
+        """
+        This method extracts the genomic regions surrounding each cluster hit using the specified sequence margin.
+        Regions at contig edges are discarded when applying the strict region flag.
+        """
+        # Make temporary regions directory
+        self.REGION_DIR.mkdir(parents = True, exist_ok = True)
+        # Loop over all hits in the binary table
+        contig_end = 0
+        for _, row in self.binary_df.iterrows():
+            # Get the ID and coordinates of the genomic region
+            assembly = row['assembly_file']
+            scaffold = row['Scaffold']
+            begin = row['Start'] - self.margin
+            end = row['End'] + self.margin
+            with gzip.open(self.GENOME_DIR / assembly, "rt") as handle:
+                seqs = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
+                # If strict, skip regions that are at a contig edge
+                # Handle the annoying habit of any2fasta in the local model to omit version digits in scaffold IDs,
+                # which results in scaffold KeyErrors.
+                try:
+                    scaffold_to_extract_from = seqs[scaffold]
+                except KeyError:
+                    scaffold_to_extract_from = seqs[scaffold.split('.')[0]]
+                length = len(scaffold_to_extract_from)
+                if end >= length or begin < 0:
+                    contig_end += 1
+                    if self.strict_regions:
+                        continue
+                    end = min(end, length)
+                    begin = max(0, begin)
+                # Extract genomic region from assembly
+                region = scaffold_to_extract_from[begin:end]
+                # Write in a new fasta file
+                with gzip.open(self.REGION_DIR / assembly, "wt") as out_handle:
+                    SeqIO.write(region, out_handle, "fasta")
+
+        print(f'{contig_end} regions were at a contig end.')
+        if self.strict_regions:
+            print('These regions have been discarded from the analysis.')
+            
+        return None
+    
     def dereplicateRegions(self):
         """
         This method takes the path to a genomic regions folder and dereplicates them using MMseqs2.
@@ -203,23 +230,19 @@ Run --|                                                                         
         """
         # Configure the MMseqs2 run
         mmseqs2_config = EasyClusterConfig(
-            fasta_files = [str(p) for p in self.GENOME_DIR.glob('*')],
+            fasta_files = [str(p) for p in self.REGION_DIR.glob('*')],
             cluster_prefix = str(self.DEREP_OUT_DIR),
             tmp_dir = str(self.DEREP_OUT_DIR / 'tmp'),
             min_seq_id = self.identity/100,
             c = self.coverage/100,
             threads = self.cores)
-        # Execute and parse output
+        # Execute
         mmseqs2_config.run()
-        mmseqs2_parser = EasyClusterParser(mmseqs2_config)
-        mmseqs_df = mmseqs2_parser.to_pandas()
-        mmseqs_df.to_csv(str(self.DEREP_OUT_DIR / 'MMseqs_clustering.txt'), sep = "\t")
-        sys.exit()
         
         return None
     
     @abstractmethod
-    def mapSkderOutToBinary(self):
+    def mapDereplicationToBinary(self):
         pass
     
     def recoverHits(self) -> None:
@@ -298,6 +321,8 @@ Run --|                                                                         
                 if self.no_recovery_by_score == False:
                     recovered_by_score = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_score']['dereplication_status'].to_list())
                     print(f"Total hits recovered by outlier cblaster score: {recovered_by_score}")
+                    
+            self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])
 
         return None
     
@@ -356,7 +381,9 @@ Run --|                                                                         
         # Store the filtered session internally:
         self.filtered_session = Session.from_dict(filtered_session_dict)
         
-        print(f"Filtering done. Removed {scaffolds_removed_total} redundant scaffolds.")
+        print("Filtering done.")
+        print(f"{scaffolds_removed_total} redundant scaffolds have been removed.")
+        print(f"{len(dereplicated_scaffolds)} scaffolds have been retained.")
 
         return None
     
@@ -409,10 +436,10 @@ Run --|                                                                         
         # Keep temp output
         if self.keep_intermediate or self.keep_downloads:
             print('Copying downloaded genomes to output folder.')
-            shutil.copytree(self.TEMP_DIR / 'genomes', 'genomes', dirs_exist_ok = True)
+            shutil.copytree(self.TEMP_DIR / 'genomes', 'genomes', dirs_exist_ok = True, ignore_dangling_symlinks = True)
         if self.keep_intermediate or self.keep_dereplication:
             print("Copying skDER results to output folder.")
-            shutil.copytree(self.TEMP_DIR / 'derep_out', 'derep_out', dirs_exist_ok = True)
+            shutil.copytree(self.TEMP_DIR / 'derep_out', 'derep_out', dirs_exist_ok = True, ignore_dangling_symlinks = True)
             
         # Extended binary:
         self.VERBOSE("Writing extended binary.")
@@ -514,55 +541,66 @@ class LocalRun(Run):
             # If there are no FASTA or GenBank files, the program cannot proceed:
             print("No FASTA files or GenBank files were detected in the provided genome folder. Exiting the program.")
             sys.exit()
+            
+        assembly_files = [acc + ".fasta.gz" for acc in self.binary_df['Organism']]
+        self.binary_df['assembly_file'] = assembly_files
         
         return None
     
-    def mapSkderOutToBinary(self) -> None:
+    def mapDereplicationToBinary(self) -> None:
         """
-        This function maps the skDER clustering table to our binary table.
-        Each row in our binary table is coupled to a representative genome and its status (redundant or representative).
-        This is done by leveraging the fact that the entries in the 'Organism' column are derived from the file names of the genomes from which they come (given that the user has not changed these names between a cblaster and CAGEcleaner run).
-        If an 'Organism' and assembly file name are stripped from their suffices (.gz, .gbk, .fasta...), they should be identical. Thus permitting a simple join operation.
+        After dereplication, map the dereplication clustering table to the binary table.
+        The dereplication clustering table is converted to a dataframe and joined with the binary table based on
+        assembly ID (full genome dereplication) or scaffold ID (region dereplication).  
         
-        Input:
-            self: Current instance of the class.   
-     
         Mutates:
             self.binary_df: pd.DataFrame: The binary table derived from a cblaster Session object.
         """
-        def extractAssembly(file_path: str) -> str:
-            return util.removeSuffixes(os.path.basename(file_path))
-        
-        def renameLabel(label: str) -> str:
-            mapping = {'representative_to_self': 'dereplication_representative',
-                       'within_cutoffs_requested': 'redundant'}
-            return mapping[label]
-        
-        self.VERBOSE("Reading skDER clustering table.")
-        # Read the skder out clustering table:
-        path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
-        # Convert to dataframe:
-        skder_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
-                                 converters = {'assembly': extractAssembly,
-                                               'representative': extractAssembly,
-                                               'dereplication_status': renameLabel},
-                                 names = ['assembly', 'representative', 'dereplication_status'],
-                                 usecols = [0,1,4], header = 0, index_col = 'assembly'
-                                 )
-        # Join with binary df on Organism column. 
-        # Every Organism row is retained (left join).
-        # If there is a match between binary_df['Organism'] and skder_df['assembly'] (index), the representative and status is added.
-        self.VERBOSE("Joining skDER clustering table and cblaster binary table.")
-        self.binary_df = self.binary_df.join(skder_df, on='Organism')
-        
-        # Extract scaffolds that could not be linked to an assembly:
-        scaffolds_with_na = self.binary_df[self.binary_df['representative'].isna()]['Scaffold'].to_list()
-        
-        if scaffolds_with_na:
-            print(f"The following {len(scaffolds_with_na)} scaffolds could not be linked to a representative genome: {', '.join(scaffolds_with_na)}. Omitting for further analysis.")    
-            # Drop the NA values:
-            self.binary_df = self.binary_df.dropna()
+        # Full genome dereplication using skDER
+        if not(self.regions):
+            def extractAssembly(file_path: str) -> str:
+                return util.removeSuffixes(os.path.basename(file_path))
             
+            def renameLabel(label: str) -> str:
+                mapping = {'representative_to_self': 'dereplication_representative',
+                           'within_cutoffs_requested': 'redundant'}
+                return mapping[label]
+            
+            self.VERBOSE("Reading skDER clustering table.")
+            # Read the skder out clustering table:
+            path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
+            # Convert to dataframe:
+            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
+                                     converters = {'assembly': extractAssembly,
+                                                   'representative': extractAssembly,
+                                                   'dereplication_status': renameLabel},
+                                     names = ['assembly', 'representative', 'dereplication_status'],
+                                     usecols = [0,1,4], header = 0, index_col = 'assembly'
+                                     )
+            # Join with binary df on Organism column. 
+            # Every Organism row is retained (left join).
+            # If there is a match between binary_df['Organism'] and derep_df['assembly'] (index), the representative and status is added.
+            self.VERBOSE("Joining skDER clustering table and cblaster binary table.")
+            self.binary_df = self.binary_df.join(derep_df, on='Organism')
+        
+        # Region dereplication using MMseqs2
+        else:
+            # Read the MMseqs clustering table
+            path_to_cluster_file: Path = self.TEMP_DIR / "derep_out_cluster.tsv"
+            # Convert to a dataframe
+            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
+                                     names = ['representative', 'Scaffold'],
+                                     header = None, index_col = 'Scaffold'
+                                     )
+            # Add dereplication status column based on whether a scaffold's ID is the same as the representative's one
+            # Every assembly_file row is retained (left join).
+            # If there is a match between binary_df['assembly_file'] and derep_df['assembly'] (its index column), the representative and status is added.
+            derep_df['dereplication_status'] = derep_df.index == derep_df['representative']
+            derep_df['dereplication_status'] = np.where(derep_df['dereplication_status'], 'dereplication_representative', 'redundant')
+            self.VERBOSE("Joining MMseqs2 clustering table and cblaster binary table.")
+            self.binary_df = self.binary_df.join(derep_df, on = "Scaffold")
+            
+        self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])           
         print("Mapping done!")
         
         return None
@@ -574,11 +612,11 @@ class LocalRun(Run):
         print("\n--- STEP 1: Staging genomes for dereplication. ---")
         self.prepareGenomes()
         
-        print("\n--- STEP 2: Dereplicating genomes. ---")
-        self.dereplicateGenomes()
+        print("\n--- STEP 2: Dereplicating. ---")
+        self.dereplicate()
         
-        print("\n--- STEP 3: Mapping skDER output to binary table. ---")
-        self.mapSkderOutToBinary()
+        print("\n--- STEP 3: Mapping dereplication output to binary table. ---")
+        self.mapDereplicationToBinary()
         
         print("\n--- STEP 4: Recovering hit diversity. ---")
         self.recoverHits()
@@ -764,75 +802,85 @@ class RemoteRun(Run):
         
         return None
     
-    def mapSkderOutToBinary(self) -> None:
+    def mapDereplicationToBinary(self) -> None:
         """
-        After dereplicating the genomes, map the skDER clustering table to the binary table.
-        skDER clustering table is converted to a df and a join is performed with the binary table based on the assembly_file column.
-        
+        After dereplication, map the dereplication clustering table to the binary table.
+        The dereplication clustering table is converted to a dataframe and joined with the binary table based on
+        assembly ID (full genome dereplication) or scaffold ID (region dereplication).        
         Mutates:
             self.binary_df: pd.DataFrame: Internal representation of the binary table.
         """
-        def extractFileName(file_path: str) -> str:
-            # Extract basename from full file path
-            return Path(file_path).name
+        # Full genome dereplication using skDER
+        if not(self.regions):
+            def extractFileName(file_path: str) -> str:
+                # Extract basename from full file path
+                return Path(file_path).name
+            
+            def renameLabel(label: str) -> str:
+                # Rename some of the skDER labels
+                mapping = {'representative_to_self': 'dereplication_representative',
+                           'within_cutoffs_requested': 'redundant'}
+                return mapping[label]
+            
+            self.VERBOSE("Reading skDER clustering table.")
+            # Read the skder out clustering table:
+            path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
+            # Convert to dataframe:
+            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
+                                     converters = {'assembly': extractFileName,
+                                                   'representative': extractFileName,
+                                                   'dereplication_status': renameLabel},
+                                     names = ['assembly', 'representative', 'dereplication_status'],
+                                     usecols = [0,1,4], header = 0, index_col = 'assembly'
+                                     )
+            # Join with binary df on assembly_file column. 
+            # Every assembly_file row is retained (left join).
+            # If there is a match between binary_df['assembly_file'] and derep_df['assembly'] (its index column), the representative and status is added.
+            self.VERBOSE("Joining skDER clustering table and cblaster binary table.")
+            self.binary_df = self.binary_df.join(derep_df, on='assembly_file')
         
-        def renameLabel(label: str) -> str:
-            # Rename some of the skDER labels
-            mapping = {'representative_to_self': 'dereplication_representative',
-                       'within_cutoffs_requested': 'redundant'}
-            return mapping[label]
+        # Region dereplication using MMseqs2
+        else:
+            # Read the MMseqs2 clustering table:
+            path_to_cluster_file: Path = self.TEMP_DIR / "derep_out_cluster.tsv"
+            # Convert to dataframe
+            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
+                                     names = ['representative', 'Scaffold'],
+                                     header = None, index_col = 'Scaffold'
+                                     )
+            # Add dereplication status column based on whether the scaffold's ID is the same as the representative's
+            # Every assembly_file row is retained (left join).
+            # If there is a match between binary_df['assembly_file'] and derep_dfs['assembly'] (its index column), the representative and status is added.
+            derep_df['dereplication_status'] = derep_df.index == derep_df['representative']
+            derep_df['dereplication_status'] = np.where(derep_df['dereplication_status'], 'dereplication_representative', 'redundant')
+            self.VERBOSE("Joining MMseqs2 clustering table and cblaster binary table.")
+            self.binary_df = self.binary_df.join(derep_df, on = "Scaffold")
         
-        self.VERBOSE("Reading skDER clustering table.")
-        # Read the skder out clustering table:
-        path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
-        # Convert to dataframe:
-        skder_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
-                                 converters = {'assembly': extractFileName,
-                                               'representative': extractFileName,
-                                               'dereplication_status': renameLabel},
-                                 names = ['assembly', 'representative', 'dereplication_status'],
-                                 usecols = [0,1,4], header = 0, index_col = 'assembly'
-                                 )
-        # Join with binary df on assembly_file column. 
-        # Every assembly_file row is retained (left join).
-        # If there is a match between binary_df['assembly_file'] and skder_df['assembly'] (its index column), the representative and status is added.
-        self.VERBOSE("Joining skDER clustering table and cblaster binary table.")
-        self.binary_df = self.binary_df.join(skder_df, on='assembly_file')
-
+        # Sort by representative ID and then by dereplication status
+        self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])
+        print("Mapping done!")
+            
         return None
     
     def run(self) -> None:
         """
         Run the entire remote workflow.
         """
-        # print("\n--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
-        # self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
+        print("\n--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
+        self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
         
-        # print("\n--- STEP 2: Downloading genomes for each assembly ID. ---")
-        # self.downloadGenomes()  # Downloads genome for each assembly ID
+        print("\n--- STEP 2: Downloading genomes for each assembly ID. ---")
+        self.downloadGenomes()  # Downloads genome for each assembly ID
         
-        # print("\n--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
-        # self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
-        # self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
-        
-        ##################
-        ### WIP BYPASS ###
-        ##################
-        self.OUT_DIR = Path("/home/lucas/bin/cagecleaner_mmseqs2/examples/test_case/out_dev")
-        self.TEMP_DIR = Path("/home/lucas/bin/cagecleaner_mmseqs2/examples/test_case/tmp")
-        self.GENOME_DIR = self.TEMP_DIR / "genomes"
-        self.DEREP_OUT_DIR = self.TEMP_DIR / "derep_out"
-        self.binary_df = pd.read_table("extended_binary.txt", sep = "\t")
-        self.binary_df = self.binary_df.drop(columns = ['representative', 'dereplication_status'])
-        ##################
-        ### WIP BYPASS ###
-        ##################
+        print("\n--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
+        self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
+        self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
                 
         print("\n--- STEP 4: Dereplicating ---")
-        self.dereplicate()  # Dereplicate using skDER. Output is in self.SKDER_OUT
+        self.dereplicate()  # Dereplicate.
         
-        print("\n--- STEP 5: Mapping skDER output to binary table ---")
-        self.mapSkderOutToBinary()  # Map each row in the binary with its representative genome
+        print("\n--- STEP 5: Mapping dereplication clustering to binary table ---")
+        self.mapDereplicationToBinary()  # Map each row in the binary table with its representative
         
         print("\n--- STEP 6: Recovering hit diversity ---")
         self.recoverHits()  # Recover hits by content and score depending on user input

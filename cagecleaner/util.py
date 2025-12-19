@@ -1,5 +1,7 @@
 import re
 import subprocess
+import gzip
+import os
 from pathlib import Path
 
 def removeSuffixes(string: str) -> str:
@@ -57,11 +59,15 @@ def convertGenbankToFasta(genome_dir: Path, out_dir: Path) -> None:
     # Loop over the files in the directory:
     for file in genome_dir.iterdir():
         # Define the output file
-        out_file = out_dir / removeSuffixes(file.name)
-        out_file = out_file.with_suffix('.fasta')
+        out_file = out_dir / '.'.join(file.name.split('.')[:-1])
+        out_file = str(out_file) + '.fasta'
         # Open the output file and redirect the output of any2fasta to it.
-        with out_file.open('w') as out_file:
+        with open(out_file, 'w') as handle:
             # use -q for quiet mode, text=True because output is not in byte form.
-            subprocess.run(['any2fasta', '-q', str(file)], stdout=out_file, check=True, text=True)
+            subprocess.run(['any2fasta', '-q', str(file)], stdout=handle, check=True, text=True)
+        with open(out_file, 'r') as handle:
+            with gzip.open(out_file + '.gz', "wt") as compressed_handle:
+                compressed_handle.writelines(handle)
+        os.remove(out_file)
     
     return None

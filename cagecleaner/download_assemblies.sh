@@ -14,7 +14,7 @@ batch_count=$(cat download_batches.txt | wc -l)  # Each line is one batch. Enfor
 echo Got $assembly_count assembly IDs. Downloading genomes in $batch_count batches...
 
 # Create the directory to store all genomes
-mkdir genomes downloads
+mkdir downloads
 
 # Here we loop over each line in the 'download_batches.txt' file:
 batch_counter=1

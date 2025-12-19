@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Import util from the directory above:
 
 import argparse
 import tempfile
@@ -62,6 +61,7 @@ def parseArguments():
     
     args_dereplication = parser.add_argument_group('Dereplication')
     args_dereplication.add_argument('--regions', dest = 'regions', default = False, action = "store_true", help = "Dereplicate based on surrounding region only. Switches to MMseqs2-based clustering. (default: False)")
+    args_dereplication.add_argument('--strict', dest = 'strict_regions', default = False, action = "store_true", help = "Omit genomic regions that, including margin, are at a contig edge.")
     args_dereplication.add_argument('-m', '--margin', dest = 'margin', default = 0, type = int, help = "Sequence margin to add to both sides of the cluster hit in bp. Required in case of region-based dereplication. (default: 0)")
     args_dereplication.add_argument('-i', '--identity', dest = 'identity', default = 99.0, type = float, help = "Identity dereplication cutoff (default: 99.0)")
     args_dereplication.add_argument('-c', '--coverage', dest = 'coverage', default = 80.0, type = float, help = "Coverage dereplication cutoff (default: 80.0)")
