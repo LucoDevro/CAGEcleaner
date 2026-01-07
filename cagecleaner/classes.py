@@ -13,7 +13,7 @@ import subprocess
 import gzip
 import re
 import shutil
-import tempfile
+from tempfile import TemporaryDirectory
 from abc import ABC, abstractmethod
 from pathlib import Path
 from copy import deepcopy
@@ -66,11 +66,9 @@ Run --|                                                                         
         # Parse IO arguments:
         self.session: Session = Session.from_file(args.session_file.resolve())  # Stores the session file as a Session object
         self.OUT_DIR: Path = args.output_dir.resolve()  # Output directory
-        if args.temp_dir == tempfile.gettempdir():
-            self.TEMP_DIR: Path = Path(tempfile.TemporaryDirectory().name).resolve()  # Temporary directory (within the given temporary directory)
-        else:
-            self.TEMP_DIR: Path = args.temp_dir.resolve()
-            self.TEMP_DIR.mkdir(parents = True, exist_ok = True)
+        Path(args.temp_dir).resolve().mkdir(parents = True, exist_ok = True)
+        self.TEMP_DIR_CONTEXT: TemporaryDirectory = TemporaryDirectory(dir = args.temp_dir, delete = False)  # Temporary directory (within the given temporary directory)
+        self.TEMP_DIR = Path(self.TEMP_DIR_CONTEXT.name)
         self.USER_GENOME_DIR: Path = args.genome_dir.resolve()  # Genome directory provided by the user
         self.keep_dereplication: bool = args.keep_dereplication
         self.keep_downloads: bool = args.keep_downloads
@@ -213,7 +211,7 @@ Run --|                                                                         
                     begin = max(0, begin)
                 # Extract genomic region from assembly
                 region = scaffold_to_extract_from[begin:end]
-                # Write in a new fasta file
+                # Write in a new compressed fasta file
                 with gzip.open(self.REGION_DIR / assembly, "wt") as out_handle:
                     SeqIO.write(region, out_handle, "fasta")
 
@@ -438,7 +436,7 @@ Run --|                                                                         
             print('Copying downloaded genomes to output folder.')
             shutil.copytree(self.TEMP_DIR / 'genomes', 'genomes', dirs_exist_ok = True, ignore_dangling_symlinks = True)
         if self.keep_intermediate or self.keep_dereplication:
-            print("Copying skDER results to output folder.")
+            print("Copying dereplication results to output folder.")
             shutil.copytree(self.TEMP_DIR / 'derep_out', 'derep_out', dirs_exist_ok = True, ignore_dangling_symlinks = True)
             
         # Extended binary:
@@ -629,7 +627,7 @@ class LocalRun(Run):
         
         # Remove the temporary directory:
         print("Cleaning up temporary directory.")
-        shutil.rmtree(self.TEMP_DIR)
+        self.TEMP_DIR_CONTEXT.cleanup()
 
  #####################################################################################################
 
@@ -893,7 +891,7 @@ class RemoteRun(Run):
         
         # Remove the temporary directory:
         print("Cleaning up temporary directory.")
-        shutil.rmtree(self.TEMP_DIR)
+        self.TEMP_DIR_CONTEXT.cleanup()
         
         return None
         
