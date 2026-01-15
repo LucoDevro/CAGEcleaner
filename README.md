@@ -15,8 +15,8 @@ Starting from a session file or hit table from a `cblaster` or [`CAGECAT`](https
 
 `CAGEcleaner` offers two dereplication approaches.
 
-- **Full genome dereplication *(default option)***: Dereplicates the full genome assemblies of the host organisms using an ANI-based approach via `skDER`, and retains the hits that are encoded by a representative assembly. The more conservative option that also takes the diversity of the host organism into account. Tends to keep more hits. Choose this option if you're concerned about preserving host diversity during compression, for example to identify HGT events.
-- **Neighbourhood dereplication**: Extracts a genomic region of a predefined length around each hit, clusters all extracted regions by sequence similarity using `MMseqs2`, and retains the hits associated with the representative genomic regions. The more aggressive option that ignores host diversity. Tends to keep less hits. Choose this option if losing host diversity is not an issue.
+- **Full genome dereplication *(default option)***: Dereplicates the full genome assemblies of the host organisms using an ANI-based approach via `skDER`, and retains the hits that are encoded by a representative assembly. The more conservative option that also takes the diversity of the host organism into account. Choose this option if you're concerned about preserving host diversity during compression, for example to identify HGT events.
+- **Neighbourhood dereplication**: Extracts a genomic region of a predefined length around each hit, clusters all extracted regions by sequence similarity using `MMseqs2`, and retains the hits associated with the representative genomic regions. The more aggressive option that ignores host diversity. Choose this option if losing host diversity is not an issue.
 
 > [!NOTE]
 > Although `CAGEcleaner` has been designed to use in conjunction with [`cblaster`](https://github.com/gamcil/cblaster), it supports output from other mining tools by converting your hit table to the `cblaster` hit table format. See the example output for the specifics.
