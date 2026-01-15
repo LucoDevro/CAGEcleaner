@@ -20,16 +20,16 @@ def parseArguments():
                 epilog = 
                 """
                 Lucas De Vrieze, Miguel Biltjes
-                (c) 2025 Masschelein lab, VIB
+                (c) 2026 Masschelein lab, VIB
                 """,
                 formatter_class = argparse.RawDescriptionHelpFormatter,
                 description = 
                 """
-                CAGEcleaner: A tool to remove redundancy from cblaster hits.
+                CAGEcleaner: A tool to remove redundancy among gene mining hits.
    
-                CAGEcleaner reduces redundancy in cblaster hit sets by dereplicating the genomes containing the hits. 
+                CAGEcleaner reduces redundancy in cblaster hit sets by dereplicating the genome (region)s containing the hits. 
                 It can also recover hits that would have been omitted by this dereplication if they have a different gene cluster content
-                or an outlier cblaster score.
+                or an outlier homology score.
                 """,
                 add_help = False
                 )
