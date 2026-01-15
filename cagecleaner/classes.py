@@ -23,7 +23,6 @@ from itertools import batched
 from Bio import SeqIO
 from cblaster.classes import Session
 from importlib import resources
-from pymmseqs.config import EasyClusterConfig
 
 
 class Run(ABC):
@@ -47,16 +46,20 @@ Run --|                                                                         
     """                                                         
     def __init__(self, args):
         
+        # Parse dereplication method
+        assert args.method in ['genomes', 'regions'], "Not a valid method choice. Possible options are 'genomes' and 'regions'."
+        self.regions: bool = (args.method == "regions")
+        
         ## Some defensive checks: ##
         assert args is not None, "No arguments were given. ArgParse object is None."
         assert args.session_file.exists() and args.session_file.is_file(), "Provided session file does not exist or is not a file."
         assert args.genome_dir.exists() and args.genome_dir.is_dir(), "Provided genome directory does not exist or is not a directory."
-        assert args.identity <= 100 and ((args.identity >= 82 and not(args.regions)) or (args.identity >= 0 and args.regions)), "Identity threshold should be between 82 and 100 in case of full-genome-based dereplication (see skani documentation) or between 0 and 100 in case of region-based dereplication."
+        assert args.identity <= 100 and ((args.identity >= 82 and not(self.regions)) or (args.identity >= 0 and self.regions)), "Identity threshold should be between 82 and 100 in case of full-genome-based dereplication (see skani documentation) or between 0 and 100 in case of region-based dereplication."
         assert args.coverage >= 0 and args.coverage <= 100, "Coverage threshold should be a number between 0 and 100."
         assert args.zscore_outlier_threshold > 0, "Z-score threshold for recovery should be greater than zero."
         assert args.minimal_score_difference >= 0, "Minimal score difference for recovery cannot be smaller than zero."
         assert args.cores > 0, "Amount of CPU cores to use should be greater than zero."
-        assert not(args.regions) or args.margin >= 0, "Region margin cannot be negative when dereplication regions."
+        assert not(self.regions) or args.margin >= 0, "Region margin cannot be negative when dereplication regions."
 
         ## User-defined variables: ##
         # Parse the general arguments:
@@ -84,7 +87,6 @@ Run --|                                                                         
         self.download_batch: int = args.download_batch
         
         # Dereplication arguments:
-        self.regions: bool = args.regions
         self.strict_regions: bool = args.strict_regions
         self.identity: float = args.identity
         self.coverage: float = args.coverage
@@ -226,16 +228,15 @@ Run --|                                                                         
         This method takes the path to a genomic regions folder and dereplicates them using MMseqs2.
         MMseqs2 output is stored in TEMP_DIR/derep_out.
         """
-        # Configure the MMseqs2 run
-        mmseqs2_config = EasyClusterConfig(
-            fasta_files = [str(p) for p in self.REGION_DIR.glob('*')],
-            cluster_prefix = str(self.DEREP_OUT_DIR),
-            tmp_dir = str(self.DEREP_OUT_DIR / 'tmp'),
-            min_seq_id = self.identity/100,
-            c = self.coverage/100,
-            threads = self.cores)
-        # Execute
-        mmseqs2_config.run()
+        subprocess.run(['mmseqs', 'easy-cluster',
+                        *[str(p) for p in self.REGION_DIR.glob('*')],
+                        str(self.DEREP_OUT_DIR),
+                        str(self.DEREP_OUT_DIR / 'tmp'),
+                        '--min-seq-id', str(self.identity/100),
+                        '-c', str(self.coverage/100),
+                        '--threads', str(self.cores),
+                        '-v', str(0)],
+                       check = True)
         
         return None
     
