@@ -34,4 +34,4 @@ skder -g $genome_folder/*.{fna,fa,fasta,fna.gz,fa.gz,fasta.gz} -o derep_out -i $
 
 # skDER stores the dereplicated genomes in its own output folder. Compare the amount of files in skder_out folder with initial folder where
 # all genomes reside.
-echo -e "\nDereplication done! $(ls "$genome_folder" | grep -E '.fasta|.fna|.fa|.fna.gz|.fasta.gz|.fa.gz' | wc -w) genomes were reduced to $(ls skder_out/Dereplicated_Representative_Genomes | wc -w) genomes"
+echo -e "\nDereplication done! $(ls "$genome_folder" | grep -E '.fasta|.fna|.fa|.fna.gz|.fasta.gz|.fa.gz' | wc -w) genomes were reduced to $(ls derep_out/Dereplicated_Representative_Genomes | wc -w) genomes"
