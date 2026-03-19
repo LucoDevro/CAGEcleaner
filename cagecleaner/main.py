@@ -4,6 +4,7 @@
 import argparse
 import tempfile
 import sys
+import logging
 from pathlib import Path
 from importlib.metadata import version
 from cblaster.classes import Session
@@ -11,6 +12,8 @@ from cagecleaner.local import LocalRun
 from cagecleaner.remote import RemoteRun
 
 __version__ = version("cagecleaner")
+
+LOG = logging.getLogger()
 
 def parseArguments():
     """
@@ -40,8 +43,8 @@ def parseArguments():
     args_general = parser.add_argument_group('General')
     args_general.add_argument('--cores', dest = 'cores', default = 1, type = int, help = "Number of cores available to use (default: 1)")    
     args_general.add_argument('-v', '--version', action = "version", version = "%(prog)s " + __version__)
+    args_general.add_argument('-vv', '--verbosity', dest = 'verbosity', default = 3, type = int, choices = [0,1,2,3,4], help = "Console verbosity level (default: 3 (info))")
     args_general.add_argument('-h', '--help', action = 'help', help = "Show this help message and exit")      
-    args_general.add_argument('--verbose', dest = 'verbose', default = False, action = 'store_true', help = "Enable verbose logging")
     
     args_io = parser.add_argument_group('File inputs and outputs')
     args_io.add_argument('-s', '--session', dest = "session_file", type = Path, help = "Path to cblaster session file", required = True)
@@ -81,6 +84,20 @@ def parseArguments():
     args_recovery.add_argument('--min_score_diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum cblaster score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
 
     args = parser.parse_args()
+    
+    # Set up logger
+    log_levels = {0: logging.CRITICAL,
+                  1: logging.ERROR,
+                  2: logging.WARNING,
+                  3: logging.INFO,
+                  4: logging.DEBUG
+                  }
+    logging.basicConfig(
+        level = log_levels[args.verbosity],
+        format = "[%(asctime)s] %(levelname)s [%(filename)s: %(funcName)s] - %(message)s",
+        datefmt="%H:%M:%S",
+        handlers = [logging.StreamHandler(sys.stdout)]
+        )
         
     return args
 
@@ -90,19 +107,19 @@ def main():
     args = parseArguments()
     
     # Initiate the approriate CAGEcleaner Run object:
-    print("\n--- Loading session file. ---")
+    LOG.info("--- Loading session file. ---")
     mode = Session.from_file(args.session_file).params['mode']
     
     if mode == 'local' or mode == 'hmm':
-        print(f"Detected {mode} mode.")
+        LOG.info(f"Detected {mode} mode.")
         my_run = LocalRun(args)
     
     elif mode == 'remote':
-        print("Detected remote mode.")
+        LOG.info("Detected remote mode.")
         my_run = RemoteRun(args)
     
     else:
-        print(f"CAGEcleaner does not support cblaster {mode} mode for the moment. Exiting the program.")
+        LOG.critical(f"CAGEcleaner does not support cblaster {mode} mode for the moment. Exiting the program.")
         sys.exit()
     
     # Run the initialised workflow:

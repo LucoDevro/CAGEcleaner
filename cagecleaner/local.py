@@ -10,7 +10,12 @@ import pandas as pd
 import numpy as np
 import os
 import sys
+import logging
 from pathlib import Path
+
+
+LOG = logging.getLogger()
+
 
 class LocalRun(Run):
     
@@ -33,12 +38,12 @@ class LocalRun(Run):
         
         # Remove organisms that the user wants to be excluded:
         if self.excluded_organisms != {''}:
-            self.VERBOSE(f"Excluding the following organisms: {', '.join(self.excluded_organisms)}")
+            LOG.debug(f"Excluding the following organisms: {', '.join(self.excluded_organisms)}")
             self.binary_df = self.binary_df[~self.binary_df['Organism'].isin(self.excluded_organisms)]
 
         # Remove scaffold IDs specified by the user:
         if self.excluded_scaffolds != {''}:
-            self.VERBOSE(f"Excluding the following scaffolds: {', '.join(self.excluded_scaffolds)}")
+            LOG.debug(f"Excluding the following scaffolds: {', '.join(self.excluded_scaffolds)}")
             # Here the approach slightly differs as users might have provided prefixed scaffold IDs:
             # Add a column with a prefixed scaffold based on the Organism column
             self.binary_df['prefixed_scaffold'] = self.binary_df['Organism'] + ':' + self.binary_df['Scaffold']
@@ -72,22 +77,22 @@ class LocalRun(Run):
 
         if any(fasta_in_folder):
             # In this case the genome folder path should remain the same
-            print(f"Detected {sum(fasta_in_folder)} FASTA files in {self.USER_GENOME_DIR}. These will be used for dereplication.")
+            LOG.info(f"Detected {sum(fasta_in_folder)} FASTA files in {self.USER_GENOME_DIR}. These will be used for dereplication.")
             # Redirect the genome dir to the user-provided folder:
             self.GENOME_DIR = self.USER_GENOME_DIR
             
         
         elif any(genbank_in_folder):
             # In this case we convert to FASTA and redirect to genome folder, which is in the temp folder by default.
-            print(f"Detected {sum(genbank_in_folder)} GenBank files in {self.USER_GENOME_DIR}. Now converting to FASTA for dereplication.")
+            LOG.info(f"Detected {sum(genbank_in_folder)} GenBank files in {self.USER_GENOME_DIR}. Now converting to FASTA for dereplication.")
             # Convert to FASTA files:
             self.GENOME_DIR.mkdir(exist_ok=True)  # Make the output folder if it does not exist already.
             util.convertGenbankToFasta(self.USER_GENOME_DIR, self.GENOME_DIR)
-            print(f"Migrated genomes in FASTA format to {self.GENOME_DIR}")
+            LOG.info(f"Migrated genomes in FASTA format to {self.GENOME_DIR}")
             
         else:
             # If there are no FASTA or GenBank files, the program cannot proceed:
-            print("No FASTA files or GenBank files were detected in the provided genome folder. Exiting the program.")
+            LOG.critical("No FASTA files or GenBank files were detected in the provided genome folder. Exiting the program.")
             sys.exit()
             
         assembly_files = [acc + ".fasta.gz" for acc in self.binary_df['Organism']]
@@ -114,7 +119,7 @@ class LocalRun(Run):
                            'within_cutoffs_requested': 'redundant'}
                 return mapping[label]
             
-            self.VERBOSE("Reading skDER clustering table.")
+            LOG.debug("Reading skDER clustering table.")
             # Read the skder out clustering table:
             path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
             # Convert to dataframe:
@@ -128,7 +133,7 @@ class LocalRun(Run):
             # Join with binary df on Organism column. 
             # Every Organism row is retained (left join).
             # If there is a match between binary_df['Organism'] and derep_df['assembly'] (index), the representative and status is added.
-            self.VERBOSE("Joining skDER clustering table and cblaster binary table.")
+            LOG.debug("Joining skDER clustering table and cblaster binary table.")
             self.binary_df = self.binary_df.join(derep_df, on='Organism')
         
         # Region dereplication using MMseqs2
@@ -145,11 +150,11 @@ class LocalRun(Run):
             # If there is a match between binary_df['assembly_file'] and derep_df['assembly'] (its index column), the representative and status is added.
             derep_df['dereplication_status'] = derep_df.index == derep_df['representative']
             derep_df['dereplication_status'] = np.where(derep_df['dereplication_status'], 'dereplication_representative', 'redundant')
-            self.VERBOSE("Joining MMseqs2 clustering table and cblaster binary table.")
+            LOG.debug("Joining MMseqs2 clustering table and cblaster binary table.")
             self.binary_df = self.binary_df.join(derep_df, on = "Scaffold")
             
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])           
-        print("Mapping done!")
+        LOG.info("Mapping done!")
         
         return None
     
@@ -157,26 +162,26 @@ class LocalRun(Run):
         """
         Run the entire LocalRun workflow.
         """
-        print("\n--- STEP 1: Staging genomes for dereplication. ---")
+        LOG.info("\n--- STEP 1: Staging genomes for dereplication. ---")
         self.prepareGenomes()
         
-        print("\n--- STEP 2: Dereplicating. ---")
+        LOG.info("\n--- STEP 2: Dereplicating. ---")
         self.dereplicate()
         
-        print("\n--- STEP 3: Mapping dereplication output to binary table. ---")
+        LOG.info("\n--- STEP 3: Mapping dereplication output to binary table. ---")
         self.mapDereplicationToBinary()
         
-        print("\n--- STEP 4: Recovering hit diversity. ---")
+        LOG.info("\n--- STEP 4: Recovering hit diversity. ---")
         self.recoverHits()
         
-        print("\n--- STEP 5: Filtering session file. ---")
+        LOG.info("\n--- STEP 5: Filtering session file. ---")
         self.filterSession()
         
-        print("\n--- STEP 6: Generating output files")
+        LOG.info("\n--- STEP 6: Generating output files")
         self.generateOutput()
         
         # Remove the temporary directory:
-        print("Cleaning up temporary directory.")
+        LOG.info("Cleaning up temporary directory.")
         self.TEMP_DIR_CONTEXT.cleanup()
         
         

@@ -12,10 +12,15 @@ import os
 import subprocess
 import gzip
 import re
+import logging
 from pathlib import Path
 from itertools import batched
 from Bio import SeqIO
 from importlib import resources
+
+
+LOG = logging.getLogger()
+
 
 class RemoteRun(Run):
     
@@ -40,13 +45,13 @@ class RemoteRun(Run):
         if self.excluded_organisms != {''}:
             # Replace colons with spaces to get the correct matching in the binary table.
             self.excluded_organisms = {org.replace(':', ' ', regex=False) for org in self.excluded_organisms}
-            self.VERBOSE(f"Excluding the following organisms: {', '.join(self.excluded_organisms)}")
+            LOG.debug(f"Excluding the following organisms: {', '.join(self.excluded_organisms)}")
             # Exclude them:
             self.binary_df = self.binary_df[~self.binary_df['Organism'].isin(self.excluded_organisms)]
         
         # Remove scaffolds that the user wants excluded:
         if self.excluded_scaffolds != {''}:
-            self.VERBOSE(f"Excluding the following scaffolds: {', '.join(self.excluded_scaffolds)}")
+            LOG.debug(f"Excluding the following scaffolds: {', '.join(self.excluded_scaffolds)}")
             self.binary_df = self.binary_df[~self.binary_df['Scaffold'].isin(self.excluded_scaffolds)]
         
         # Replace colons in the bypass assemblies as wel:
@@ -93,7 +98,7 @@ class RemoteRun(Run):
         # First we cut off the version digits of our assembly IDs, and rely on NCBI datatsets to fetch the latest version:
         versionless_assemblies = [acc.split('.')[0] for acc in self.assembly_accessions]
         
-        self.VERBOSE("Writing assembly ID batches for download script.")
+        LOG.debug("Writing assembly ID batches for download script.")
         # Now we write the assembly accesions to a file in batches:
         download_batches_file: Path = self.TEMP_DIR / 'download_batches.txt'
         with download_batches_file.open('w') as file:
@@ -104,7 +109,7 @@ class RemoteRun(Run):
         # Run the bash script to download genomes:
         home = os.getcwd()
         os.chdir(self.TEMP_DIR)
-        self.VERBOSE("Calling download script.")
+        LOG.debug("Calling download script.")
         subprocess.run(["bash", str(self.DOWNLOAD_SCRIPT)], check=True)
         os.chdir(home)
 
@@ -143,7 +148,7 @@ class RemoteRun(Run):
         for file in self.GENOME_DIR.iterdir():
             # Only read fasta files:
             if util.isFasta(file.name):
-                self.VERBOSE(f"Reading {file.name}")
+                LOG.debug(f"Reading {file.name}")
                 # Open the file:
                 with gzip.open(file, 'rt') as assembly:
                     # Extract the set of scaffold IDs in the file:
@@ -155,7 +160,7 @@ class RemoteRun(Run):
                     # Now we have to add the prefix again by using the original scaffold list from the host assembly:
                     found_scaffolds: set = {addPrefix(scaffold, scaffolds_in_this_assembly) for scaffold in found_scaffolds_no_prefix}
                     # Tell the user what we found in this assembly file
-                    self.VERBOSE(f"Found {','.join(found_scaffolds)}") if len(found_scaffolds) > 0 else self.VERBOSE("No scaffolds found.")
+                    LOG.debug(f"Found {','.join(found_scaffolds)}") if len(found_scaffolds) > 0 else LOG.debug("No scaffolds found.")
                     # Finalize the mapping in a dictionary:
                     for scaffold in found_scaffolds:
                         self.scaffold_assembly_pairs[scaffold] = file.name
@@ -180,7 +185,7 @@ class RemoteRun(Run):
         scaffolds_with_na = self.binary_df[self.binary_df['assembly_file'].isna()]['Scaffold'].to_list()
         
         if scaffolds_with_na:
-            print(f"The following {len(scaffolds_with_na)} scaffolds could not be linked to a genome assembly: {', '.join(scaffolds_with_na)}. Omitting for further analysis.") 
+            LOG.warning(f"The following {len(scaffolds_with_na)} scaffolds could not be linked to a genome assembly: {', '.join(scaffolds_with_na)}. Omitting for further analysis.") 
             # Drop the NA values:
             self.binary_df = self.binary_df.dropna()
         
@@ -206,7 +211,7 @@ class RemoteRun(Run):
                            'within_cutoffs_requested': 'redundant'}
                 return mapping[label]
             
-            self.VERBOSE("Reading skDER clustering table.")
+            LOG.debug("Reading skDER clustering table.")
             # Read the skder out clustering table:
             path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
             # Convert to dataframe:
@@ -220,7 +225,7 @@ class RemoteRun(Run):
             # Join with binary df on assembly_file column. 
             # Every assembly_file row is retained (left join).
             # If there is a match between binary_df['assembly_file'] and derep_df['assembly'] (its index column), the representative and status is added.
-            self.VERBOSE("Joining skDER clustering table and cblaster binary table.")
+            LOG.debug("Joining skDER clustering table and cblaster binary table.")
             self.binary_df = self.binary_df.join(derep_df, on='assembly_file')
         
         # Region dereplication using MMseqs2
@@ -237,12 +242,12 @@ class RemoteRun(Run):
             # If there is a match between binary_df['assembly_file'] and derep_dfs['assembly'] (its index column), the representative and status is added.
             derep_df['dereplication_status'] = derep_df.index == derep_df['representative']
             derep_df['dereplication_status'] = np.where(derep_df['dereplication_status'], 'dereplication_representative', 'redundant')
-            self.VERBOSE("Joining MMseqs2 clustering table and cblaster binary table.")
+            LOG.debug("Joining MMseqs2 clustering table and cblaster binary table.")
             self.binary_df = self.binary_df.join(derep_df, on = "Scaffold")
         
         # Sort by representative ID and then by dereplication status
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])
-        print("Mapping done!")
+        LOG.info("Mapping done!")
             
         return None
     
@@ -250,33 +255,33 @@ class RemoteRun(Run):
         """
         Run the entire remote workflow.
         """
-        print("\n--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
+        LOG.info("\n--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
         self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
         
-        print("\n--- STEP 2: Downloading genomes for each assembly ID. ---")
+        LOG.info("\n--- STEP 2: Downloading genomes for each assembly ID. ---")
         self.downloadGenomes()  # Downloads genome for each assembly ID
         
-        print("\n--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
+        LOG.info("\n--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
         self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
         self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
                 
-        print("\n--- STEP 4: Dereplicating ---")
+        LOG.info("\n--- STEP 4: Dereplicating ---")
         self.dereplicate()  # Dereplicate.
         
-        print("\n--- STEP 5: Mapping dereplication clustering to binary table ---")
+        LOG.info("\n--- STEP 5: Mapping dereplication clustering to binary table ---")
         self.mapDereplicationToBinary()  # Map each row in the binary table with its representative
         
-        print("\n--- STEP 6: Recovering hit diversity ---")
+        LOG.info("\n--- STEP 6: Recovering hit diversity ---")
         self.recoverHits()  # Recover hits by content and score depending on user input
         
-        print("\n--- STEP 7: Filtering original session file. ---")
+        LOG.info("\n--- STEP 7: Filtering original session file. ---")
         self.filterSession()  # Filter the original session file, retaining only the dereplicated hits.
         
-        print("\n--- STEP 8: Generating output files ---")
+        LOG.info("\n--- STEP 8: Generating output files ---")
         self.generateOutput()  # Generate all output files.
         
         # Remove the temporary directory:
-        print("Cleaning up temporary directory.")
+        LOG.info("Cleaning up temporary directory.")
         self.TEMP_DIR_CONTEXT.cleanup()
         
         return None

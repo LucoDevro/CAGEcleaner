@@ -10,6 +10,7 @@ import os
 import subprocess
 import gzip
 import shutil
+import logging
 from tempfile import TemporaryDirectory
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -19,6 +20,9 @@ from random import choice
 from Bio import SeqIO
 from cblaster.classes import Session
 from importlib import resources
+
+
+LOG = logging.getLogger()
 
 
 class Run(ABC):
@@ -60,7 +64,6 @@ Run --|                                                                         
         ## User-defined variables: ##
         # Parse the general arguments:
         self.cores: int = args.cores   
-        self.verbose: bool = args.verbose
         
         # Parse IO arguments:
         self.session: Session = Session.from_file(args.session_file.resolve())  # Stores the session file as a Session object
@@ -126,12 +129,12 @@ Run --|                                                                         
         It calls the appropriate dereplication method for the sequences being dereplicated (full genomes vs. regions).
         """
         if self.regions:
-            print("Extracting genomic regions.")
+            LOG.info("Extracting genomic regions.")
             self.extractRegions()
-            print("Starting region-based dereplication.")
+            LOG.info("Starting region-based dereplication.")
             self.dereplicateRegions()
         else:
-            print("Starting full genome dereplication.")
+            LOG.info("Starting full genome dereplication.")
             self.dereplicateGenomes()
             
         return None
@@ -192,9 +195,9 @@ Run --|                                                                         
                 with gzip.open(self.REGION_DIR / assembly, "wt") as out_handle:
                     SeqIO.write(region, out_handle, "fasta")
 
-        print(f'{contig_end} regions were at a contig end.')
+        LOG.info(f'{contig_end} regions were at a contig end.')
         if self.strict_regions:
-            print('These regions have been discarded from the analysis.')
+            LOG.info('These regions have been discarded from the analysis.')
             
         return None
     
@@ -260,20 +263,20 @@ Run --|                                                                         
         
         # If the user is not interested in recovering by content, skip this workflow.
         if self.no_recovery_by_content == True:
-            print("Skipping hit recovery.")
+            LOG.info("Skipping hit recovery.")
         
         else:   
             if self.no_recovery_by_score == True:
-                print("Skipping hit rcovery by score.")
+                LOG.info("Skipping hit rcovery by score.")
             # Loop over each representative cluster:
             grouped_by_rep = self.binary_df.groupby('representative')  # Define the grouping
             for representative, cluster in grouped_by_rep:
-                self.VERBOSE(f"Recovering hits in the group of {representative}.")
-                self.VERBOSE(f"-> {len(cluster)} hits in this group")
+                LOG.debug(f"Recovering hits in the group of {representative}.")
+                LOG.debug(f"-> {len(cluster)} hits in this group")
                 # Now we have to create subgroups within each group based on the amount of genes in each cluster:        
                 # Loop over the grouping:
                 grouped_by_content = cluster.groupby(self.session.queries)
-                self.VERBOSE(f"-> {len(grouped_by_content)} subgroups based on gene cluster composition.")
+                LOG.debug(f"-> {len(grouped_by_content)} subgroups based on gene cluster composition.")
                 for _, group in grouped_by_content:
                     # Now we want to recover by cblaster score:
                     if self.no_recovery_by_score == False:
@@ -291,10 +294,10 @@ Run --|                                                                         
         
             if self.no_recovery_by_content == False:
                 recovered_by_content = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_content']['dereplication_status'].to_list())
-                print(f"Total hits recovered by alternative gene cluster composition: {recovered_by_content}")
+                LOG.info(f"Total hits recovered by alternative gene cluster composition: {recovered_by_content}")
                 if self.no_recovery_by_score == False:
                     recovered_by_score = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_score']['dereplication_status'].to_list())
-                    print(f"Total hits recovered by outlier cblaster score: {recovered_by_score}")
+                    LOG.info(f"Total hits recovered by outlier cblaster score: {recovered_by_score}")
                     
             self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])
 
@@ -327,10 +330,10 @@ Run --|                                                                         
             scaffolds_removed = 0  # Counter
             # Get the full name of the organism, with strain (if it is not empty):
             org_full_name = f"{org['name']} {org['strain']}".strip()
-            self.VERBOSE(f"Carving out organism {org_full_name}")
+            LOG.debug(f"Carving out organism {org_full_name}")
             # First we check whether we need to bypass this assembly. If yes, don't pop this one and proceed with the next one
             if self.bypass_organisms != {''} and org_full_name in self.bypass_organisms:
-                self.VERBOSE("-> Bypassing")
+                LOG.debug("-> Bypassing")
                 continue
             # Now we go to the scaffold level and loop over each scaffold associated with this organism
             for hit_idx, hit in reversed(list(enumerate(org['scaffolds']))):
@@ -338,14 +341,14 @@ Run --|                                                                         
                 prefixed_scaffold = org_full_name + ':' + hit['accession']
                 # If we have to bypass it, jump to the next one in line
                 if self.bypass_scaffolds != {''} and prefixed_scaffold.endswith(tuple(self.bypass_scaffolds)):
-                    self.VERBOSE(f"-> Bypassing scaffold {hit['accession']}")
+                    LOG.debug(f"-> Bypassing scaffold {hit['accession']}")
                     continue
                 # If it's not in the list of dereplicated scaffolds, remove it.
                 elif hit['accession'] not in dereplicated_scaffolds:
                     filtered_session_dict['organisms'][org_idx]['scaffolds'].pop(hit_idx)
                     scaffolds_removed += 1  # Update counter
             # Tell the user how many scaffolds were removed in this organism:
-            self.VERBOSE(f"-> Removed {scaffolds_removed} scaffolds for {org_full_name}")
+            LOG.debug(f"-> Removed {scaffolds_removed} scaffolds for {org_full_name}")
             # If the scaffold list for this organism is now empty, remove the entire organism:
             if not filtered_session_dict['organisms'][org_idx]['scaffolds']:
                 filtered_session_dict['organisms'].pop(org_idx)
@@ -355,9 +358,9 @@ Run --|                                                                         
         # Store the filtered session internally:
         self.filtered_session = Session.from_dict(filtered_session_dict)
         
-        print("Filtering done.")
-        print(f"{scaffolds_removed_total} redundant scaffolds have been removed.")
-        print(f"{len(dereplicated_scaffolds)} scaffolds have been retained.")
+        LOG.info("Filtering done.")
+        LOG.info(f"{scaffolds_removed_total} redundant scaffolds have been removed.")
+        LOG.info(f"{len(dereplicated_scaffolds)} scaffolds have been retained.")
 
         return None
     
@@ -380,22 +383,22 @@ Run --|                                                                         
         
         # Generate the outputs
         # Session file
-        self.VERBOSE("Writing filtered session file.")
+        LOG.debug("Writing filtered session file.")
         with open("filtered_session.json", "w") as filtered_session_handle:
             self.filtered_session.to_json(fp = filtered_session_handle)
             
         # Binary table
-        self.VERBOSE("Writing filtered binary table.")
+        LOG.debug("Writing filtered binary table.")
         with open("filtered_binary.txt", 'w') as filtered_binary_handle:
             self.filtered_session.format(form = "binary", delimiter = "\t", fp = filtered_binary_handle)
             
         # Summary file
-        self.VERBOSE("Writing filtered summary file.")
+        LOG.debug("Writing filtered summary file.")
         with open("filtered_summary.txt", "w") as filtered_summary_handle:
             self.filtered_session.format(form = "summary", fp = filtered_summary_handle)    
             
         # List of cluster numbers
-        self.VERBOSE("Writing list of retained cluster numbers.")
+        LOG.debug("Writing list of retained cluster numbers.")
         filtered_cluster_numbers = [cluster['number'] 
                                     for organism in Session.to_dict(self.filtered_session)['organisms'] 
                                     for scaffold in organism['scaffolds'] 
@@ -404,35 +407,26 @@ Run --|                                                                         
             numbers_handle.write(','.join([str(nb) for nb in filtered_cluster_numbers]))
                 
         # Cluster sizes:
-        self.VERBOSE("Writing genome cluster sizes.")
+        LOG.debug("Writing genome cluster sizes.")
         self.binary_df.groupby('representative').size().to_frame(name='cluster_size').to_csv('genome_cluster_sizes.txt', sep='\t')
         
         # Keep temp output
         if self.keep_intermediate or self.keep_downloads:
-            print('Copying downloaded genomes to output folder.')
+            LOG.info('Copying downloaded genomes to output folder.')
             shutil.copytree(self.TEMP_DIR / 'genomes', 'genomes', dirs_exist_ok = True, ignore_dangling_symlinks = True)
         if self.keep_intermediate or self.keep_dereplication:
-            print("Copying dereplication results to output folder.")
+            LOG.info("Copying dereplication results to output folder.")
             shutil.copytree(self.TEMP_DIR / 'derep_out', 'derep_out', dirs_exist_ok = True, ignore_dangling_symlinks = True)
             
         # Extended binary:
-        self.VERBOSE("Writing extended binary.")
+        LOG.debug("Writing extended binary.")
         self.binary_df.to_csv('extended_binary.txt', sep='\t', index = False)
         
-        print(f"Finished! Output files can be found in {self.OUT_DIR}.")
+        LOG.info(f"Finished! Output files can be found in {self.OUT_DIR}.")
                 
         return None
     
     @abstractmethod
     def run():
         pass
-    
-    def VERBOSE(self, message: str) -> None:
-        """
-        Function to print verbose statements. Prevents having to write an if statement every time.
-        """
-        if self.verbose:
-            print('[VERBOSE] ' + message)
-        else:
-            pass
     
