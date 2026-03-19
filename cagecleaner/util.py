@@ -2,7 +2,12 @@ import re
 import subprocess
 import gzip
 import os
+import logging
 from pathlib import Path
+
+
+LOG = logging.getLogger(__name__)
+
 
 def removeSuffixes(string: str) -> str:
     """

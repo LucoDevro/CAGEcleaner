@@ -25,7 +25,7 @@ while read line; do
     datasets download genome accession $(echo "$line" | xargs) --dehydrated
 
     # Unzip the files
-    unzip -d downloads ncbi_dataset.zip && rm ncbi_dataset.zip
+    unzip -q -d downloads ncbi_dataset.zip && rm ncbi_dataset.zip
 
     # Rehydrate
     datasets rehydrate --directory downloads --gzip

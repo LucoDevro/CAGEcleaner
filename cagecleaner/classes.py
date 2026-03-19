@@ -120,7 +120,7 @@ Run --|                                                                         
 
         # Make working subdirectories
         self.OUT_DIR.mkdir(parents = True, exist_ok = True)
-        self.DEREP_OUT_DIR.mkdir(parents = True, exist_ok = True)
+        # self.DEREP_OUT_DIR.mkdir(parents = True, exist_ok = True)
         self.GENOME_DIR.mkdir(parents = True, exist_ok = True)
 
     def dereplicate(self):
@@ -145,16 +145,37 @@ Run --|                                                                         
         skDER output is stored in TEMP_DIR/derep_out.
         """    
         # Define current working directory:
-        home = os.getcwd()
+        # home = os.getcwd()
         # Navigate to the temp directory:
-        os.chdir(self.TEMP_DIR)
+        # os.chdir(self.TEMP_DIR)
         # Initiate the dereplication script:
-        subprocess.run(['bash', str(self.DEREPLICATE_SCRIPT),
-                        str(self.identity), str(self.coverage), 
-                        str(self.cores), str(self.GENOME_DIR), 'low_'*self.low_mem + 'mem'], 
+        LOG.info(f'Dereplicating genomes in {str(self.GENOME_DIR)} with identity cutoff of {str(self.identity)} % and coverage cutoff of {str(self.coverage)} %')
+        
+        LOG.info("Starting skDER")
+        subprocess.run(['skder',
+                        '-g', self.GENOME_DIR,
+                        '-o', str(self.DEREP_OUT_DIR),
+                        '-i', str(self.identity),
+                        '-f', str(self.coverage),
+                        '-c', str(self.cores),
+                        '-d', "low_mem_"*self.low_mem + 'greedy',
+                        '-n'
+                        ],
                        check = True)
+        
+        LOG.info("Dereplication done!")
+        
+        extensions = {'.fna','.fa','.fasta','.fna.gz','.fa.gz','.fasta.gz'}
+        paths = [str(p) for p in self.GENOME_DIR.iterdir() if extensions & set(p.suffixes)]
+        before = len(paths)
+        after = len(list((self.DEREP_OUT_DIR / 'Dereplicated_Representative_Genomes').iterdir()))
+        LOG.info(f'{before} genomes were reduced to {after} genomes.')
+        # subprocess.run(['bash', str(self.DEREPLICATE_SCRIPT),
+        #                 str(self.identity), str(self.coverage), 
+        #                 str(self.cores), str(self.GENOME_DIR), 'low_'*self.low_mem + 'mem'], 
+        #                check = True)
         # Go back home
-        os.chdir(home)
+        # os.chdir(home)
         
         return None
     

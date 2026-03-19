@@ -162,22 +162,22 @@ class LocalRun(Run):
         """
         Run the entire LocalRun workflow.
         """
-        LOG.info("\n--- STEP 1: Staging genomes for dereplication. ---")
+        LOG.info("--- STEP 1: Staging genomes for dereplication. ---")
         self.prepareGenomes()
         
-        LOG.info("\n--- STEP 2: Dereplicating. ---")
+        LOG.info("--- STEP 2: Dereplicating. ---")
         self.dereplicate()
         
-        LOG.info("\n--- STEP 3: Mapping dereplication output to binary table. ---")
+        LOG.info("--- STEP 3: Mapping dereplication output to binary table. ---")
         self.mapDereplicationToBinary()
         
-        LOG.info("\n--- STEP 4: Recovering hit diversity. ---")
+        LOG.info("--- STEP 4: Recovering hit diversity. ---")
         self.recoverHits()
         
-        LOG.info("\n--- STEP 5: Filtering session file. ---")
+        LOG.info("--- STEP 5: Filtering session file. ---")
         self.filterSession()
         
-        LOG.info("\n--- STEP 6: Generating output files")
+        LOG.info("--- STEP 6: Generating output files")
         self.generateOutput()
         
         # Remove the temporary directory:

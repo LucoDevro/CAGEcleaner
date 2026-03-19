@@ -255,29 +255,29 @@ class RemoteRun(Run):
         """
         Run the entire remote workflow.
         """
-        LOG.info("\n--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
+        LOG.info("--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
         self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
         
-        LOG.info("\n--- STEP 2: Downloading genomes for each assembly ID. ---")
+        LOG.info("--- STEP 2: Downloading genomes for each assembly ID. ---")
         self.downloadGenomes()  # Downloads genome for each assembly ID
         
-        LOG.info("\n--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
+        LOG.info("--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
         self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
         self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
                 
-        LOG.info("\n--- STEP 4: Dereplicating ---")
+        LOG.info("--- STEP 4: Dereplicating ---")
         self.dereplicate()  # Dereplicate.
         
-        LOG.info("\n--- STEP 5: Mapping dereplication clustering to binary table ---")
+        LOG.info("--- STEP 5: Mapping dereplication clustering to binary table ---")
         self.mapDereplicationToBinary()  # Map each row in the binary table with its representative
         
-        LOG.info("\n--- STEP 6: Recovering hit diversity ---")
+        LOG.info("--- STEP 6: Recovering hit diversity ---")
         self.recoverHits()  # Recover hits by content and score depending on user input
         
-        LOG.info("\n--- STEP 7: Filtering original session file. ---")
+        LOG.info("--- STEP 7: Filtering original session file. ---")
         self.filterSession()  # Filter the original session file, retaining only the dereplicated hits.
         
-        LOG.info("\n--- STEP 8: Generating output files ---")
+        LOG.info("--- STEP 8: Generating output files ---")
         self.generateOutput()  # Generate all output files.
         
         # Remove the temporary directory:
