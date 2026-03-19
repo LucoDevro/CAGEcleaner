@@ -3,9 +3,12 @@
 
 import argparse
 import tempfile
+import sys
 from pathlib import Path
 from importlib.metadata import version
-from .classes import Run
+from cblaster.classes import Session
+from cagecleaner.local import LocalRun
+from cagecleaner.remote import RemoteRun
 
 __version__ = version("cagecleaner")
 
@@ -86,10 +89,23 @@ def main():
     # First we parse the arguments:
     args = parseArguments()
     
-    # Initiate a CAGECLEANER Run object:
-    my_run = Run.fromArgs(args)  # This is now a LocalRun or RemoteRun depending on the mode of the session in args
+    # Initiate the approriate CAGEcleaner Run object:
+    print("\n--- Loading session file. ---")
+    mode = Session.from_file(args.session_file).params['mode']
     
-    # Run the entire Local or Remote workflow:
+    if mode == 'local' or mode == 'hmm':
+        print(f"Detected {mode} mode.")
+        my_run = LocalRun(args)
+    
+    elif mode == 'remote':
+        print("Detected remote mode.")
+        my_run = RemoteRun(args)
+    
+    else:
+        print(f"CAGEcleaner does not support cblaster {mode} mode for the moment. Exiting the program.")
+        sys.exit()
+    
+    # Run the initialised workflow:
     my_run.run()
     
      
