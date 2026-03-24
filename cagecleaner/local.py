@@ -84,11 +84,11 @@ class LocalRun(Run):
         
         elif any(genbank_in_folder):
             # In this case we convert to FASTA and redirect to genome folder, which is in the temp folder by default.
-            LOG.info(f"Detected {sum(genbank_in_folder)} GenBank files in {self.USER_GENOME_DIR}. Now converting to FASTA for dereplication.")
+            LOG.info(f"Detected {sum(genbank_in_folder)} GenBank files in {self.USER_GENOME_DIR}.")
             # Convert to FASTA files:
             self.GENOME_DIR.mkdir(exist_ok=True)  # Make the output folder if it does not exist already.
-            util.convertGenbankToFasta(self.USER_GENOME_DIR, self.GENOME_DIR)
-            LOG.info(f"Migrated genomes in FASTA format to {self.GENOME_DIR}")
+            util.convertGenbankToFasta(self.USER_GENOME_DIR, self.GENOME_DIR, workers = self.cores)
+            LOG.info(f"Moved genomes in FASTA format to {self.GENOME_DIR}")
             
         else:
             # If there are no FASTA or GenBank files, the program cannot proceed:

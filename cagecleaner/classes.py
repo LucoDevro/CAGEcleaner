@@ -47,7 +47,6 @@ Run --|                                                                         
     def __init__(self, args):
         
         # Parse dereplication method
-        assert args.method in ['genomes', 'regions'], "Not a valid method choice. Possible options are 'genomes' and 'regions'."
         self.regions: bool = (args.method == "regions")
         
         ## Some defensive checks: ##
@@ -59,11 +58,12 @@ Run --|                                                                         
         assert args.zscore_outlier_threshold > 0, "Z-score threshold for recovery should be greater than zero."
         assert args.minimal_score_difference >= 0, "Minimal score difference for recovery cannot be smaller than zero."
         assert args.cores > 0, "Amount of CPU cores to use should be greater than zero."
-        assert not(self.regions) or args.margin >= 0, "Region margin cannot be negative when dereplication regions."
+        assert not(self.regions) or args.margin >= 0, "Region margin cannot be negative when dereplicating regions."
 
         ## User-defined variables: ##
         # Parse the general arguments:
-        self.cores: int = args.cores   
+        self.cores: int = args.cores
+        self.verbosity: int = args.verbosity
         
         # Parse IO arguments:
         self.session: Session = Session.from_file(args.session_file.resolve())  # Stores the session file as a Session object
