@@ -1,9 +1,12 @@
 import re
+import logging
 import subprocess
 import gzip
 import os
-import logging
+import shutil
 from pathlib import Path
+from tqdm.contrib.concurrent import thread_map
+from Bio import SeqIO
 
 
 LOG = logging.getLogger(__name__)
@@ -51,8 +54,65 @@ def isGenbank(file: str) -> bool:
     else:
         return True
     
+    
+def _stream_reader(pipe, write_func):
+    try:
+        with pipe:
+            for chunk in iter(lambda: pipe.readline(), b''):
+                if not chunk:
+                    break
+                try:
+                    text = chunk.decode('utf-8', 'replace')
+                except Exception:
+                    text = chunk.decode('latin-1', 'replace')
+                write_func(text)
+    except Exception:
+        LOG.exception("stream reader error")
+    
+    
+def _extractOneRegion(row: dict, margin: int, in_dir: Path, out_dir: Path, strict: bool) -> bool:
+    assembly = row['assembly_file']
+    scaffold = row['Scaffold']
+    begin = row['Start'] - margin
+    end = row['End'] + margin
+    contig_end = False
+    
+    with gzip.open(in_dir / assembly, "rt") as handle:
+        seqs = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
+        # If strict, skip regions that are at a contig edge
+        scaffold_to_extract_from = seqs[scaffold]
+        length = len(scaffold_to_extract_from)
+        if end >= length or begin < 0:
+            contig_end = True
+            if strict:
+                return contig_end
+            end = min(end, length)
+            begin = max(0, begin)
+        # Extract genomic region from assembly
+        region = scaffold_to_extract_from[begin:end]
+        # Write in a new compressed fasta file
+        with gzip.open(out_dir / assembly, "wt") as out_handle:
+            SeqIO.write(region, out_handle, "fasta")
+            
+    return contig_end
 
-def convertGenbankToFasta(genome_dir: Path, out_dir: Path) -> None:
+
+def _convertOneGenbankToFasta(input_output_paths: tuple) -> None:
+    in_file, out_file = input_output_paths
+    
+    # Open the output file and redirect the output of any2fasta to it.
+    with open(out_file, "w") as handle:
+        # use -q for quiet mode, text=True because output is not in byte form.
+        subprocess.run(['any2fasta', '-q', '-g', str(in_file)], stdout=handle, check=True, text=True)
+    with open(out_file, 'r') as handle:
+        with gzip.open(out_file.with_suffix('.fasta.gz'), "wt") as compressed_handle:
+            compressed_handle.writelines(handle)
+    os.remove(out_file)
+    
+    return None
+    
+
+def convertGenbankToFasta(genome_dir: Path, out_dir: Path, workers: int = 1) -> None:
     """
     This function takes the path to a genome folder containing genbank files.
     It then uses any2fasta in a subprocess to convert them to FASTA format and store them in the out folder.
@@ -61,18 +121,32 @@ def convertGenbankToFasta(genome_dir: Path, out_dir: Path) -> None:
     assert genome_dir.exists() and genome_dir.is_dir(), "Provided genome folder for GenBank conversion does not exist or is not a directory."
     assert out_dir.exists() and out_dir.is_dir(), "Provided output folder for GenBank conversion does not exist or is not a directory."
     
-    # Loop over the files in the directory:
-    for file in genome_dir.iterdir():
-        # Define the output file
-        out_file = out_dir / '.'.join(file.name.split('.')[:-1])
-        out_file = str(out_file) + '.fasta'
-        # Open the output file and redirect the output of any2fasta to it.
-        with open(out_file, 'w') as handle:
-            # use -q for quiet mode, text=True because output is not in byte form.
-            subprocess.run(['any2fasta', '-q', str(file)], stdout=handle, check=True, text=True)
-        with open(out_file, 'r') as handle:
-            with gzip.open(out_file + '.gz', "wt") as compressed_handle:
-                compressed_handle.writelines(handle)
-        os.remove(out_file)
+    # Convert the GenBank files in parallel
+    ios = [(i, out_dir / i.with_suffix('.fasta').name) for i in genome_dir.iterdir()]
+    LOG.info(f'Converting {len(ios)} Genbank genomes to Fasta format.')
+    thread_map(_convertOneGenbankToFasta, ios, max_workers = workers)
     
     return None
+
+def _downloadOneRegion(region: tuple, out_dir: Path) -> None:
+    accession, nucl_range = region
+    out_file = (out_dir / accession).with_suffix('.fasta')
+    
+    acc_downloader_executable = shutil.which('ncbi-acc-download')
+    cmd = [acc_downloader_executable,
+           '-m', 'nucleotide',
+           '-F', 'fasta',
+           '-o', '/dev/stdout',
+           '-g', nucl_range,
+           accession]
+    
+    with open(out_file, 'w') as handle:
+        subprocess.run(cmd, stdout = handle, check = True, text = True)
+    with open(out_file, "r") as handle:
+        with gzip.open(out_file.with_suffix('.fasta.gz'), "wt") as compressed_handle:
+            compressed_handle.writelines(handle)
+    os.remove(out_file)
+    
+    return None
+    
+    

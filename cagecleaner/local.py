@@ -116,7 +116,8 @@ class LocalRun(Run):
             
             def renameLabel(label: str) -> str:
                 mapping = {'representative_to_self': 'dereplication_representative',
-                           'within_cutoffs_requested': 'redundant'}
+                           'within_cutoffs_requested': 'redundant',
+                           'outside_cutoffs_requested': 'redundant'} # edge case that clusters by skani dist, but fails the clustering cutoffs
                 return mapping[label]
             
             LOG.debug("Reading skDER clustering table.")
@@ -138,20 +139,18 @@ class LocalRun(Run):
         
         # Region dereplication using MMseqs2
         else:
-            # Read the MMseqs clustering table
-            path_to_cluster_file: Path = self.TEMP_DIR / "derep_out_cluster.tsv"
-            # Convert to a dataframe
+            # Parse the MMseqs clustering table
+            path_to_cluster_file: Path = self.DEREP_OUT_DIR / "derep_cluster.tsv"
             derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
                                      names = ['representative', 'Scaffold'],
                                      header = None, index_col = 'Scaffold'
                                      )
-            # Add dereplication status column based on whether a scaffold's ID is the same as the representative's one
-            # Every assembly_file row is retained (left join).
-            # If there is a match between binary_df['assembly_file'] and derep_df['assembly'] (its index column), the representative and status is added.
+            # Determine dereplication status
             derep_df['dereplication_status'] = derep_df.index == derep_df['representative']
             derep_df['dereplication_status'] = np.where(derep_df['dereplication_status'], 'dereplication_representative', 'redundant')
+            # Add dereplication status columns to binary table by joining with the clustering table
             LOG.debug("Joining MMseqs2 clustering table and cblaster binary table.")
-            self.binary_df = self.binary_df.join(derep_df, on = "Scaffold")
+            self.binary_df = self.binary_df.merge(derep_df, left_on = "Scaffold", right_index = True)
             
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])           
         LOG.info("Mapping done!")

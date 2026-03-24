@@ -8,18 +8,19 @@ from cagecleaner import util
 import pandas as pd
 import os
 import subprocess
-import gzip
 import shutil
 import logging
+import sys
+import threading
 from tempfile import TemporaryDirectory
 from abc import ABC, abstractmethod
 from pathlib import Path
 from copy import deepcopy
 from scipy.stats import zscore
 from random import choice
-from Bio import SeqIO
 from cblaster.classes import Session
 from importlib import resources
+from tqdm.contrib.concurrent import thread_map
 
 
 LOG = logging.getLogger()
@@ -164,24 +165,45 @@ Run --|                                                                         
         This method takes the path to a genome folder and dereplicates the genomes using skDER.
         skDER output is stored in TEMP_DIR/derep_out.
         """    
-        # Define current working directory:
-        # home = os.getcwd()
-        # Navigate to the temp directory:
-        # os.chdir(self.TEMP_DIR)
-        # Initiate the dereplication script:
         LOG.info(f'Dereplicating genomes in {str(self.GENOME_DIR)} with identity cutoff of {str(self.identity)} % and coverage cutoff of {str(self.coverage)} %')
         
         LOG.info("Starting skDER")
-        subprocess.run(['skder',
-                        '-g', self.GENOME_DIR,
-                        '-o', str(self.DEREP_OUT_DIR),
-                        '-i', str(self.identity),
-                        '-f', str(self.coverage),
-                        '-c', str(self.cores),
-                        '-d', "low_mem_"*self.low_mem + 'greedy',
-                        '-n'
-                        ],
-                       check = True)
+        skder_executable = shutil.which('skder')
+        
+        cmd = [skder_executable,
+               '-g', str(self.GENOME_DIR),
+               '-o', str(self.DEREP_OUT_DIR),
+               '-i', str(self.identity),
+               '-f', str(self.coverage),
+               '-c', str(self.cores),
+               '-d', "low_mem_"*self.low_mem + 'greedy',
+               '-n'
+               ]
+        
+        LOG.debug(f'Running command: {" ".join(cmd)}')
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        # Capture stdout and stderr in realtime and wrap it in the logs
+        def skder_stdout_log(s): return LOG.debug(s.rstrip())
+        def skder_stderr_log(s): return LOG.warning(s.rstrip())
+        
+        t_out = threading.Thread(target=util._stream_reader, args=(proc.stdout, skder_stdout_log))
+        t_err = threading.Thread(target=util._stream_reader, args=(proc.stderr, skder_stderr_log))
+        t_out.daemon = True
+        t_err.daemon = True
+        t_out.start()
+        t_err.start()
+    
+        returncode = proc.wait()
+        t_out.join()
+        t_err.join()
+    
+        # Wrap up
+        if returncode != 0:
+            LOG.critical(f"skDER exited with code {returncode}")
+            sys.exit()
+        else:
+            LOG.info('skDER finished successfully.')
         
         LOG.info("Dereplication done!")
         
@@ -190,12 +212,6 @@ Run --|                                                                         
         before = len(paths)
         after = len(list((self.DEREP_OUT_DIR / 'Dereplicated_Representative_Genomes').iterdir()))
         LOG.info(f'{before} genomes were reduced to {after} genomes.')
-        # subprocess.run(['bash', str(self.DEREPLICATE_SCRIPT),
-        #                 str(self.identity), str(self.coverage), 
-        #                 str(self.cores), str(self.GENOME_DIR), 'low_'*self.low_mem + 'mem'], 
-        #                check = True)
-        # Go back home
-        # os.chdir(home)
         
         return None
     
@@ -204,37 +220,15 @@ Run --|                                                                         
         This method extracts the genomic regions surrounding each cluster hit using the specified sequence margin.
         Regions at contig edges are discarded when applying the strict region flag.
         """
+        
         # Make temporary regions directory
         self.REGION_DIR.mkdir(parents = True, exist_ok = True)
-        # Loop over all hits in the binary table
-        contig_end = 0
-        for _, row in self.binary_df.iterrows():
-            # Get the ID and coordinates of the genomic region
-            assembly = row['assembly_file']
-            scaffold = row['Scaffold']
-            begin = row['Start'] - self.margin
-            end = row['End'] + self.margin
-            with gzip.open(self.GENOME_DIR / assembly, "rt") as handle:
-                seqs = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
-                # If strict, skip regions that are at a contig edge
-                # Handle the annoying habit of any2fasta in the local model to omit version digits in scaffold IDs,
-                # which results in scaffold KeyErrors.
-                try:
-                    scaffold_to_extract_from = seqs[scaffold]
-                except KeyError:
-                    scaffold_to_extract_from = seqs[scaffold.split('.')[0]]
-                length = len(scaffold_to_extract_from)
-                if end >= length or begin < 0:
-                    contig_end += 1
-                    if self.strict_regions:
-                        continue
-                    end = min(end, length)
-                    begin = max(0, begin)
-                # Extract genomic region from assembly
-                region = scaffold_to_extract_from[begin:end]
-                # Write in a new compressed fasta file
-                with gzip.open(self.REGION_DIR / assembly, "wt") as out_handle:
-                    SeqIO.write(region, out_handle, "fasta")
+        
+        # Extract regions in parallel
+        regions = [r.to_dict() for i,r in self.binary_df.iterrows()]
+        contig_ends = thread_map(lambda x: util._extractOneRegion(x, self.margin, self.GENOME_DIR, self.REGION_DIR, self.strict_regions), 
+                                 regions, max_workers = self.cores)
+        contig_end = sum(contig_ends)
 
         LOG.info(f'{contig_end} regions were at a contig end.')
         if self.strict_regions:
@@ -247,15 +241,44 @@ Run --|                                                                         
         This method takes the path to a genomic regions folder and dereplicates them using MMseqs2.
         MMseqs2 output is stored in TEMP_DIR/derep_out.
         """
-        subprocess.run(['mmseqs', 'easy-cluster',
-                        *[str(p) for p in self.REGION_DIR.glob('*')],
-                        str(self.DEREP_OUT_DIR),
-                        str(self.DEREP_OUT_DIR / 'tmp'),
-                        '--min-seq-id', str(self.identity/100),
-                        '-c', str(self.coverage/100),
-                        '--threads', str(self.cores),
-                        '-v', str(0)],
-                       check = True)
+        mmseqs_executable = shutil.which('mmseqs')
+        mmseqs_verbosity = str(min(self.verbosity, 3))
+        self.DEREP_OUT_DIR.mkdir(parents = True, exist_ok = True)
+        
+        cmd = [mmseqs_executable, 'easy-cluster',
+               *[str(p) for p in self.REGION_DIR.iterdir()],
+               str(self.DEREP_OUT_DIR / 'derep'),
+               str(self.DEREP_OUT_DIR / 'tmp'),
+               '--min-seq-id', str(self.identity/100),
+               '-c', str(self.coverage/100),
+               '--threads', str(self.cores),
+               '-v', mmseqs_verbosity
+               ]
+        
+        LOG.debug(f'Running command: {" ".join(cmd)}')
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        # Capture stdout and stderr in realtime and wrap it in the logs
+        def mmseqs_stdout_log(s): return LOG.debug(s.rstrip())
+        def mmseqs_stderr_log(s): return LOG.warning(s.rstrip())
+        
+        t_out = threading.Thread(target=util._stream_reader, args=(proc.stdout, mmseqs_stdout_log))
+        t_err = threading.Thread(target=util._stream_reader, args=(proc.stderr, mmseqs_stderr_log))
+        t_out.daemon = True
+        t_err.daemon = True
+        t_out.start()
+        t_err.start()
+    
+        returncode = proc.wait()
+        t_out.join()
+        t_err.join()
+    
+        # Wrap up
+        if returncode != 0:
+            LOG.critical(f"MMseqs2 exited with code {returncode}")
+            sys.exit()
+        else:
+            LOG.info('MMseqs2 finished successfully.')
         
         return None
     

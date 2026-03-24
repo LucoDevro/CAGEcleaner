@@ -17,6 +17,7 @@ from pathlib import Path
 from itertools import batched
 from Bio import SeqIO
 from importlib import resources
+from tqdm.contrib.concurrent import thread_map
 
 
 LOG = logging.getLogger()
@@ -115,6 +116,20 @@ class RemoteRun(Run):
 
         return None
     
+    def downloadRegions(self) -> None:
+        accessions = self.binary_df['Scaffold'].to_list()
+        ranges = (self.binary_df['Start'].map(str) + ':' + self.binary_df['End'].map(str)).to_list()
+        regions = list(zip(accessions, ranges))
+        
+        if self.cores > 2:
+            max_workers = 2
+            LOG.warning("You are requesting too many download workers by NCBI policy. Limiting the number to 2 for compliance.")
+        else:
+            max_workers = self.cores
+        thread_map(lambda x: util._downloadOneRegion(x, self.REGION_DIR), regions, max_workers = max_workers)
+        
+        return None
+    
     def mapScaffoldsToAssemblies(self) -> None:
         """
         This function maps every scaffold in the binary table to its corresponding assembly file.
@@ -208,7 +223,8 @@ class RemoteRun(Run):
             def renameLabel(label: str) -> str:
                 # Rename some of the skDER labels
                 mapping = {'representative_to_self': 'dereplication_representative',
-                           'within_cutoffs_requested': 'redundant'}
+                           'within_cutoffs_requested': 'redundant',
+                           'outside_cutoffs_requested': 'redundant'} # edge case that clusters by skani dist, but fails the clustering cutoffs
                 return mapping[label]
             
             LOG.debug("Reading skDER clustering table.")
@@ -231,7 +247,7 @@ class RemoteRun(Run):
         # Region dereplication using MMseqs2
         else:
             # Read the MMseqs2 clustering table:
-            path_to_cluster_file: Path = self.TEMP_DIR / "derep_out_cluster.tsv"
+            path_to_cluster_file: Path = self.DEREP_OUT_DIR / "derep_cluster.tsv"
             # Convert to dataframe
             derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
                                      names = ['representative', 'Scaffold'],
@@ -255,15 +271,20 @@ class RemoteRun(Run):
         """
         Run the entire remote workflow.
         """
-        LOG.info("--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
-        self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
+        if not(self.regions):
+            LOG.info("--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
+            self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
+            
+            LOG.info("--- STEP 2: Downloading genomes for each assembly ID. ---")
+            self.downloadGenomes()  # Downloads genome for each assembly ID
+            
+            LOG.info("--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
+            self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
+            self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
         
-        LOG.info("--- STEP 2: Downloading genomes for each assembly ID. ---")
-        self.downloadGenomes()  # Downloads genome for each assembly ID
-        
-        LOG.info("--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
-        self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
-        self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
+        else:
+            LOG.info('Downloading regions')
+            self.downloadRegions()
                 
         LOG.info("--- STEP 4: Dereplicating ---")
         self.dereplicate()  # Dereplicate.
