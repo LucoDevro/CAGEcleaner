@@ -118,10 +118,30 @@ Run --|                                                                         
         
         self.DEREPLICATE_SCRIPT: Path = Path(resources.files(__name__)) / 'dereplicate_assemblies.sh'  # Path to the dereplication script
 
-        # Make working subdirectories
-        self.OUT_DIR.mkdir(parents = True, exist_ok = True)
-        # self.DEREP_OUT_DIR.mkdir(parents = True, exist_ok = True)
+        # Make working subdirectories. Check for presence and force if ok.
+        # Genome directory can already exist
         self.GENOME_DIR.mkdir(parents = True, exist_ok = True)
+        
+        # Region directory should not exist yet.
+        try:
+            self.REGION_DIR.mkdir(parents = True)
+        except FileExistsError:
+            if args.force:
+                LOG.warning('Region folder already exists, but it will be overwritten.')
+            else:
+                LOG.error('Region folder already exists! Rerun with -f to overwrite it.')
+                sys.exit()
+        
+        # Output directory should not exist yet.
+        try:
+            self.OUT_DIR.mkdir(parents = True)
+        except FileExistsError:
+            if args.force:
+                LOG.warning('Output folder already exists, but it will be overwritten.')
+            else:
+                LOG.error('Output folder already exists! Rerun with -f to overwrite it.')
+                sys.exit()
+        
 
     def dereplicate(self):
         """

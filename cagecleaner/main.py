@@ -42,8 +42,9 @@ def parseArguments():
 
     args_general = parser.add_argument_group('General')
     args_general.add_argument('--cores', dest = 'cores', default = 1, type = int, help = "Number of cores available to use (default: 1)")    
-    args_general.add_argument('-v', '--version', action = "version", version = "%(prog)s " + __version__)
+    args_general.add_argument('-f', '--force', dest = 'force', default = False, action = 'store_true', help = "Force overwriting output (default: False).")
     args_general.add_argument('-vv', '--verbosity', dest = 'verbosity', default = 3, type = int, choices = [0,1,2,3,4], help = "Console verbosity level (default: 3 (info))")
+    args_general.add_argument('-v', '--version', action = "version", version = "%(prog)s " + __version__)
     args_general.add_argument('-h', '--help', action = 'help', help = "Show this help message and exit")      
     
     args_io = parser.add_argument_group('File inputs and outputs')
@@ -66,7 +67,8 @@ def parseArguments():
     args_download.add_argument('--download_batch', dest = 'download_batch', default = 300, type = int, help = "Number of genomes to download in one batch (default: 300)")
     
     args_dereplication = parser.add_argument_group('Dereplication')
-    args_dereplication.add_argument('--method', dest = 'method', default = "genomes", type = str, help = "Dereplication method: full genome-based ('genomes') or genomic neighbourhood-based ('regions') (default: genomes)")
+    args_dereplication.add_argument('--method', dest = 'method', default = "genomes", choices = ['genomes', 'regions'], type = str, 
+                                    help = "Dereplication method: full genome-based ('genomes') or genomic neighbourhood-based ('regions') (default: genomes)")
     args_dereplication.add_argument('-i', '--identity', dest = 'identity', default = 99.0, type = float, help = "Identity dereplication cutoff (default: 99.0)")
     args_dereplication.add_argument('-c', '--coverage', dest = 'coverage', default = 80.0, type = float, help = "Coverage dereplication cutoff (default: 80.0)")
 
