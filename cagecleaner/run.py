@@ -7,11 +7,9 @@ from cagecleaner import util
 # External libraries:
 import pandas as pd
 import os
-import subprocess
 import shutil
 import logging
 import sys
-import threading
 from tempfile import TemporaryDirectory
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -19,47 +17,25 @@ from copy import deepcopy
 from scipy.stats import zscore
 from random import choice
 from cblaster.classes import Session
-from importlib import resources
-from tqdm.contrib.concurrent import thread_map
 
 
 LOG = logging.getLogger()
 
 
 class Run(ABC):
-    """
-    This is an abstract class representing a typical CAGEcleaner Run.
-    A Run is either a LocalRun or a RemoteRun, depending on the mode in which cblaster was executed.
-    It contains an initializer, shared by both LocalRun and RemoteRun, that internally parses and stores the arguments given through the command line.
-    The static method fromArgs() is used to initialize a LocalRun or RemoteRun based on the mode of the provided session file.
-        
-    One can visualize the workflow as follows:
-        
-       -- Remote -> fetchAssemblyIDs() -> downloadGenomes() -> mapAssembliesToBinary() -> EXTENDED_BINARY -> |
-      |                                                                                                      |
-Run --|                                                                                                       -> dereplicate() -> mapDereplicationOutToBinary() -> recoverHits() -> filterSession() -> generateOutput()
-      |                                                                                                      |
-       -- Local/HMM ------------------------------------> prepareGenomes() --------------------------------> |
-        
-        With EXTENDED_BINARY containing links to the corresponding genome file for each row.
-        (In local mode this link essentially already exists through the 'Organism' column)
-        
-    """                                                         
+    
     def __init__(self, args):
         
-        # Parse dereplication method
-        self.regions: bool = (args.method == "regions")
+        super().__init__()
         
         ## Some defensive checks: ##
         assert args is not None, "No arguments were given. ArgParse object is None."
         assert args.session_file.exists() and args.session_file.is_file(), "Provided session file does not exist or is not a file."
         assert args.genome_dir.exists() and args.genome_dir.is_dir(), "Provided genome directory does not exist or is not a directory."
-        assert args.identity <= 100 and ((args.identity >= 82 and not(self.regions)) or (args.identity >= 0 and self.regions)), "Identity threshold should be between 82 and 100 in case of full-genome-based dereplication (see skani documentation) or between 0 and 100 in case of region-based dereplication."
         assert args.coverage >= 0 and args.coverage <= 100, "Coverage threshold should be a number between 0 and 100."
         assert args.zscore_outlier_threshold > 0, "Z-score threshold for recovery should be greater than zero."
         assert args.minimal_score_difference >= 0, "Minimal score difference for recovery cannot be smaller than zero."
         assert args.cores > 0, "Amount of CPU cores to use should be greater than zero."
-        assert not(self.regions) or args.margin >= 0, "Region margin cannot be negative when dereplicating regions."
 
         ## User-defined variables: ##
         # Parse the general arguments:
@@ -84,6 +60,7 @@ Run --|                                                                         
         self.excluded_scaffolds: set = {i.strip() for i in args.excluded_scaffolds.split(',')}
 
         # Download arguments:
+        self.download_workers: int = args.download_workers
         self.download_batch: int = args.download_batch
         
         # Dereplication arguments:
@@ -108,30 +85,13 @@ Run --|                                                                         
         self.binary_df = pd.read_table(self.TEMP_DIR / 'binary.txt', 
                                        sep = "\t", 
                                        converters= {'Organism': util.removeSuffixes})  # removeSuffixes only relevant in local mode. 
-                  
+        os.remove(self.TEMP_DIR / 'binary.txt')
+        
         # This variable will store the filtered session file, the end result.
-        self.filtered_session: Session = None
+        self.filtered_session: Session | None = None
         
-        # Set directory for skDER output and Path to dereplication script
+        # Set directory for dereplication output
         self.DEREP_OUT_DIR: Path = self.TEMP_DIR / 'derep_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
-        self.GENOME_DIR: Path = self.TEMP_DIR / 'genomes'  # Default path where genomes will be stored. In local mode this can change to USER_GENOME_DIR.
-        self.REGION_DIR: Path = self.TEMP_DIR / 'regions' # Path where the genomic regions will be saved temporarily for region-based dereplication
-        
-        self.DEREPLICATE_SCRIPT: Path = Path(resources.files(__name__)) / 'dereplicate_assemblies.sh'  # Path to the dereplication script
-
-        # Make working subdirectories. Check for presence and force if ok.
-        # Genome directory can already exist
-        self.GENOME_DIR.mkdir(parents = True, exist_ok = True)
-        
-        # Region directory should not exist yet.
-        try:
-            self.REGION_DIR.mkdir(parents = True)
-        except FileExistsError:
-            if args.force:
-                LOG.warning('Region folder already exists, but it will be overwritten.')
-            else:
-                LOG.error('Region folder already exists! Rerun with -f to overwrite it.')
-                sys.exit()
         
         # Output directory should not exist yet.
         try:
@@ -142,144 +102,7 @@ Run --|                                                                         
             else:
                 LOG.error('Output folder already exists! Rerun with -f to overwrite it.')
                 sys.exit()
-        
-
-    def dereplicate(self):
-        """
-        This method is the entry point for the dereplication.
-        It calls the appropriate dereplication method for the sequences being dereplicated (full genomes vs. regions).
-        """
-        if self.regions:
-            LOG.info("Extracting genomic regions.")
-            self.extractRegions()
-            LOG.info("Starting region-based dereplication.")
-            self.dereplicateRegions()
-        else:
-            LOG.info("Starting full genome dereplication.")
-            self.dereplicateGenomes()
-            
-        return None
-        
-    def dereplicateGenomes(self):
-        """
-        This method takes the path to a genome folder and dereplicates the genomes using skDER.
-        skDER output is stored in TEMP_DIR/derep_out.
-        """    
-        LOG.info(f'Dereplicating genomes in {str(self.GENOME_DIR)} with identity cutoff of {str(self.identity)} % and coverage cutoff of {str(self.coverage)} %')
-        
-        LOG.info("Starting skDER")
-        skder_executable = shutil.which('skder')
-        
-        cmd = [skder_executable,
-               '-g', str(self.GENOME_DIR),
-               '-o', str(self.DEREP_OUT_DIR),
-               '-i', str(self.identity),
-               '-f', str(self.coverage),
-               '-c', str(self.cores),
-               '-d', "low_mem_"*self.low_mem + 'greedy',
-               '-n'
-               ]
-        
-        LOG.debug(f'Running command: {" ".join(cmd)}')
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        # Capture stdout and stderr in realtime and wrap it in the logs
-        def skder_stdout_log(s): return LOG.debug(s.rstrip())
-        def skder_stderr_log(s): return LOG.warning(s.rstrip())
-        
-        t_out = threading.Thread(target=util._stream_reader, args=(proc.stdout, skder_stdout_log))
-        t_err = threading.Thread(target=util._stream_reader, args=(proc.stderr, skder_stderr_log))
-        t_out.daemon = True
-        t_err.daemon = True
-        t_out.start()
-        t_err.start()
-    
-        returncode = proc.wait()
-        t_out.join()
-        t_err.join()
-    
-        # Wrap up
-        if returncode != 0:
-            LOG.critical(f"skDER exited with code {returncode}")
-            sys.exit()
-        else:
-            LOG.info('skDER finished successfully.')
-        
-        LOG.info("Dereplication done!")
-        
-        extensions = {'.fna','.fa','.fasta','.fna.gz','.fa.gz','.fasta.gz'}
-        paths = [str(p) for p in self.GENOME_DIR.iterdir() if extensions & set(p.suffixes)]
-        before = len(paths)
-        after = len(list((self.DEREP_OUT_DIR / 'Dereplicated_Representative_Genomes').iterdir()))
-        LOG.info(f'{before} genomes were reduced to {after} genomes.')
-        
-        return None
-    
-    def extractRegions(self):
-        """
-        This method extracts the genomic regions surrounding each cluster hit using the specified sequence margin.
-        Regions at contig edges are discarded when applying the strict region flag.
-        """
-        
-        # Make temporary regions directory
-        self.REGION_DIR.mkdir(parents = True, exist_ok = True)
-        
-        # Extract regions in parallel
-        regions = [r.to_dict() for i,r in self.binary_df.iterrows()]
-        contig_ends = thread_map(lambda x: util._extractOneRegion(x, self.margin, self.GENOME_DIR, self.REGION_DIR, self.strict_regions), 
-                                 regions, max_workers = self.cores)
-        contig_end = sum(contig_ends)
-
-        LOG.info(f'{contig_end} regions were at a contig end.')
-        if self.strict_regions:
-            LOG.info('These regions have been discarded from the analysis.')
-            
-        return None
-    
-    def dereplicateRegions(self):
-        """
-        This method takes the path to a genomic regions folder and dereplicates them using MMseqs2.
-        MMseqs2 output is stored in TEMP_DIR/derep_out.
-        """
-        mmseqs_executable = shutil.which('mmseqs')
-        mmseqs_verbosity = str(min(self.verbosity, 3))
-        self.DEREP_OUT_DIR.mkdir(parents = True, exist_ok = True)
-        
-        cmd = [mmseqs_executable, 'easy-cluster',
-               *[str(p) for p in self.REGION_DIR.iterdir()],
-               str(self.DEREP_OUT_DIR / 'derep'),
-               str(self.DEREP_OUT_DIR / 'tmp'),
-               '--min-seq-id', str(self.identity/100),
-               '-c', str(self.coverage/100),
-               '--threads', str(self.cores),
-               '-v', mmseqs_verbosity
-               ]
-        
-        LOG.debug(f'Running command: {" ".join(cmd)}')
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        # Capture stdout and stderr in realtime and wrap it in the logs
-        def mmseqs_stdout_log(s): return LOG.debug(s.rstrip())
-        def mmseqs_stderr_log(s): return LOG.warning(s.rstrip())
-        
-        t_out = threading.Thread(target=util._stream_reader, args=(proc.stdout, mmseqs_stdout_log))
-        t_err = threading.Thread(target=util._stream_reader, args=(proc.stderr, mmseqs_stderr_log))
-        t_out.daemon = True
-        t_err.daemon = True
-        t_out.start()
-        t_err.start()
-    
-        returncode = proc.wait()
-        t_out.join()
-        t_err.join()
-    
-        # Wrap up
-        if returncode != 0:
-            LOG.critical(f"MMseqs2 exited with code {returncode}")
-            sys.exit()
-        else:
-            LOG.info('MMseqs2 finished successfully.')
-        
+                
         return None
     
     @abstractmethod
@@ -397,7 +220,7 @@ Run --|                                                                         
             LOG.debug(f"Carving out organism {org_full_name}")
             # First we check whether we need to bypass this assembly. If yes, don't pop this one and proceed with the next one
             if self.bypass_organisms != {''} and org_full_name in self.bypass_organisms:
-                LOG.debug("-> Bypassing")
+                LOG.debug("-> Bypassing organism {org_full_name}")
                 continue
             # Now we go to the scaffold level and loop over each scaffold associated with this organism
             for hit_idx, hit in reversed(list(enumerate(org['scaffolds']))):
@@ -442,23 +265,20 @@ Run --|                                                                         
             - skDER output
             - Downloaded genomes
         """
-        # Navigate to the output folder:
-        os.chdir(self.OUT_DIR)
-        
         # Generate the outputs
         # Session file
         LOG.debug("Writing filtered session file.")
-        with open("filtered_session.json", "w") as filtered_session_handle:
+        with open(self.OUT_DIR / "filtered_session.json", "w") as filtered_session_handle:
             self.filtered_session.to_json(fp = filtered_session_handle)
             
         # Binary table
         LOG.debug("Writing filtered binary table.")
-        with open("filtered_binary.txt", 'w') as filtered_binary_handle:
+        with open(self.OUT_DIR / "filtered_binary.txt", 'w') as filtered_binary_handle:
             self.filtered_session.format(form = "binary", delimiter = "\t", fp = filtered_binary_handle)
             
         # Summary file
         LOG.debug("Writing filtered summary file.")
-        with open("filtered_summary.txt", "w") as filtered_summary_handle:
+        with open(self.OUT_DIR / "filtered_summary.txt", "w") as filtered_summary_handle:
             self.filtered_session.format(form = "summary", fp = filtered_summary_handle)    
             
         # List of cluster numbers
@@ -467,30 +287,35 @@ Run --|                                                                         
                                     for organism in Session.to_dict(self.filtered_session)['organisms'] 
                                     for scaffold in organism['scaffolds'] 
                                     for cluster in scaffold['clusters']]
-        with open("retained_cluster_numbers.txt", "w") as numbers_handle:
+        with open(self.OUT_DIR / "retained_cluster_numbers.txt", "w") as numbers_handle:
             numbers_handle.write(','.join([str(nb) for nb in filtered_cluster_numbers]))
                 
         # Cluster sizes:
         LOG.debug("Writing genome cluster sizes.")
-        self.binary_df.groupby('representative').size().to_frame(name='cluster_size').to_csv('genome_cluster_sizes.txt', sep='\t')
+        cluster_sizes = self.binary_df.groupby('representative').size().to_frame(name='cluster_size')
+        cluster_sizes.to_csv(self.OUT_DIR / 'genome_cluster_sizes.txt', sep='\t')
         
         # Keep temp output
         if self.keep_intermediate or self.keep_downloads:
             LOG.info('Copying downloaded genomes to output folder.')
-            shutil.copytree(self.TEMP_DIR / 'genomes', 'genomes', dirs_exist_ok = True, ignore_dangling_symlinks = True)
+            shutil.copytree(self.DEREP_IN_DIR, self.OUT_DIR / 'downloads', 
+                            dirs_exist_ok = True, ignore_dangling_symlinks = True)
         if self.keep_intermediate or self.keep_dereplication:
             LOG.info("Copying dereplication results to output folder.")
-            shutil.copytree(self.TEMP_DIR / 'derep_out', 'derep_out', dirs_exist_ok = True, ignore_dangling_symlinks = True)
+            shutil.copytree(self.DEREP_OUT_DIR, self.OUT_DIR / 'dereplication', 
+                            dirs_exist_ok = True, ignore_dangling_symlinks = True)
             
         # Extended binary:
         LOG.debug("Writing extended binary.")
-        self.binary_df.to_csv('extended_binary.txt', sep='\t', index = False)
+        self.binary_df.to_csv(self.OUT_DIR / 'extended_binary.txt', sep='\t', index = False)
         
         LOG.info(f"Finished! Output files can be found in {self.OUT_DIR}.")
                 
         return None
     
+    
     @abstractmethod
     def run():
         pass
+    
     

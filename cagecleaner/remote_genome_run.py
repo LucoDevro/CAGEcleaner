@@ -1,32 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Internal imports:
+from cagecleaner.remote_run import RemoteRun
+from cagecleaner.genome_run import GenomeRun
 from cagecleaner import util
-from cagecleaner.classes import Run
 
-# External libraries:
-import pandas as pd
-import numpy as np
+import logging
 import os
 import subprocess
-import gzip
 import re
-import logging
+import gzip
+import sys
+import pandas as pd
 from pathlib import Path
 from itertools import batched
 from Bio import SeqIO
 from importlib import resources
-from tqdm.contrib.concurrent import thread_map
 
 
 LOG = logging.getLogger()
 
 
-class RemoteRun(Run):
+class RemoteGenomeRun(RemoteRun, GenomeRun):
     
     def __init__(self, args):
-        # Call the parent constructor:
+        
         super().__init__(args)
         
         # Defensive check:
@@ -42,23 +40,12 @@ class RemoteRun(Run):
         # Dictionary to store the scaffold:assembly mapping:
         self.scaffold_assembly_pairs: dict = {}
         
-        # Remove Organisms specified by the user:
-        if self.excluded_organisms != {''}:
-            # Replace colons with spaces to get the correct matching in the binary table.
-            self.excluded_organisms = {org.replace(':', ' ', regex=False) for org in self.excluded_organisms}
-            LOG.debug(f"Excluding the following organisms: {', '.join(self.excluded_organisms)}")
-            # Exclude them:
-            self.binary_df = self.binary_df[~self.binary_df['Organism'].isin(self.excluded_organisms)]
+        # Make folder to download genomes to
+        self.TEMP_GENOME_DIR = self.TEMP_DIR / "genomes"
+        self.TEMP_GENOME_DIR.mkdir(parents = True)
         
-        # Remove scaffolds that the user wants excluded:
-        if self.excluded_scaffolds != {''}:
-            LOG.debug(f"Excluding the following scaffolds: {', '.join(self.excluded_scaffolds)}")
-            self.binary_df = self.binary_df[~self.binary_df['Scaffold'].isin(self.excluded_scaffolds)]
-        
-        # Replace colons in the bypass assemblies as wel:
-        if self.bypass_organisms != {''}:
-            self.bypass_organisms = {org.replace(':', ' ') for org in self.bypass_organisms}
-        
+        return None
+    
     def fetchAssemblyIDs(self) -> None:
         """
         This function writes the scaffold IDs from the binary table to a file.
@@ -111,23 +98,9 @@ class RemoteRun(Run):
         home = os.getcwd()
         os.chdir(self.TEMP_DIR)
         LOG.debug("Calling download script.")
-        subprocess.run(["bash", str(self.DOWNLOAD_SCRIPT)], check=True)
+        subprocess.run(["bash", str(self.DOWNLOAD_SCRIPT), str(self.download_workers)], check=True)
         os.chdir(home)
 
-        return None
-    
-    def downloadRegions(self) -> None:
-        accessions = self.binary_df['Scaffold'].to_list()
-        ranges = (self.binary_df['Start'].map(str) + ':' + self.binary_df['End'].map(str)).to_list()
-        regions = list(zip(accessions, ranges))
-        
-        if self.cores > 2:
-            max_workers = 2
-            LOG.warning("You are requesting too many download workers by NCBI policy. Limiting the number to 2 for compliance.")
-        else:
-            max_workers = self.cores
-        thread_map(lambda x: util._downloadOneRegion(x, self.REGION_DIR), regions, max_workers = max_workers)
-        
         return None
     
     def mapScaffoldsToAssemblies(self) -> None:
@@ -160,7 +133,7 @@ class RemoteRun(Run):
         scaffolds_in_binary_no_prefix: set = {removePrefix(scaffold) for scaffold in scaffolds_in_binary}
         
         # Loop over the directory containing all genomes:
-        for file in self.GENOME_DIR.iterdir():
+        for file in self.DEREP_IN_DIR.iterdir():
             # Only read fasta files:
             if util.isFasta(file.name):
                 LOG.debug(f"Reading {file.name}")
@@ -200,7 +173,9 @@ class RemoteRun(Run):
         scaffolds_with_na = self.binary_df[self.binary_df['assembly_file'].isna()]['Scaffold'].to_list()
         
         if scaffolds_with_na:
-            LOG.warning(f"The following {len(scaffolds_with_na)} scaffolds could not be linked to a genome assembly: {', '.join(scaffolds_with_na)}. Omitting for further analysis.") 
+            with open(self.OUT_DIR / "unmapped.scaffolds.txt", "w") as handle:
+                handle.writelines(scaffolds_with_na)
+            LOG.warning(f"{len(scaffolds_with_na)} scaffolds could not be linked to a genome assembly. See unmapped.scaffolds.txt") 
             # Drop the NA values:
             self.binary_df = self.binary_df.dropna()
         
@@ -215,51 +190,33 @@ class RemoteRun(Run):
             self.binary_df: pd.DataFrame: Internal representation of the binary table.
         """
         # Full genome dereplication using skDER
-        if not(self.regions):
-            def extractFileName(file_path: str) -> str:
-                # Extract basename from full file path
-                return Path(file_path).name
-            
-            def renameLabel(label: str) -> str:
-                # Rename some of the skDER labels
-                mapping = {'representative_to_self': 'dereplication_representative',
-                           'within_cutoffs_requested': 'redundant',
-                           'outside_cutoffs_requested': 'redundant'} # edge case that clusters by skani dist, but fails the clustering cutoffs
-                return mapping[label]
-            
-            LOG.debug("Reading skDER clustering table.")
-            # Read the skder out clustering table:
-            path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
-            # Convert to dataframe:
-            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
-                                     converters = {'assembly': extractFileName,
-                                                   'representative': extractFileName,
-                                                   'dereplication_status': renameLabel},
-                                     names = ['assembly', 'representative', 'dereplication_status'],
-                                     usecols = [0,1,4], header = 0, index_col = 'assembly'
-                                     )
-            # Join with binary df on assembly_file column. 
-            # Every assembly_file row is retained (left join).
-            # If there is a match between binary_df['assembly_file'] and derep_df['assembly'] (its index column), the representative and status is added.
-            LOG.debug("Joining skDER clustering table and cblaster binary table.")
-            self.binary_df = self.binary_df.join(derep_df, on='assembly_file')
+        def extractFileName(file_path: str) -> str:
+            # Extract basename from full file path
+            return Path(file_path).name
         
-        # Region dereplication using MMseqs2
-        else:
-            # Read the MMseqs2 clustering table:
-            path_to_cluster_file: Path = self.DEREP_OUT_DIR / "derep_cluster.tsv"
-            # Convert to dataframe
-            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
-                                     names = ['representative', 'Scaffold'],
-                                     header = None, index_col = 'Scaffold'
-                                     )
-            # Add dereplication status column based on whether the scaffold's ID is the same as the representative's
-            # Every assembly_file row is retained (left join).
-            # If there is a match between binary_df['assembly_file'] and derep_dfs['assembly'] (its index column), the representative and status is added.
-            derep_df['dereplication_status'] = derep_df.index == derep_df['representative']
-            derep_df['dereplication_status'] = np.where(derep_df['dereplication_status'], 'dereplication_representative', 'redundant')
-            LOG.debug("Joining MMseqs2 clustering table and cblaster binary table.")
-            self.binary_df = self.binary_df.join(derep_df, on = "Scaffold")
+        def renameLabel(label: str) -> str:
+            # Rename some of the skDER labels
+            mapping = {'representative_to_self': 'dereplication_representative',
+                       'within_cutoffs_requested': 'redundant',
+                       'outside_cutoffs_requested': 'redundant'} # edge case that clusters by skani dist, but fails the clustering cutoffs
+            return mapping[label]
+        
+        LOG.debug("Reading skDER clustering table.")
+        # Read the skder out clustering table:
+        path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
+        # Convert to dataframe:
+        derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
+                                 converters = {'assembly': extractFileName,
+                                               'representative': extractFileName,
+                                               'dereplication_status': renameLabel},
+                                 names = ['assembly', 'representative', 'dereplication_status'],
+                                 usecols = [0,1,4], header = 0, index_col = 'assembly'
+                                 )
+        # Join with binary df on assembly_file column. 
+        # Every assembly_file row is retained (left join).
+        # If there is a match between binary_df['assembly_file'] and derep_df['assembly'] (its index column), the representative and status is added.
+        LOG.debug("Joining skDER clustering table and cblaster binary table.")
+        self.binary_df = self.binary_df.join(derep_df, on='assembly_file')
         
         # Sort by representative ID and then by dereplication status
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])
@@ -267,27 +224,20 @@ class RemoteRun(Run):
             
         return None
     
-    def run(self) -> None:
-        """
-        Run the entire remote workflow.
-        """
-        if not(self.regions):
-            LOG.info("--- STEP 1: Fetching assembly IDs from NCBI for each scaffold ID in the cblaster binary table. ---")
-            self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
-            
-            LOG.info("--- STEP 2: Downloading genomes for each assembly ID. ---")
-            self.downloadGenomes()  # Downloads genome for each assembly ID
-            
-            LOG.info("--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
-            self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
-            self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
+    def run(self):
         
-        else:
-            LOG.info('Downloading regions')
-            self.downloadRegions()
-                
+        LOG.info("--- STEP 1: Fetching NCBI assembly IDs for each scaffold ID. ---")
+        self.fetchAssemblyIDs()  # Stores a list of NCBI assembly IDs 
+    
+        LOG.info("--- STEP 2: Downloading genomes for each assembly ID. ---")
+        self.downloadGenomes()  # Downloads genome for each assembly ID
+        
+        LOG.info("--- STEP 3: Mapping scaffold IDs to assembly IDs ---")
+        self.mapScaffoldsToAssemblies()  # Results in a dictionary of scaffold:assembly_file pairs
+        self.mapAssembliesToBinary()  # Each row in the binary table is now mapped to its assembly file
+        
         LOG.info("--- STEP 4: Dereplicating ---")
-        self.dereplicate()  # Dereplicate.
+        self.dereplicateGenomes()  # Dereplicate.
         
         LOG.info("--- STEP 5: Mapping dereplication clustering to binary table ---")
         self.mapDereplicationToBinary()  # Map each row in the binary table with its representative

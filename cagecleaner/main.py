@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from cagecleaner.local_genome_run import LocalGenomeRun
+from cagecleaner.local_region_run import LocalRegionRun
+from cagecleaner.remote_genome_run import RemoteGenomeRun
+from cagecleaner.remote_region_run import RemoteRegionRun
+
 import argparse
 import tempfile
 import sys
@@ -8,8 +13,6 @@ import logging
 from pathlib import Path
 from importlib.metadata import version
 from cblaster.classes import Session
-from cagecleaner.local import LocalRun
-from cagecleaner.remote import RemoteRun
 
 __version__ = version("cagecleaner")
 
@@ -63,8 +66,9 @@ def parseArguments():
     args_id_io.add_argument('-exs', '--exclude_scaffolds', dest = 'excluded_scaffolds', default = '', help = "Scaffolds IDs in the binary table to be excluded from the hit set (comma-separated). ")
     args_id_io.add_argument('-exo', '--exclude_organisms', dest = 'excluded_organisms', default = '', help = "Organisms in the binary table to be excluded from the hit set (comma-seperated).")
   
-    args_download = parser.add_argument_group('Genome download')
-    args_download.add_argument('--download_batch', dest = 'download_batch', default = 300, type = int, help = "Number of genomes to download in one batch (default: 300)")
+    args_download = parser.add_argument_group('Download options')
+    args_download.add_argument('-w', '--workers', dest = 'download_workers', default = 1, type = int, help = "Number of download workers (default: 1).")
+    args_download.add_argument('--download_batch', dest = 'download_batch', default = 300, type = int, help = "Number of genomes to download in one batch when downloading genomes (default: 300)")
     
     args_dereplication = parser.add_argument_group('Dereplication')
     args_dereplication.add_argument('--method', dest = 'method', default = "genomes", choices = ['genomes', 'regions'], type = str, 
@@ -110,19 +114,25 @@ def main():
     
     # Initiate the approriate CAGEcleaner Run object:
     LOG.info("--- Loading session file. ---")
-    mode = Session.from_file(args.session_file).params['mode']
-    
-    if mode == 'local' or mode == 'hmm':
-        LOG.info(f"Detected {mode} mode.")
-        my_run = LocalRun(args)
-    
-    elif mode == 'remote':
-        LOG.info("Detected remote mode.")
-        my_run = RemoteRun(args)
-    
-    else:
-        LOG.critical(f"CAGEcleaner does not support cblaster {mode} mode for the moment. Exiting the program.")
-        sys.exit()
+    source = Session.from_file(args.session_file).params['mode']
+    method = args.method
+    mode = (source, method)
+    match mode:
+        case ('remote', 'genomes'):
+            LOG.info('Entering remote genome mode')
+            my_run = RemoteGenomeRun(args)
+        case ('remote', 'regions'):
+            LOG.info('Entering remote region mode')
+            my_run = RemoteRegionRun(args)
+        case ('local', 'genomes') | ('hmm', 'genomes'):
+            LOG.info('Entering local genome mode')
+            my_run = LocalGenomeRun(args)
+        case ('local', 'regions') | ('hmm', 'regions'):
+            LOG.info('Entering local region mode')
+            my_run = LocalRegionRun(args)
+        case _:
+            LOG.critical(f'Invalid mode detected: {mode}. Exiting.')
+            sys.exit()
     
     # Run the initialised workflow:
     my_run.run()

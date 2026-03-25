@@ -28,7 +28,7 @@ while read line; do
     unzip -q -d downloads ncbi_dataset.zip && rm ncbi_dataset.zip
 
     # Rehydrate
-    datasets rehydrate --directory downloads --gzip
+    datasets rehydrate --directory downloads --gzip --max-workers $1
 
     # Put all genomes from this batch into the collection directory
     mv downloads/ncbi_dataset/data/GC*/* genomes/
