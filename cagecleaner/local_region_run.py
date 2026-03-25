@@ -6,7 +6,6 @@ from cagecleaner.region_run import RegionRun
 from cagecleaner import util
 
 import logging
-import sys
 import pandas as pd
 import numpy as np
 from pathlib import Path

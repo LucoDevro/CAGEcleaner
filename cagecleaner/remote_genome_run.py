@@ -10,7 +10,6 @@ import os
 import subprocess
 import re
 import gzip
-import sys
 import pandas as pd
 from pathlib import Path
 from itertools import batched
@@ -43,6 +42,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         # Make folder to download genomes to
         self.TEMP_GENOME_DIR = self.TEMP_DIR / "genomes"
         self.TEMP_GENOME_DIR.mkdir(parents = True)
+        self.DEREP_IN_DIR = self.TEMP_GENOME_DIR
         
         return None
     
@@ -170,12 +170,11 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         self.binary_df = self.binary_df.join(scaffold_assembly_pairs_df, on='Scaffold')
             
         # Extract scaffolds that could not be linked to an assembly:
-        scaffolds_with_na = self.binary_df[self.binary_df['assembly_file'].isna()]['Scaffold'].to_list()
+        scaffolds_with_na = self.binary_df[self.binary_df['assembly_file'].isna()]['Scaffold']
         
-        if scaffolds_with_na:
-            with open(self.OUT_DIR / "unmapped.scaffolds.txt", "w") as handle:
-                handle.writelines(scaffolds_with_na)
-            LOG.warning(f"{len(scaffolds_with_na)} scaffolds could not be linked to a genome assembly. See unmapped.scaffolds.txt") 
+        if not(scaffolds_with_na.empty):
+            scaffolds_with_na.to_csv(self.OUT_DIR / "unmapped.scaffolds.txt", index = False, header = False)
+            LOG.warning(f"{scaffolds_with_na.size} scaffolds could not be linked to a genome assembly. See unmapped.scaffolds.txt") 
             # Drop the NA values:
             self.binary_df = self.binary_df.dropna()
         
