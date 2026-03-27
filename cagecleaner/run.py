@@ -41,6 +41,7 @@ class Run(ABC):
         # Parse the general arguments:
         self.cores: int = args.cores
         self.verbosity: int = args.verbosity
+        self.no_progress: bool = args.no_progress
         
         # Parse IO arguments:
         self.session: Session = Session.from_file(args.session_file.resolve())  # Stores the session file as a Session object
@@ -140,8 +141,11 @@ class Run(ABC):
             # Alter the OG binary df at the indices where the score difference and the z_score pass the thresholds
             for index, row in df.iterrows():
                 if (abs(row['Score'] - modal_score) >= self.minimal_score_difference) and (abs(row['z_score']) >= self.zscore_outlier_threshold):
-                    # Alter the df that was passed as argument such that recoverByContent has this information. Only do this if that row is not already a dereplication representative, in which case the hit is retained anyway.
+                    # Alter the df that was passed as argument such that recoverByContent has this information.
+                    # Only do this if that row is not already a dereplication representative, 
+                    # in which case the hit is retained anyway.
                     df.at[index, 'dereplication_status'] = 'readded_by_score' if row['dereplication_status'] != 'dereplication_representative' else row['dereplication_status']
+                    
                     # Alter the OG binary df:
                     self.binary_df.at[index, 'dereplication_status'] = 'readded_by_score' if row['dereplication_status'] != 'dereplication_representative' else row['dereplication_status']
         
@@ -155,19 +159,23 @@ class Run(ABC):
         else:   
             if self.no_recovery_by_score == True:
                 LOG.info("Skipping hit rcovery by score.")
+            
             # Loop over each representative cluster:
             grouped_by_rep = self.binary_df.groupby('representative')  # Define the grouping
             for representative, cluster in grouped_by_rep:
                 LOG.debug(f"Recovering hits in the group of {representative}.")
                 LOG.debug(f"-> {len(cluster)} hits in this group")
+                
                 # Now we have to create subgroups within each group based on the amount of genes in each cluster:        
                 # Loop over the grouping:
                 grouped_by_content = cluster.groupby(self.session.queries)
                 LOG.debug(f"-> {len(grouped_by_content)} subgroups based on gene cluster composition.")
                 for _, group in grouped_by_content:
+                    
                     # Now we want to recover by cblaster score:
                     if self.no_recovery_by_score == False:
                         group = recoverHitsByScore(group)  # This group now contains rows that are 'readded_by_score'
+                    
                     # Check if a representative is in here. If yes, continue:
                     if 'dereplication_representative' in group['dereplication_status'].to_list():
                         continue
@@ -215,30 +223,38 @@ class Run(ABC):
         # Going in reverse so the index doesn't change by popping items
         for org_idx, org in reversed(list(enumerate(session_dict['organisms']))):
             scaffolds_removed = 0  # Counter
+            
             # Get the full name of the organism, with strain (if it is not empty):
             org_full_name = f"{org['name']} {org['strain']}".strip()
             LOG.debug(f"Carving out organism {org_full_name}")
+            
             # First we check whether we need to bypass this assembly. If yes, don't pop this one and proceed with the next one
             if self.bypass_organisms != {''} and org_full_name in self.bypass_organisms:
                 LOG.debug("-> Bypassing organism {org_full_name}")
                 continue
+            
             # Now we go to the scaffold level and loop over each scaffold associated with this organism
             for hit_idx, hit in reversed(list(enumerate(org['scaffolds']))):
                 # Obtain the prefixed hit for proper exclusion (in local mode, the user provides scaffolds to exclude in the form of <assembly:scaffold> to prevent issues with duplicate scaffold IDs)
                 prefixed_scaffold = org_full_name + ':' + hit['accession']
+                
                 # If we have to bypass it, jump to the next one in line
                 if self.bypass_scaffolds != {''} and prefixed_scaffold.endswith(tuple(self.bypass_scaffolds)):
                     LOG.debug(f"-> Bypassing scaffold {hit['accession']}")
                     continue
-                # If it's not in the list of dereplicated scaffolds, remove it.
+                
+                # Remove it when it's not in the list of dereplicated scaffolds
                 elif hit['accession'] not in dereplicated_scaffolds:
                     filtered_session_dict['organisms'][org_idx]['scaffolds'].pop(hit_idx)
                     scaffolds_removed += 1  # Update counter
+                    
             # Tell the user how many scaffolds were removed in this organism:
             LOG.debug(f"-> Removed {scaffolds_removed} scaffolds for {org_full_name}")
+            
             # If the scaffold list for this organism is now empty, remove the entire organism:
             if not filtered_session_dict['organisms'][org_idx]['scaffolds']:
                 filtered_session_dict['organisms'].pop(org_idx)
+            
             # Update the total counter
             scaffolds_removed_total += scaffolds_removed  
         

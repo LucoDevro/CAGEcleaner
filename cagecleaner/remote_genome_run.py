@@ -55,25 +55,63 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         Mutates:
             self.assembly_accessions: list: A list of assembly IDs to be downloaded later on.
         """
-        # First we extract the scaffold IDs out of the binary table:
-        scaffolds = self.binary_df['Scaffold'].to_list()
+        home = os.getcwd()
         
-        # Write these to a file with every scaffold ID on a new line:
-        scaffolds_file: Path = self.TEMP_DIR / 'scaffolds.txt'
-        with scaffolds_file.open('w') as file:
-            file.writelines('\n'.join(scaffolds))
+        ## First we extract the scaffold IDs out of the binary table
+        scaffolds = self.binary_df['Scaffold'].to_list()
+        LOG.info(f"Got {len(scaffolds)} scaffold IDs to crossref")
+        
+        ## Split up in RefSeq and Genbank IDs
+        refseq_scaffolds = [sc for sc in scaffolds if sc.startswith('NC_') or sc.startswith('NZ_')]
+        genbank_scaffolds = [sc for sc in scaffolds if not(sc.startswith('NC_') or sc.startswith('NZ_'))]
+        
+        LOG.info(f'..., of which {len(refseq_scaffolds)} are RefSeq IDs')
+        LOG.info(f'..., and {len(genbank_scaffolds)} are Genbank IDs.')
+        
+        ## Fetch RefSeq assembly IDs
+        LOG.info('Fetching RefSeq Assembly IDs')
+        LOG.info('Opening subshell')
+        
+        # Write IDs to a file with every scaffold ID on a new line:
+        refseq_file: Path = self.TEMP_DIR / 'scaffolds_refseq.txt'
+        with refseq_file.open('w') as file:
+            file.writelines('\n'.join(refseq_scaffolds))
 
         # Now we use the helper bash script to map the scaffolds to the NCBI assembly IDs that host them.
-        home = os.getcwd()
         os.chdir(self.TEMP_DIR)
-        subprocess.run(['bash', str(self.ACCESSIONS_SCRIPT), 'scaffolds.txt'], check = True)
+        subprocess.run(['bash', str(self.ACCESSIONS_SCRIPT), 'scaffolds_refseq.txt', 'RefSeq'], check = True)
         os.chdir(home)
         
         # Read the result file
         result_file: Path = self.TEMP_DIR / 'assembly_accessions.txt'
         with result_file.open('r') as file:
             # Store the assembly accessions internally:
-            self.assembly_accessions = [line.rstrip() for line in file.readlines()]
+            refseq_assembly_accessions = [line.rstrip() for line in file.readlines()]
+        
+        ## Fetch Genbank assembly IDs
+        LOG.info('Fetching Genbank Assembly IDs')
+        LOG.info('Opening subshell')
+        
+        genbank_file: Path = self.TEMP_DIR / 'scaffolds_genbank.txt'
+        with genbank_file.open('w') as file:
+            file.writelines('\n'.join(genbank_scaffolds))
+            
+        os.chdir(self.TEMP_DIR)
+        subprocess.run(['bash', str(self.ACCESSIONS_SCRIPT), 'scaffolds_genbank.txt', 'Genbank'], check = True)
+        os.chdir(home)
+        
+        result_file: Path = self.TEMP_DIR / 'assembly_accessions.txt'
+        with result_file.open('r') as file:
+            # Store the assembly accessions internally:
+            genbank_assembly_accessions = [line.rstrip() for line in file.readlines()]
+        
+        ## Gather and deduplicate assembly IDs
+        LOG.info('Merging ID sets and taking the latest assembly versions')
+        assembly_accessions = refseq_assembly_accessions + genbank_assembly_accessions
+        assembly_accessions_df = pd.DataFrame(assembly_accessions, columns = ['IDs'])
+        assembly_accessions_df = assembly_accessions_df.sort_values(by = 'IDs').drop_duplicates(keep = "last")
+        assembly_accessions = assembly_accessions_df['IDs'].to_list()
+        self.assembly_accessions = assembly_accessions
 
         return None
     

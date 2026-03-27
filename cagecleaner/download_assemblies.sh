@@ -22,13 +22,13 @@ while read line; do
     echo -e "\nBatch $batch_counter/$batch_count"
 
     # Download the dehydrated genome package. xargs removes the trailing whitespace:
-    datasets download genome accession $(echo "$line" | xargs) --dehydrated
+    datasets download genome accession $(echo "$line" | xargs) --dehydrated --no-progressbar
 
     # Unzip the files
     unzip -q -d downloads ncbi_dataset.zip && rm ncbi_dataset.zip
 
     # Rehydrate
-    datasets rehydrate --directory downloads --gzip --max-workers $1
+    datasets rehydrate --directory downloads --gzip --no-progressbar --max-workers $1
 
     # Put all genomes from this batch into the collection directory
     mv downloads/ncbi_dataset/data/GC*/* genomes/

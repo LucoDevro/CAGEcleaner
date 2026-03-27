@@ -47,6 +47,7 @@ def parseArguments():
     args_general.add_argument('--cores', dest = 'cores', default = 1, type = int, help = "Number of cores available to use (default: 1)")    
     args_general.add_argument('-f', '--force', dest = 'force', default = False, action = 'store_true', help = "Force overwriting output (default: False).")
     args_general.add_argument('-vv', '--verbosity', dest = 'verbosity', default = 3, type = int, choices = [0,1,2,3,4], help = "Console verbosity level (default: 3 (info))")
+    args_general.add_argument('-np', '--no-progress', dest = "no_progress", default = False, action = 'store_true', help = "Don't show progress bar (default: False).")
     args_general.add_argument('-v', '--version', action = "version", version = "%(prog)s " + __version__)
     args_general.add_argument('-h', '--help', action = 'help', help = "Show this help message and exit")      
     

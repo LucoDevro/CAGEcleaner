@@ -32,7 +32,10 @@ class RemoteRegionRun(RemoteRun, RegionRun):
             LOG.warning("You are requesting too many download workers by NCBI policy. Limiting the number to 2 for compliance.")
         else:
             max_workers = self.download_workers
-        thread_map(lambda x: util._downloadOneRegion(x, self.DEREP_IN_DIR), regions, max_workers = max_workers)
+        thread_map(lambda x: util._downloadOneRegion(x, self.DEREP_IN_DIR), regions, 
+                   max_workers = max_workers,
+                   leave = False,
+                   disable = self.no_progress)
         
         return None
     

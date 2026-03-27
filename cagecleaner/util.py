@@ -112,7 +112,7 @@ def _convertOneGenbankToFasta(input_output_paths: tuple) -> None:
     return None
     
 
-def convertGenbankToFasta(genome_dir: Path, out_dir: Path, workers: int = 1) -> None:
+def convertGenbankToFasta(genome_dir: Path, out_dir: Path, workers: int = 1, no_progress: bool = False) -> None:
     """
     This function takes the path to a genome folder containing genbank files.
     It then uses any2fasta in a subprocess to convert them to FASTA format and store them in the out folder.
@@ -124,7 +124,10 @@ def convertGenbankToFasta(genome_dir: Path, out_dir: Path, workers: int = 1) -> 
     # Convert the GenBank files in parallel
     ios = [(i, out_dir / i.with_suffix('.fasta').name) for i in genome_dir.iterdir()]
     LOG.info(f'Converting {len(ios)} Genbank genomes to Fasta format.')
-    thread_map(_convertOneGenbankToFasta, ios, max_workers = workers)
+    thread_map(_convertOneGenbankToFasta, ios,
+               max_workers = workers,
+               leave = False,
+               disable = no_progress)
     
     return None
 

@@ -32,7 +32,10 @@ class LocalRegionRun(LocalRun, RegionRun):
         regions = [r.to_dict() for i,r in self.binary_df.iterrows()]
         contig_ends = thread_map(lambda x: util._extractOneRegion(x, self.margin, self.TEMP_GENOME_DIR, 
                                                                   self.DEREP_IN_DIR, self.strict_regions), 
-                                 regions, max_workers = self.cores)
+                                 regions, 
+                                 max_workers = self.cores,
+                                 leave = False,
+                                 disable = self.no_progress)
         contig_end = sum(contig_ends)
 
         LOG.info(f'{contig_end} regions were at a contig end.')
