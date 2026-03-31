@@ -17,6 +17,7 @@ from copy import deepcopy
 from scipy.stats import zscore
 from random import choice
 from cblaster.classes import Session
+from cblaster.extract_clusters import get_sorted_cluster_hierarchies
 
 
 LOG = logging.getLogger()
@@ -44,15 +45,26 @@ class Run(ABC):
         self.no_progress: bool = args.no_progress
         
         # Parse IO arguments:
-        self.session: Session = Session.from_file(args.session_file.resolve())  # Stores the session file as a Session object
+        self.keep_dereplication: bool = args.keep_dereplication
+        self.keep_downloads: bool = args.keep_downloads
+        self.keep_intermediate: bool = args.keep_intermediate
+        
+        # Define paths and check output folders
         self.OUT_DIR: Path = args.output_dir.resolve()  # Output directory
         Path(args.temp_dir).resolve().mkdir(parents = True, exist_ok = True)
         self.TEMP_DIR_CONTEXT: TemporaryDirectory = TemporaryDirectory(dir = args.temp_dir, delete = False)  # Temporary directory (within the given temporary directory)
         self.TEMP_DIR = Path(self.TEMP_DIR_CONTEXT.name)
         self.USER_GENOME_DIR: Path = args.genome_dir.resolve()  # Genome directory provided by the user
-        self.keep_dereplication: bool = args.keep_dereplication
-        self.keep_downloads: bool = args.keep_downloads
-        self.keep_intermediate: bool = args.keep_intermediate
+        self.DEREP_OUT_DIR: Path = self.TEMP_DIR / 'derep_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
+        # Output directory should not exist yet.
+        try:
+            self.OUT_DIR.mkdir(parents = True)
+        except FileExistsError:
+            if args.force:
+                LOG.warning('Output folder already exists, but it will be overwritten.')
+            else:
+                LOG.error('Output folder already exists! Rerun with -f to overwrite it.')
+                sys.exit()
         
         # Parse bypass and excluded scaffolds/assemblies:
         self.bypass_organisms: set = {i.strip() for i in args.bypass_organisms.split(',')}  # Converts comma-separated sequence to a set.
@@ -76,34 +88,35 @@ class Run(ABC):
         self.no_recovery_by_score: bool = args.no_recovery_by_score
         self.zscore_outlier_threshold: float = args.zscore_outlier_threshold
         self.minimal_score_difference: float = args.minimal_score_difference
-            
-        ## Now some non-user defined variables follow: ##
-        # Make a binary table file from the session object:
+        
+        # This variable will store the filtered session file, the end result.
+        self.filtered_session: Session | None = None
+        
+        ## Now get the information we want from the session file
+        # First parse the binary table
+        self.session: Session = Session.from_file(args.session_file.resolve()) # Stores the session file as a Session object
         with (self.TEMP_DIR / 'binary.txt').open('w') as handle:
            self.session.format("binary", delimiter = "\t", fp = handle)
-
-        # Store it internally as a dataframe:     
         self.binary_df = pd.read_table(self.TEMP_DIR / 'binary.txt', 
                                        sep = "\t", 
                                        converters= {'Organism': util.removeSuffixes})  # removeSuffixes only relevant in local mode. 
         os.remove(self.TEMP_DIR / 'binary.txt')
         
-        # This variable will store the filtered session file, the end result.
-        self.filtered_session: Session | None = None
+        # Then join with cluster numbers, layouts and strand positions
+        all_scaffolds = [sc for _,sc,_ in get_sorted_cluster_hierarchies(self.session, max_clusters=None)]
+        scaffold_number_map = pd.DataFrame([{'Scaffold': sc.accession,
+                                             'Number': cl.number,
+                                             'Start': cl.start,
+                                             'End': cl.end,
+                                             'Strand': tuple([sbj.strand for sbj in cl.subjects]),
+                                             'Layout_group': tuple(cl.indices)}
+                                            for sc in all_scaffolds for cl in sc.clusters])
+        self.binary_df = self.binary_df.merge(scaffold_number_map, on = ['Scaffold', 'Start', 'End'])
         
-        # Set directory for dereplication output
-        self.DEREP_OUT_DIR: Path = self.TEMP_DIR / 'derep_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
+        # Check whether layouts are truly different when seen from the complementary strand
+        # and correct if necessary
+        self.binary_df = util._correctLayouts(self.binary_df)
         
-        # Output directory should not exist yet.
-        try:
-            self.OUT_DIR.mkdir(parents = True)
-        except FileExistsError:
-            if args.force:
-                LOG.warning('Output folder already exists, but it will be overwritten.')
-            else:
-                LOG.error('Output folder already exists! Rerun with -f to overwrite it.')
-                sys.exit()
-                
         return None
     
     @abstractmethod
