@@ -133,7 +133,7 @@ class Run(ABC):
             self.binary_df: pd.DataFrame: Binary table derived from the cblaster Session object.
         """
         
-        def recoverHitsByScore(df: pd.DataFrame) -> pd.DataFrame():
+        def recoverHitsByScore(df: pd.DataFrame) -> pd.DataFrame:
             """
             Auxiliary function that takes a dataframe (structural subgroup in this context) and calculates z_scores and minimal difference. 
             It then alters the OG binary table at the correct index and returns the updated grouping to recoverByContent()
@@ -166,48 +166,43 @@ class Run(ABC):
         
         
         # If the user is not interested in recovering by content, skip this workflow.
-        if self.no_recovery_by_content == True:
+        if self.no_recovery_by_content:
             LOG.info("Skipping hit recovery.")
+            return None
         
-        else:   
-            if self.no_recovery_by_score == True:
-                LOG.info("Skipping hit rcovery by score.")
+        if self.no_recovery_by_score:
+            LOG.info("Skipping hit recovery by score.")
+        
+        # Group by representative and layout group
+        grouped_by_rep_layout = self.binary_df.groupby(['representative', 'Layout_group'])
+        for rep_layout, group in grouped_by_rep_layout:
+            LOG.debug(f"Recovering hits in the group of {rep_layout[0]} with layout {rep_layout[1]}.")
+            LOG.debug(f"-> {len(group)} hits in this group")
             
-            # Loop over each representative cluster:
-            grouped_by_rep = self.binary_df.groupby('representative')  # Define the grouping
-            for representative, cluster in grouped_by_rep:
-                LOG.debug(f"Recovering hits in the group of {representative}.")
-                LOG.debug(f"-> {len(cluster)} hits in this group")
+            # Now we want to recover hits with outlier scores within this group of hits with same representative and cluster layout
+            if not(self.no_recovery_by_score):
+                group = recoverHitsByScore(group)  # This group now contains rows that are 'readded_by_score'
+            
+            # If there is a dereplication presentative in this group, we can skip it since it's already represented
+            if 'dereplication_representative' in group['dereplication_status'].to_list():
+                continue
+            else:
+                # If there is no dereplication representative, recover a random one (not already recovered by score), 
+                # and change its status in the OG binary dataframe
                 
-                # Now we have to create subgroups within each group based on the amount of genes in each cluster:        
-                # Loop over the grouping:
-                grouped_by_content = cluster.groupby(self.session.queries)
-                LOG.debug(f"-> {len(grouped_by_content)} subgroups based on gene cluster composition.")
-                for _, group in grouped_by_content:
-                    
-                    # Now we want to recover by cblaster score:
-                    if self.no_recovery_by_score == False:
-                        group = recoverHitsByScore(group)  # This group now contains rows that are 'readded_by_score'
-                    
-                    # Check if a representative is in here. If yes, continue:
-                    if 'dereplication_representative' in group['dereplication_status'].to_list():
-                        continue
-                    else:
-                        # If there is no representative, pick a random one (that is not already recovered by score), 
-                        # get its index, and change the status in the OG binary dataframe:
-                        # First we exclude the ones that were already readded by score:
-                        group = group[group['dereplication_status'] != 'readded_by_score']
-                        # Update the OG binary table at a random index (choice()) from this group
-                        self.binary_df.at[choice(group.index), 'dereplication_status'] = 'readded_by_content'
-        
-            if self.no_recovery_by_content == False:
-                recovered_by_content = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_content']['dereplication_status'].to_list())
-                LOG.info(f"Total hits recovered by alternative gene cluster composition: {recovered_by_content}")
-                if self.no_recovery_by_score == False:
-                    recovered_by_score = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_score']['dereplication_status'].to_list())
-                    LOG.info(f"Total hits recovered by outlier cblaster score: {recovered_by_score}")
-                    
-            self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])
+                # First we exclude the ones that were already readded by score:
+                group_without_score_recovered = group[group['dereplication_status'] != 'readded_by_score']
+                # Update the OG binary table at a random index (choice()) from this group
+                self.binary_df.at[choice(group_without_score_recovered.index), 'dereplication_status'] = 'readded_by_content'
+    
+        # Log some counts
+        recovered_by_content = sum(self.binary_df['dereplication_status'] == 'readded_by_content')
+        LOG.info(f"Total hits recovered by alternative gene cluster composition: {recovered_by_content}")
+        if not(self.no_recovery_by_score):
+            recovered_by_score = sum(self.binary_df['dereplication_status'] == 'readded_by_score')
+            LOG.info(f"Total hits recovered by outlier cblaster score: {recovered_by_score}")
+                
+        self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status', 'Layout_group'])
 
         return None
     
