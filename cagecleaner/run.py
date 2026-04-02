@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Internal imports:
-from cagecleaner import util
+from cagecleaner.file_utils import removeSuffixes, correctLayouts
 
 # External libraries:
 import pandas as pd
@@ -99,7 +99,7 @@ class Run(ABC):
            self.session.format("binary", delimiter = "\t", fp = handle)
         self.binary_df = pd.read_table(self.TEMP_DIR / 'binary.txt', 
                                        sep = "\t", 
-                                       converters= {'Organism': util.removeSuffixes})  # removeSuffixes only relevant in local mode. 
+                                       converters= {'Organism': removeSuffixes})  # removeSuffixes only relevant in local mode. 
         os.remove(self.TEMP_DIR / 'binary.txt')
         
         # Then join with cluster numbers, layouts and strand positions
@@ -115,7 +115,7 @@ class Run(ABC):
         
         # Check whether layouts are truly different when seen from the complementary strand
         # and correct if necessary
-        self.binary_df = util._correctLayouts(self.binary_df)
+        self.binary_df = correctLayouts(self.binary_df)
         
         return None
     

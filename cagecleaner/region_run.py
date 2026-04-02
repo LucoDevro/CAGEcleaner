@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from cagecleaner.run import Run
-from cagecleaner import util
+from cagecleaner.communication import _stream_reader
 
 import logging
 import shutil
@@ -64,8 +64,8 @@ class RegionRun(Run):
         def mmseqs_stdout_log(s): return LOG.debug(s.rstrip())
         def mmseqs_stderr_log(s): return LOG.warning(s.rstrip())
         
-        t_out = threading.Thread(target=util._stream_reader, args=(proc.stdout, mmseqs_stdout_log))
-        t_err = threading.Thread(target=util._stream_reader, args=(proc.stderr, mmseqs_stderr_log))
+        t_out = threading.Thread(target=_stream_reader, args=(proc.stdout, mmseqs_stdout_log))
+        t_err = threading.Thread(target=_stream_reader, args=(proc.stderr, mmseqs_stderr_log))
         t_out.daemon = True
         t_err.daemon = True
         t_out.start()

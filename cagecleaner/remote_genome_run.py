@@ -3,7 +3,8 @@
 
 from cagecleaner.remote_run import RemoteRun
 from cagecleaner.genome_run import GenomeRun
-from cagecleaner import util
+from cagecleaner.file_utils import isFasta
+from cagecleaner.communication import get_assembly_accessions
 
 import logging
 import os
@@ -55,8 +56,6 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         Mutates:
             self.assembly_accessions: list: A list of assembly IDs to be downloaded later on.
         """
-        home = os.getcwd()
-        
         ## First we extract the scaffold IDs out of the binary table
         scaffolds = self.binary_df['Scaffold'].to_list()
         LOG.info(f"Got {len(scaffolds)} scaffold IDs to crossref")
@@ -70,47 +69,16 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         
         ## Fetch RefSeq assembly IDs
         LOG.info('Fetching RefSeq Assembly IDs')
-        LOG.info('Opening subshell')
-        
-        # Write IDs to a file with every scaffold ID on a new line:
-        refseq_file: Path = self.TEMP_DIR / 'scaffolds_refseq.txt'
-        with refseq_file.open('w') as file:
-            file.writelines('\n'.join(refseq_scaffolds))
-
-        # Now we use the helper bash script to map the scaffolds to the NCBI assembly IDs that host them.
-        os.chdir(self.TEMP_DIR)
-        subprocess.run(['bash', str(self.ACCESSIONS_SCRIPT), 'scaffolds_refseq.txt', 'RefSeq'], check = True)
-        os.chdir(home)
-        
-        # Read the result file
-        result_file: Path = self.TEMP_DIR / 'assembly_accessions.txt'
-        with result_file.open('r') as file:
-            # Store the assembly accessions internally:
-            refseq_assembly_accessions = [line.rstrip() for line in file.readlines()]
+        refseq_assembly_accessions = get_assembly_accessions(refseq_scaffolds, 'RefSeq', no_progress = self.no_progress)
         
         ## Fetch Genbank assembly IDs
         LOG.info('Fetching Genbank Assembly IDs')
-        LOG.info('Opening subshell')
-        
-        genbank_file: Path = self.TEMP_DIR / 'scaffolds_genbank.txt'
-        with genbank_file.open('w') as file:
-            file.writelines('\n'.join(genbank_scaffolds))
-            
-        os.chdir(self.TEMP_DIR)
-        subprocess.run(['bash', str(self.ACCESSIONS_SCRIPT), 'scaffolds_genbank.txt', 'Genbank'], check = True)
-        os.chdir(home)
-        
-        result_file: Path = self.TEMP_DIR / 'assembly_accessions.txt'
-        with result_file.open('r') as file:
-            # Store the assembly accessions internally:
-            genbank_assembly_accessions = [line.rstrip() for line in file.readlines()]
+        genbank_assembly_accessions = get_assembly_accessions(genbank_scaffolds, 'Genbank', no_progress = self.no_progress)
         
         ## Gather and deduplicate assembly IDs
-        LOG.info('Merging ID sets and taking the latest assembly versions')
+        LOG.info('Merging ID sets')
         assembly_accessions = refseq_assembly_accessions + genbank_assembly_accessions
-        assembly_accessions_df = pd.DataFrame(assembly_accessions, columns = ['IDs'])
-        assembly_accessions_df = assembly_accessions_df.sort_values(by = 'IDs').drop_duplicates(keep = "last")
-        assembly_accessions = assembly_accessions_df['IDs'].to_list()
+        LOG.info(f'Got {len(assembly_accessions)} accession IDs in total')
         self.assembly_accessions = assembly_accessions
 
         return None
@@ -173,7 +141,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         # Loop over the directory containing all genomes:
         for file in self.DEREP_IN_DIR.iterdir():
             # Only read fasta files:
-            if util.isFasta(file.name):
+            if isFasta(file.name):
                 LOG.debug(f"Reading {file.name}")
                 # Open the file:
                 with gzip.open(file, 'rt') as assembly:

@@ -3,7 +3,7 @@
 
 from cagecleaner.remote_run import RemoteRun
 from cagecleaner.region_run import RegionRun
-from cagecleaner import util
+from cagecleaner.communication import _downloadOneRegion
 
 import logging
 import pandas as pd
@@ -32,7 +32,7 @@ class RemoteRegionRun(RemoteRun, RegionRun):
             LOG.warning("You are requesting too many download workers by NCBI policy. Limiting the number to 2 for compliance.")
         else:
             max_workers = self.download_workers
-        thread_map(lambda x: util._downloadOneRegion(x, self.DEREP_IN_DIR), regions, 
+        thread_map(lambda x: _downloadOneRegion(x, self.DEREP_IN_DIR), regions, 
                    max_workers = max_workers,
                    leave = False,
                    disable = self.no_progress)
