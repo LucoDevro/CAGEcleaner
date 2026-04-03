@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from cagecleaner.run import Run
-from cagecleaner import util
+from cagecleaner.file_utils import isFasta, isGff, isGenbank, removeSuffixes, convertGenbankToFasta
 
 import logging
 import os
@@ -29,7 +29,7 @@ class LocalRun(Run):
         # Make sure there is no exotic stuff in the provided genome folder
         for file in self.USER_GENOME_DIR.iterdir():
             assert file.is_file(), f"The following object in the genome folder is not a file: {file}. Please move or remove it."
-            assert (util.isFasta(str(file)) or util.isGff(str(file)) or util.isGenbank(str(file))), f"The following file is not in the correct format: {file}.\nWe only accept the following suffices: [.fasta, .fna, .fa, .gff3, .gff, .gbff, .gbk, .gb]. The '.gz' extension is allowed."
+            assert (isFasta(str(file)) or isGff(str(file)) or isGenbank(str(file))), f"The following file is not in the correct format: {file}.\nWe only accept the following suffices: [.fasta, .fna, .fa, .gff3, .gff, .gbff, .gbk, .gb]. The '.gz' extension is allowed."
         
         # Remove organisms that the user wants to be excluded:
         if self.excluded_organisms != {''}:
@@ -67,14 +67,14 @@ class LocalRun(Run):
         """
         
         # Assert that Organism and filenames correspond:
-        files_in_genomes_dir: set = {util.removeSuffixes(file) for file in os.listdir(self.USER_GENOME_DIR)}
-        organisms_in_session: set = {util.removeSuffixes(organism.name) for organism in self.session.organisms}
+        files_in_genomes_dir: set = {removeSuffixes(file) for file in os.listdir(self.USER_GENOME_DIR)}
+        organisms_in_session: set = {removeSuffixes(organism.name) for organism in self.session.organisms}
         
         assert files_in_genomes_dir >= organisms_in_session, "The genomes of all organisms in the cblaster session have not been found in the genome directory. Check the paths and please make sure you have not changed the genome filenames between a cblaster run and a CAGEcleaner run."
         
         # Check if there are FASTA files in the genome folder:
-        fasta_in_folder = [util.isFasta(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
-        genbank_in_folder = [util.isGenbank(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
+        fasta_in_folder = [isFasta(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
+        genbank_in_folder = [isGenbank(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
 
         if any(fasta_in_folder):
             # In this case the genome folder path should remain the same
@@ -88,7 +88,7 @@ class LocalRun(Run):
             # Convert to FASTA files:
             self.TEMP_GENOME_DIR = self.TEMP_DIR / 'genomes'
             self.TEMP_GENOME_DIR.mkdir(exist_ok=True)  # Make the temporary genome folder if it does not exist already.
-            util.convertGenbankToFasta(self.USER_GENOME_DIR, self.TEMP_GENOME_DIR, workers = self.cores)
+            convertGenbankToFasta(self.USER_GENOME_DIR, self.TEMP_GENOME_DIR, workers = self.cores)
             LOG.info(f"Saved genomes in FASTA format to {self.TEMP_GENOME_DIR}")
             
         else:

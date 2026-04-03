@@ -88,7 +88,7 @@ def parseArguments():
     args_recovery.add_argument('--no_recovery_content', dest = 'no_recovery_by_content', default = False, action = "store_true", help = "Skip recovering hits by cluster content (default: False)")
     args_recovery.add_argument('--no_recovery_score', dest = 'no_recovery_by_score', default = False, action = "store_true", help = "Skip recovering hits by outlier scores (default: False)")
     args_recovery.add_argument('--min_z_score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
-    args_recovery.add_argument('--min_score_diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum cblaster score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
+    args_recovery.add_argument('--min_score_diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
 
     args = parser.parse_args()
     

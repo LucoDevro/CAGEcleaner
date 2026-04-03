@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # Internal imports:
-from cagecleaner import util
+from cagecleaner.file_utils import removeSuffixes
+from cagecleaner.utils import correctLayouts
 
 # External libraries:
 import pandas as pd
@@ -17,6 +18,7 @@ from copy import deepcopy
 from scipy.stats import zscore
 from random import choice
 from cblaster.classes import Session
+from cblaster.extract_clusters import get_sorted_cluster_hierarchies
 
 
 LOG = logging.getLogger()
@@ -44,15 +46,26 @@ class Run(ABC):
         self.no_progress: bool = args.no_progress
         
         # Parse IO arguments:
-        self.session: Session = Session.from_file(args.session_file.resolve())  # Stores the session file as a Session object
+        self.keep_dereplication: bool = args.keep_dereplication
+        self.keep_downloads: bool = args.keep_downloads
+        self.keep_intermediate: bool = args.keep_intermediate
+        
+        # Define paths and check output folders
         self.OUT_DIR: Path = args.output_dir.resolve()  # Output directory
         Path(args.temp_dir).resolve().mkdir(parents = True, exist_ok = True)
         self.TEMP_DIR_CONTEXT: TemporaryDirectory = TemporaryDirectory(dir = args.temp_dir, delete = False)  # Temporary directory (within the given temporary directory)
         self.TEMP_DIR = Path(self.TEMP_DIR_CONTEXT.name)
         self.USER_GENOME_DIR: Path = args.genome_dir.resolve()  # Genome directory provided by the user
-        self.keep_dereplication: bool = args.keep_dereplication
-        self.keep_downloads: bool = args.keep_downloads
-        self.keep_intermediate: bool = args.keep_intermediate
+        self.DEREP_OUT_DIR: Path = self.TEMP_DIR / 'derep_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
+        # Output directory should not exist yet.
+        try:
+            self.OUT_DIR.mkdir(parents = True)
+        except FileExistsError:
+            if args.force:
+                LOG.warning('Output folder already exists, but it will be overwritten.')
+            else:
+                LOG.error('Output folder already exists! Rerun with -f to overwrite it.')
+                sys.exit()
         
         # Parse bypass and excluded scaffolds/assemblies:
         self.bypass_organisms: set = {i.strip() for i in args.bypass_organisms.split(',')}  # Converts comma-separated sequence to a set.
@@ -76,34 +89,35 @@ class Run(ABC):
         self.no_recovery_by_score: bool = args.no_recovery_by_score
         self.zscore_outlier_threshold: float = args.zscore_outlier_threshold
         self.minimal_score_difference: float = args.minimal_score_difference
-            
-        ## Now some non-user defined variables follow: ##
-        # Make a binary table file from the session object:
-        with (self.TEMP_DIR / 'binary.txt').open('w') as handle:
-           self.session.format("binary", delimiter = "\t", fp = handle)
-
-        # Store it internally as a dataframe:     
-        self.binary_df = pd.read_table(self.TEMP_DIR / 'binary.txt', 
-                                       sep = "\t", 
-                                       converters= {'Organism': util.removeSuffixes})  # removeSuffixes only relevant in local mode. 
-        os.remove(self.TEMP_DIR / 'binary.txt')
         
         # This variable will store the filtered session file, the end result.
         self.filtered_session: Session | None = None
         
-        # Set directory for dereplication output
-        self.DEREP_OUT_DIR: Path = self.TEMP_DIR / 'derep_out'  # Folder where skder will place its output. The directory will be made by the dereplication script when it is called.
+        ## Now get the information we want from the session file
+        # First parse the binary table
+        self.session: Session = Session.from_file(args.session_file.resolve()) # Stores the session file as a Session object
+        with (self.TEMP_DIR / 'binary.txt').open('w') as handle:
+           self.session.format("binary", delimiter = "\t", fp = handle)
+        self.binary_df = pd.read_table(self.TEMP_DIR / 'binary.txt', 
+                                       sep = "\t", 
+                                       converters= {'Organism': removeSuffixes})  # removeSuffixes only relevant in local mode. 
+        os.remove(self.TEMP_DIR / 'binary.txt')
         
-        # Output directory should not exist yet.
-        try:
-            self.OUT_DIR.mkdir(parents = True)
-        except FileExistsError:
-            if args.force:
-                LOG.warning('Output folder already exists, but it will be overwritten.')
-            else:
-                LOG.error('Output folder already exists! Rerun with -f to overwrite it.')
-                sys.exit()
-                
+        # Then join with cluster numbers, layouts and strand positions
+        all_scaffolds = [sc for _,sc,_ in get_sorted_cluster_hierarchies(self.session, max_clusters=None)]
+        scaffold_number_map = pd.DataFrame([{'Scaffold': sc.accession,
+                                             'Number': cl.number,
+                                             'Start': cl.start,
+                                             'End': cl.end,
+                                             'Strand': tuple([sbj.strand for sbj in cl.subjects]),
+                                             'Layout_group': tuple(cl.indices)}
+                                            for sc in all_scaffolds for cl in sc.clusters])
+        self.binary_df = self.binary_df.merge(scaffold_number_map, on = ['Scaffold', 'Start', 'End'])
+        
+        # Check whether layouts are truly different when seen from the complementary strand
+        # and correct if necessary
+        self.binary_df = correctLayouts(self.binary_df)
+        
         return None
     
     @abstractmethod
@@ -120,7 +134,7 @@ class Run(ABC):
             self.binary_df: pd.DataFrame: Binary table derived from the cblaster Session object.
         """
         
-        def recoverHitsByScore(df: pd.DataFrame) -> pd.DataFrame():
+        def recoverHitsByScore(df: pd.DataFrame) -> pd.DataFrame:
             """
             Auxiliary function that takes a dataframe (structural subgroup in this context) and calculates z_scores and minimal difference. 
             It then alters the OG binary table at the correct index and returns the updated grouping to recoverByContent()
@@ -153,48 +167,43 @@ class Run(ABC):
         
         
         # If the user is not interested in recovering by content, skip this workflow.
-        if self.no_recovery_by_content == True:
+        if self.no_recovery_by_content:
             LOG.info("Skipping hit recovery.")
+            return None
         
-        else:   
-            if self.no_recovery_by_score == True:
-                LOG.info("Skipping hit rcovery by score.")
+        if self.no_recovery_by_score:
+            LOG.info("Skipping hit recovery by score.")
+        
+        # Group by representative and layout group
+        grouped_by_rep_layout = self.binary_df.groupby(['representative', 'Layout_group'])
+        for rep_layout, group in grouped_by_rep_layout:
+            LOG.debug(f"Recovering hits in the group of {rep_layout[0]} with layout {rep_layout[1]}.")
+            LOG.debug(f"-> {len(group)} hits in this group")
             
-            # Loop over each representative cluster:
-            grouped_by_rep = self.binary_df.groupby('representative')  # Define the grouping
-            for representative, cluster in grouped_by_rep:
-                LOG.debug(f"Recovering hits in the group of {representative}.")
-                LOG.debug(f"-> {len(cluster)} hits in this group")
+            # Now we want to recover hits with outlier scores within this group of hits with same representative and cluster layout
+            if not(self.no_recovery_by_score):
+                group = recoverHitsByScore(group)  # This group now contains rows that are 'readded_by_score'
+            
+            # If there is a dereplication presentative in this group, we can skip it since it's already represented
+            if 'dereplication_representative' in group['dereplication_status'].to_list():
+                continue
+            else:
+                # If there is no dereplication representative, recover a random one (not already recovered by score), 
+                # and change its status in the OG binary dataframe
                 
-                # Now we have to create subgroups within each group based on the amount of genes in each cluster:        
-                # Loop over the grouping:
-                grouped_by_content = cluster.groupby(self.session.queries)
-                LOG.debug(f"-> {len(grouped_by_content)} subgroups based on gene cluster composition.")
-                for _, group in grouped_by_content:
-                    
-                    # Now we want to recover by cblaster score:
-                    if self.no_recovery_by_score == False:
-                        group = recoverHitsByScore(group)  # This group now contains rows that are 'readded_by_score'
-                    
-                    # Check if a representative is in here. If yes, continue:
-                    if 'dereplication_representative' in group['dereplication_status'].to_list():
-                        continue
-                    else:
-                        # If there is no representative, pick a random one (that is not already recovered by score), 
-                        # get its index, and change the status in the OG binary dataframe:
-                        # First we exclude the ones that were already readded by score:
-                        group = group[group['dereplication_status'] != 'readded_by_score']
-                        # Update the OG binary table at a random index (choice()) from this group
-                        self.binary_df.at[choice(group.index), 'dereplication_status'] = 'readded_by_content'
-        
-            if self.no_recovery_by_content == False:
-                recovered_by_content = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_content']['dereplication_status'].to_list())
-                LOG.info(f"Total hits recovered by alternative gene cluster composition: {recovered_by_content}")
-                if self.no_recovery_by_score == False:
-                    recovered_by_score = len(self.binary_df[self.binary_df['dereplication_status'] == 'readded_by_score']['dereplication_status'].to_list())
-                    LOG.info(f"Total hits recovered by outlier cblaster score: {recovered_by_score}")
-                    
-            self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])
+                # First we exclude the ones that were already readded by score:
+                group_without_score_recovered = group[group['dereplication_status'] != 'readded_by_score']
+                # Update the OG binary table at a random index (choice()) from this group
+                self.binary_df.at[choice(group_without_score_recovered.index), 'dereplication_status'] = 'readded_by_content'
+    
+        # Log some counts
+        recovered_by_content = sum(self.binary_df['dereplication_status'] == 'readded_by_content')
+        LOG.info(f"Total hits recovered by alternative gene cluster composition: {recovered_by_content}")
+        if not(self.no_recovery_by_score):
+            recovered_by_score = sum(self.binary_df['dereplication_status'] == 'readded_by_score')
+            LOG.info(f"Total hits recovered by outlier hit score: {recovered_by_score}")
+                
+        self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status', 'Layout_group'])
 
         return None
     
@@ -307,9 +316,9 @@ class Run(ABC):
             numbers_handle.write(','.join([str(nb) for nb in filtered_cluster_numbers]))
                 
         # Cluster sizes:
-        LOG.debug("Writing genome cluster sizes.")
+        LOG.debug("Writing cluster sizes.")
         cluster_sizes = self.binary_df.groupby('representative').size().to_frame(name='cluster_size')
-        cluster_sizes.to_csv(self.OUT_DIR / 'genome_cluster_sizes.txt', sep='\t')
+        cluster_sizes.to_csv(self.OUT_DIR / 'cluster_sizes.txt', sep='\t')
         
         # Keep temp output
         if self.keep_intermediate or self.keep_downloads:

@@ -3,7 +3,7 @@
 
 from cagecleaner.local_run import LocalRun
 from cagecleaner.region_run import RegionRun
-from cagecleaner import util
+from cagecleaner.file_utils import _extractOneRegion
 
 import logging
 import pandas as pd
@@ -30,8 +30,8 @@ class LocalRegionRun(LocalRun, RegionRun):
         
         # Extract regions in parallel
         regions = [r.to_dict() for i,r in self.binary_df.iterrows()]
-        contig_ends = thread_map(lambda x: util._extractOneRegion(x, self.margin, self.TEMP_GENOME_DIR, 
-                                                                  self.DEREP_IN_DIR, self.strict_regions), 
+        contig_ends = thread_map(lambda x: _extractOneRegion(x, self.margin, self.TEMP_GENOME_DIR, 
+                                                             self.DEREP_IN_DIR, self.strict_regions), 
                                  regions, 
                                  max_workers = self.cores,
                                  leave = False,

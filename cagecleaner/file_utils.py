@@ -3,7 +3,6 @@ import logging
 import subprocess
 import gzip
 import os
-import shutil
 from pathlib import Path
 from tqdm.contrib.concurrent import thread_map
 from Bio import SeqIO
@@ -53,21 +52,6 @@ def isGenbank(file: str) -> bool:
         return False
     else:
         return True
-    
-    
-def _stream_reader(pipe, write_func):
-    try:
-        with pipe:
-            for chunk in iter(lambda: pipe.readline(), b''):
-                if not chunk:
-                    break
-                try:
-                    text = chunk.decode('utf-8', 'replace')
-                except Exception:
-                    text = chunk.decode('latin-1', 'replace')
-                write_func(text)
-    except Exception:
-        LOG.exception("stream reader error")
     
     
 def _extractOneRegion(row: dict, margin: int, in_dir: Path, out_dir: Path, strict: bool) -> bool:
@@ -131,25 +115,3 @@ def convertGenbankToFasta(genome_dir: Path, out_dir: Path, workers: int = 1, no_
     
     return None
 
-def _downloadOneRegion(region: tuple, out_dir: Path) -> None:
-    accession, nucl_range = region
-    out_file = (out_dir / accession).with_suffix('.fasta')
-    
-    acc_downloader_executable = shutil.which('ncbi-acc-download')
-    cmd = [acc_downloader_executable,
-           '-m', 'nucleotide',
-           '-F', 'fasta',
-           '-o', '/dev/stdout',
-           '-g', nucl_range,
-           accession]
-    
-    with open(out_file, 'w') as handle:
-        subprocess.run(cmd, stdout = handle, check = True, text = True)
-    with open(out_file, "r") as handle:
-        with gzip.open(out_file.with_suffix('.fasta.gz'), "wt") as compressed_handle:
-            compressed_handle.writelines(handle)
-    os.remove(out_file)
-    
-    return None
-    
-    

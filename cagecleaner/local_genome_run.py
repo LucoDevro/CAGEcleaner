@@ -3,7 +3,7 @@
 
 from cagecleaner.local_run import LocalRun
 from cagecleaner.genome_run import GenomeRun
-from cagecleaner import util
+from cagecleaner.file_utils import removeSuffixes
 
 import logging
 import os
@@ -33,7 +33,7 @@ class LocalGenomeRun(LocalRun, GenomeRun):
         """
         # Full genome dereplication using skDER
         def extractAssembly(file_path: str) -> str:
-            return util.removeSuffixes(os.path.basename(file_path))
+            return removeSuffixes(os.path.basename(file_path))
         
         def renameLabel(label: str) -> str:
             mapping = {'representative_to_self': 'dereplication_representative',
