@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # Internal imports:
-from cagecleaner.file_utils import removeSuffixes, correctLayouts
+from cagecleaner.file_utils import removeSuffixes
+from cagecleaner.utils import correctLayouts
 
 # External libraries:
 import pandas as pd
@@ -200,7 +201,7 @@ class Run(ABC):
         LOG.info(f"Total hits recovered by alternative gene cluster composition: {recovered_by_content}")
         if not(self.no_recovery_by_score):
             recovered_by_score = sum(self.binary_df['dereplication_status'] == 'readded_by_score')
-            LOG.info(f"Total hits recovered by outlier cblaster score: {recovered_by_score}")
+            LOG.info(f"Total hits recovered by outlier hit score: {recovered_by_score}")
                 
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status', 'Layout_group'])
 
@@ -315,9 +316,9 @@ class Run(ABC):
             numbers_handle.write(','.join([str(nb) for nb in filtered_cluster_numbers]))
                 
         # Cluster sizes:
-        LOG.debug("Writing genome cluster sizes.")
+        LOG.debug("Writing cluster sizes.")
         cluster_sizes = self.binary_df.groupby('representative').size().to_frame(name='cluster_size')
-        cluster_sizes.to_csv(self.OUT_DIR / 'genome_cluster_sizes.txt', sep='\t')
+        cluster_sizes.to_csv(self.OUT_DIR / 'cluster_sizes.txt', sep='\t')
         
         # Keep temp output
         if self.keep_intermediate or self.keep_downloads:

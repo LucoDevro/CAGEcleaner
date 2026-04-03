@@ -4,7 +4,6 @@ import subprocess
 import gzip
 import os
 import shutil
-import sys
 import warnings
 from itertools import batched
 from pathlib import Path

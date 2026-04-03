@@ -4,18 +4,23 @@
 from cagecleaner.remote_run import RemoteRun
 from cagecleaner.genome_run import GenomeRun
 from cagecleaner.file_utils import isFasta
-from cagecleaner.communication import get_assembly_accessions
+from cagecleaner.communication import get_assembly_accessions, _stream_reader
 
 import logging
+import sys
 import os
-import subprocess
 import re
 import gzip
+import shutil
+import threading
+import subprocess
 import pandas as pd
 from pathlib import Path
 from itertools import batched
 from Bio import SeqIO
 from importlib import resources
+from tqdm import tqdm
+from tqdm.contrib.logging import logging_redirect_tqdm
 
 
 LOG = logging.getLogger()
@@ -89,24 +94,100 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         It then calls a bash script that downloads the genomes for each line of assembly IDs.
         Genome files are placed in the TEMP_DIR/genomes folder (in gzipped format)
         """
+        LOG.info('Preparing to download assembies...')
+        
         # First we cut off the version digits of our assembly IDs, and rely on NCBI datatsets to fetch the latest version:
         versionless_assemblies = [acc.split('.')[0] for acc in self.assembly_accessions]
         
-        LOG.debug("Writing assembly ID batches for download script.")
-        # Now we write the assembly accesions to a file in batches:
-        download_batches_file: Path = self.TEMP_DIR / 'download_batches.txt'
-        with download_batches_file.open('w') as file:
-            download_batches = list(batched(versionless_assemblies, self.download_batch))
-            for batch in download_batches:
-                file.write(' '.join(batch) + '\n')
+        # Make download batches
+        download_batches = list(batched(versionless_assemblies, self.download_batch))
+        
+        # Then download all batches
+        nb_assemblies = len(versionless_assemblies)
+        nb_batches = len(download_batches)
+        def datasets_stdout_log(s): return LOG.debug(s.rstrip())
+        def datasets_stderr_log(s): return LOG.warning(s.rstrip())
+        
+        LOG.info(f'Got {nb_assemblies} assembly IDs. Downloading genomes in {nb_batches} batches.')
+        
+        for idx, batch in tqdm(list(enumerate(download_batches)), leave = False, disable = self.no_progress):
+            LOG.info(f"Downloading batch {idx+1} out of {nb_batches}")
+            
+            DOWNLOADS = (self.TEMP_DIR / 'downloads')
+            DOWNLOADS.mkdir(parents = True, exist_ok = True)
+            datasets_zip = DOWNLOADS / "ncbi_dataset.zip"
+            datasets_executable = shutil.which('datasets')
+            
+            # download command
+            fetch_cmd = [datasets_executable, 'download', 'genome', 'accession',
+                   ','.join(batch),
+                   '--filename', str(datasets_zip.resolve()),
+                   '--dehydrated',
+                   '--no-progressbar']
+            
+            LOG.debug(f'Running command: {" ".join(fetch_cmd)}')
+            with logging_redirect_tqdm(loggers = [LOG]):
+                # Get fetch URLs from NCBI
+                proc = subprocess.Popen(fetch_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 
-        # Run the bash script to download genomes:
-        home = os.getcwd()
-        os.chdir(self.TEMP_DIR)
-        LOG.debug("Calling download script.")
-        subprocess.run(["bash", str(self.DOWNLOAD_SCRIPT), str(self.download_workers)], check=True)
-        os.chdir(home)
-
+                t_out = threading.Thread(target=_stream_reader, args=(proc.stdout, datasets_stdout_log))
+                t_err = threading.Thread(target=_stream_reader, args=(proc.stderr, datasets_stderr_log))
+                t_out.daemon = True
+                t_err.daemon = True
+                t_out.start()
+                t_err.start()
+            
+                returncode = proc.wait()
+                t_out.join()
+                t_err.join()
+            
+                if returncode != 0:
+                    LOG.critical(f"NCBI Datasets exited while fetching download URLs with code {returncode}")
+                    sys.exit()
+                else:
+                    LOG.info('NCBI Datasets finished fetching download URLs successfully.')
+                
+            # Unzip the package
+            shutil.unpack_archive(datasets_zip, extract_dir = DOWNLOADS, format = "zip")
+            os.remove(datasets_zip)
+                
+            # Do the actual download
+            download_cmd = [datasets_executable, 'rehydrate',
+                            '--directory', str(DOWNLOADS.resolve()),
+                            '--gzip',
+                            '--no-progressbar',
+                            '--max-workers', str(self.download_workers)]
+            
+            LOG.debug(f'Running command: {" ".join(download_cmd)}')
+            with logging_redirect_tqdm(loggers = [LOG]):
+                proc = subprocess.Popen(download_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                
+                t_out = threading.Thread(target=_stream_reader, args=(proc.stdout, datasets_stdout_log))
+                t_err = threading.Thread(target=_stream_reader, args=(proc.stderr, datasets_stderr_log))
+                t_out.daemon = True
+                t_err.daemon = True
+                t_out.start()
+                t_err.start()
+            
+                returncode = proc.wait()
+                t_out.join()
+                t_err.join()
+            
+                if returncode != 0:
+                    LOG.critical(f"NCBI Datasets exited while downloading with code {returncode}")
+                    sys.exit()
+                else:
+                    LOG.info('NCBI Datasets finished downloading successfully.')
+                
+            # Move all the genome files to the genome folder
+            for file in DOWNLOADS.glob('ncbi_dataset/data/GC*/*'):
+                shutil.move(file, self.TEMP_GENOME_DIR)
+            
+            # Remove the downloads folder
+            shutil.rmtree(DOWNLOADS)
+            
+        LOG.info(f'{len(list(self.TEMP_GENOME_DIR.iterdir()))} genomes in {str(self.TEMP_GENOME_DIR)}')
+            
         return None
     
     def mapScaffoldsToAssemblies(self) -> None:
