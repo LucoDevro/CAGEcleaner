@@ -3,7 +3,7 @@
 
 # Internal imports:
 from cagecleaner.file_utils import removeSuffixes
-from cagecleaner.utils import correctLayouts
+from cagecleaner.utils import correctLayouts, generate_cblaster_session
 
 # External libraries:
 import pandas as pd
@@ -32,7 +32,7 @@ class Run(ABC):
         
         ## Some defensive checks: ##
         assert args is not None, "No arguments were given. ArgParse object is None."
-        assert args.session_file.exists() and args.session_file.is_file(), "Provided session file does not exist or is not a file."
+        assert args.session.exists(), "Provided input does not exist."
         assert args.genome_dir.exists() and args.genome_dir.is_dir(), "Provided genome directory does not exist or is not a directory."
         assert args.coverage >= 0 and args.coverage <= 100, "Coverage threshold should be a number between 0 and 100."
         assert args.zscore_outlier_threshold > 0, "Z-score threshold for recovery should be greater than zero."
@@ -93,9 +93,23 @@ class Run(ABC):
         # This variable will store the filtered session file, the end result.
         self.filtered_session: Session | None = None
         
+        ## Define the cblaster session
+        match args.session.suffix:
+            # If supplied, just parse it
+            case '.json':
+                LOG.info('Found cblaster session. Parsing it.')
+                self.session: Session = Session.from_file(args.session.resolve())
+            # If not supplied, generate one from the alternative hit and cluster tables
+            case _:
+                if args.session.is_dir() and '.tsv' in [f.suffix for f in args.session.iterdir()]:
+                    LOG.info('Found hit and cluster tables. Generating cblaster session from these.')
+                    self.session: Session = generate_cblaster_session(args.session, args.mode)
+                else:
+                    LOG.critical('Invalid input mode! Exiting...')
+                    sys.exit()
+        
         ## Now get the information we want from the session file
         # First parse the binary table
-        self.session: Session = Session.from_file(args.session_file.resolve()) # Stores the session file as a Session object
         with (self.TEMP_DIR / 'binary.txt').open('w') as handle:
            self.session.format("binary", delimiter = "\t", fp = handle)
         self.binary_df = pd.read_table(self.TEMP_DIR / 'binary.txt', 
@@ -103,7 +117,7 @@ class Run(ABC):
                                        converters= {'Organism': removeSuffixes})  # removeSuffixes only relevant in local mode. 
         os.remove(self.TEMP_DIR / 'binary.txt')
         
-        # Then join with cluster numbers, layouts and strand positions
+        # Then join the binary table with cluster numbers, layouts and strand positions
         all_scaffolds = [sc for _,sc,_ in get_sorted_cluster_hierarchies(self.session, max_clusters=None)]
         scaffold_number_map = pd.DataFrame([{'Scaffold': sc.accession,
                                              'Number': cl.number,

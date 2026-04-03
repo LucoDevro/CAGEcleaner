@@ -52,10 +52,12 @@ def parseArguments():
     args_general.add_argument('-h', '--help', action = 'help', help = "Show this help message and exit")      
     
     args_io = parser.add_argument_group('File inputs and outputs')
-    args_io.add_argument('-s', '--session', dest = "session_file", type = Path, help = "Path to cblaster session file", required = True)
+    args_io.add_argument('-s', '--session', dest = "session", type = Path, required = True, help = "Input path, either a cblaster session (*.json), or a folder containing appropriately named hit and cluster tables (*/*.tsv).")
     args_io.add_argument('-g', '--genomes', dest = "genome_dir", type = Path, default = '.', help = "[Only relevant for local cblaster sessions] Path to local genome folder containing genome files. Accepted formats are FASTA and GenBank [.fasta; .fna; .fa; .gbff; .gbk; .gb]. Files can be gzipped. Folder can contain other files. (default: current working directory)")
     args_io.add_argument('-o', '--output', dest = "output_dir", type = Path, default = '.', help = "Output directory (default: current working directory)")
     args_io.add_argument('-t', '--temp', dest = "temp_dir", type = Path, default = tempfile.gettempdir(), help = "Path to store temporary files (default: your OS's default temporary directory).")
+    args_io.add_argument('--mode', dest = 'mode', type = str, default = 'remote', choices = ['remote', 'local'],
+                         help = "Sequence origin mode to treat the hits in the alternative input tables, if any (choices: 'remote' or 'local').")
     args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes")
     args_io.add_argument('--keep_dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep dereplication intermediary output")
     args_io.add_argument('--keep_intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
@@ -115,7 +117,10 @@ def main():
     
     # Initiate the approriate CAGEcleaner Run object:
     LOG.info("--- Loading session file. ---")
-    source = Session.from_file(args.session_file).params['mode']
+    if args.session.is_dir():
+        source = args.mode
+    else:
+        source = Session.from_file(args.session).params['mode']
     method = args.method
     mode = (source, method)
     match mode:
