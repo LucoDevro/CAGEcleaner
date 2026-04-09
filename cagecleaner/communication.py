@@ -13,27 +13,14 @@ from tqdm.contrib.logging import logging_redirect_tqdm
 from subprocess import CalledProcessError
 
 
-LOG = logging.getLogger(__name__)
+LOG = logging.getLogger()
+warnings.filterwarnings(action = "ignore", module = "Bio")
 
-
-def _stream_reader(pipe, write_func):
-    try:
-        with pipe:
-            for chunk in iter(lambda: pipe.readline(), b''):
-                if not chunk:
-                    break
-                try:
-                    text = chunk.decode('utf-8', 'replace')
-                except Exception:
-                    text = chunk.decode('latin-1', 'replace')
-                write_func(text)
-    except Exception:
-        LOG.exception("stream reader error")
-        
 
 def _downloadOneRegion(region: tuple, out_dir: Path) -> None:
     accession, nucl_range = region
-    out_file = (out_dir / accession).with_suffix('.fasta')
+    out_file = Path('|'.join([str(out_dir / accession)] + nucl_range.split(':')) + '.fasta')
+    max_attempts = 3
     
     acc_downloader_executable = shutil.which('ncbi-acc-download')
     cmd = [acc_downloader_executable,
@@ -43,15 +30,20 @@ def _downloadOneRegion(region: tuple, out_dir: Path) -> None:
            '-g', nucl_range,
            accession]
     
-    with open(out_file, 'w') as handle:
-        try:
-            subprocess.run(cmd, stdout = handle, check = True, text = True)
-        except CalledProcessError:
-            LOG.warning(f"Error downloading {accession}")
-            return None
+    for attempt in range(max_attempts):
+        with open(out_file, 'w') as handle:
+            try:
+                subprocess.run(cmd, stdout = handle, check = True, text = True)
+            except CalledProcessError:
+                if attempt+1 < max_attempts:
+                    LOG.warning(f"Error downloading {accession}. Retrying...")
+                else:
+                    LOG.error(f"Error downloading {accession}.")
+                    return None
         
+    compressed_file = out_file.with_suffix('.fasta.gz')
     with open(out_file, "r") as handle:
-        with gzip.open(out_file.with_suffix('.fasta.gz'), "wt") as compressed_handle:
+        with gzip.open(compressed_file, "wt") as compressed_handle:
             compressed_handle.writelines(handle)
     os.remove(out_file)
     
@@ -76,36 +68,36 @@ def get_assembly_accessions(scaffolds: list, source: str, no_progress: bool = Fa
     LOG.info(f'Getting Assembly accession IDs in {n_batches} batches of {batch_size}')
     
     with logging_redirect_tqdm(loggers = [LOG]):
+        LOG.debug('Elinking')
         records = []
         for b_idx, batch in tqdm(list(enumerate(batched(scaffolds, batch_size))), leave = False, disable = no_progress):
             for attempt in range(max_attempts):
                 try:
-                    with warnings.catch_warnings(action = "ignore"):
-                        with Entrez.elink(dbfrom = "nucleotide", db = 'assembly', id = batch) as handle:
-                            batch_records = Entrez.read(handle)
-                        records += batch_records
-                        break
+                    with Entrez.elink(dbfrom = "nucleotide", db = 'assembly', id = batch) as handle:
+                        batch_records = Entrez.read(handle)
+                    records += batch_records
+                    break
                 except:
                     if attempt+1 < max_attempts:
-                        LOG.warning(f'Error processing batch {b_idx+1} in attempt {attempt+1}. Max. attempts: {max_attempts}')
+                        LOG.warning(f'Error Elinking batch {b_idx+1} in attempt {attempt+1}. Max. attempts: {max_attempts}')
                     else:
-                        LOG.error(f'Error processing batch {b_idx+1} after {max_attempts} attempts. Skipping...')
+                        LOG.error(f'Error Elinking batch {b_idx+1} after {max_attempts} attempts. Skipping...')
         
-        # Get UIDs from Elink records
-        uids = [str(l['Id']) for record in records for linksetdb in record['LinkSetDb'] for l in linksetdb['Link']]
-        
-        # Get Esummary objects for every UID in max. 3 attempts
-        for attempt in tqdm(range(max_attempts), leave = False, disable = no_progress):
-            try:
-                with warnings.catch_warnings(action = "ignore"):
-                    with Entrez.esummary(db = 'assembly', id = uids) as handle:
-                        summary_set = Entrez.read(handle)
-            except:
-                if attempt+1 < max_attempts:
-                    LOG.warning(f'Error getting assembly IDs in attempt {attempt+1}. Max. attempts: {max_attempts}')
-                else:
-                    LOG.error(f'Error getting assembly IDs after {max_attempts} attempts. Skipping...')
-                    return []
+    # Extract UIDs from Elink records
+    uids = [str(l['Id']) for record in records for linksetdb in record['LinkSetDb'] for l in linksetdb['Link']]
+    
+    # Get Esummary objects for every UID in max. 3 attempts
+    LOG.debug('Retrieving Assembly IDs from Elink responses')
+    for attempt in range(max_attempts):
+        try:
+            with Entrez.esummary(db = 'assembly', id = uids) as handle:
+                summary_set = Entrez.read(handle)
+        except:
+            if attempt+1 < max_attempts:
+                LOG.warning(f'Error getting assembly IDs in attempt {attempt+1}. Max. attempts: {max_attempts}')
+            else:
+                LOG.error(f'Error getting assembly IDs after {max_attempts} attempts. Skipping...')
+                return []
     
     # Extract Assembly accession ID from Esummary object
     summaries = summary_set['DocumentSummarySet']['DocumentSummary']

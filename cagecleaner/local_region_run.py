@@ -57,16 +57,22 @@ class LocalRegionRun(LocalRun, RegionRun):
         # Parse the MMseqs clustering table
         path_to_cluster_file: Path = self.DEREP_OUT_DIR / "derep_cluster.tsv"
         derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
-                                 names = ['representative', 'Scaffold'],
-                                 header = None, index_col = 'Scaffold'
+                                 names = ['representative', 'Region'],
+                                 header = None
                                  )
+
         # Determine dereplication status
-        derep_df['dereplication_status'] = derep_df.index == derep_df['representative']
+        derep_df[['Scaffold', 'Start', 'End']] = derep_df['Region'].str.split(pat = "|", expand = True)
+        derep_df[['Start', 'End']] = derep_df[['Start', 'End']].astype(int)
+        derep_df['dereplication_status'] = derep_df['Region'] == derep_df['representative']
         derep_df['dereplication_status'] = np.where(derep_df['dereplication_status'], 'dereplication_representative', 'redundant')
+        
         # Add dereplication status columns to binary table by joining with the clustering table
         LOG.debug("Joining MMseqs2 clustering table and cblaster binary table.")
-        self.binary_df = self.binary_df.merge(derep_df, left_on = "Scaffold", right_index = True)
+        self.binary_df = self.binary_df.merge(derep_df, on = ["Scaffold", 'Start', 'End'])
+        self.binary_df.drop(columns = ['Region'], inplace = True)
         
+        # Sort by representative ID and then by dereplication status
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])           
         LOG.info("Mapping done!")
         
