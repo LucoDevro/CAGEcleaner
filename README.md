@@ -6,9 +6,9 @@
 
 > [!NOTE]
 > **Coming late april '26: v1.5! New features will include:**
-> - ✔️ A local dereplication mode (MMseqs2-driven dereplication by genomic neighbourhood of the gene cluster)
-> - Support for non-cblaster inputs via TSV and Excel files
-> - ✔️ Improved cluster diversity recovery taking gene synteny into account
+> - A local dereplication mode (MMseqs2-driven dereplication by genomic neighbourhood of the gene cluster)
+> - Support for non-cblaster inputs via TSV files
+> - Improved cluster diversity recovery taking gene synteny into account
 
 > [!WARNING]
 > `CAGEcleaner` supports all functional `cblaster` modes (remote, local, hmm). We do not recommend using sessions from one of the combi modes.
