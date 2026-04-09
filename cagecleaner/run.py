@@ -101,8 +101,8 @@ class Run(ABC):
                 self.session: Session = Session.from_file(args.session.resolve())
             # If not supplied, generate one from the alternative hit and cluster tables
             case _:
-                if args.session.is_dir() and '.tsv' in [f.suffix for f in args.session.iterdir()]:
-                    LOG.info('Found hit and cluster tables. Generating cblaster session from these.')
+                if args.session.is_dir() and {Path('clusters.tsv'), Path('hits.tsv'), Path('queries.tsv')} <= set(args.session.iterdir()):
+                    LOG.info('Found tsv tables. Generating cblaster session from these.')
                     self.session: Session = generate_cblaster_session(args.session, args.mode)
                 else:
                     LOG.critical('Invalid input mode! Exiting...')
@@ -118,7 +118,7 @@ class Run(ABC):
         os.remove(self.TEMP_DIR / 'binary.txt')
         
         # Then join the binary table with cluster numbers, layouts and strand positions
-        all_scaffolds = [sc for _,sc,_ in get_sorted_cluster_hierarchies(self.session, max_clusters=None)]
+        all_scaffolds = {sc for _,sc,_ in get_sorted_cluster_hierarchies(self.session, max_clusters=None)}
         scaffold_number_map = pd.DataFrame([{'Scaffold': sc.accession,
                                              'Number': cl.number,
                                              'Start': cl.start,
@@ -217,6 +217,7 @@ class Run(ABC):
             recovered_by_score = sum(self.binary_df['dereplication_status'] == 'readded_by_score')
             LOG.info(f"Total hits recovered by outlier hit score: {recovered_by_score}")
                 
+        # Sort for a nice grouping in the extended binary table
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status', 'Layout_group'])
 
         return None

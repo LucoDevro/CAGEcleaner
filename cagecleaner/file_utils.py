@@ -8,7 +8,7 @@ from tqdm.contrib.concurrent import thread_map
 from Bio import SeqIO
 
 
-LOG = logging.getLogger(__name__)
+LOG = logging.getLogger()
 
 
 def removeSuffixes(string: str) -> str:
@@ -55,13 +55,16 @@ def isGenbank(file: str) -> bool:
     
     
 def _extractOneRegion(row: dict, margin: int, in_dir: Path, out_dir: Path, strict: bool) -> bool:
-    assembly = row['assembly_file']
+    assembly_file = Path(row['assembly_file'])
     scaffold = row['Scaffold']
-    begin = row['Start'] - margin
-    end = row['End'] + margin
+    begin_cluster = row['Start']
+    begin = begin_cluster - margin
+    end_cluster = row['End']
+    end = end_cluster + margin
     contig_end = False
     
-    with gzip.open(in_dir / assembly, "rt") as handle:
+    in_file = in_dir / assembly_file
+    with gzip.open(in_file, "rt") as handle:
         seqs = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
         # If strict, skip regions that are at a contig edge
         scaffold_to_extract_from = seqs[scaffold]
@@ -74,8 +77,10 @@ def _extractOneRegion(row: dict, margin: int, in_dir: Path, out_dir: Path, stric
             begin = max(0, begin)
         # Extract genomic region from assembly
         region = scaffold_to_extract_from[begin:end]
+        region.id = '|'.join([scaffold_to_extract_from.id, str(begin_cluster), str(end_cluster)])
         # Write in a new compressed fasta file
-        with gzip.open(out_dir / assembly, "wt") as out_handle:
+        out_file = str(Path(out_dir / region.id)) + '.fasta.gz'
+        with gzip.open(out_file, "wt") as out_handle:
             SeqIO.write(region, out_handle, "fasta")
             
     return contig_end

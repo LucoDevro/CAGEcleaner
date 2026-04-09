@@ -3,14 +3,19 @@
 
 import logging
 import re
+import shutil
+import threading
+import subprocess
+import sys
 import pandas as pd
 import networkx as nx
 from copy import deepcopy
 from cblaster.classes import Session
 from pathlib import Path
+from tqdm.contrib.logging import logging_redirect_tqdm
 
 
-LOG = logging.getLogger(__name__)
+LOG = logging.getLogger()
 
 
 def correctLayouts(binary_df: pd.DataFrame) -> pd.DataFrame:
@@ -40,6 +45,53 @@ def correctLayouts(binary_df: pd.DataFrame) -> pd.DataFrame:
     binary_df['Layout_group'] = corrected_layouts
     
     return binary_df
+
+
+def _stream_reader(pipe, write_func):
+    try:
+        with pipe:
+            for chunk in iter(lambda: pipe.readline(), b''):
+                if not chunk:
+                    break
+                try:
+                    text = chunk.decode('utf-8', 'replace')
+                except Exception:
+                    text = chunk.decode('latin-1', 'replace')
+                write_func(text)
+    except Exception:
+        LOG.exception("stream reader error")
+        
+
+def run_command(cmd_list: list) -> None:
+    executable = Path(shutil.which(cmd_list[0]))
+    cmd = [str(executable)] + cmd_list[1:]
+    def command_stdout_log(s): return LOG.debug(s.rstrip())
+    def command_stderr_log(s): return LOG.warning(s.rstrip())
+    
+    LOG.debug(f'Running command: {" ".join(cmd)}')
+    
+    with logging_redirect_tqdm(loggers = [LOG]):
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        t_out = threading.Thread(target=_stream_reader, args=(proc.stdout, command_stdout_log))
+        t_err = threading.Thread(target=_stream_reader, args=(proc.stderr, command_stderr_log))
+        t_out.daemon = True
+        t_err.daemon = True
+        t_out.start()
+        t_err.start()
+    
+        returncode = proc.wait()
+        t_out.join()
+        t_err.join()
+    
+        if returncode != 0:
+            LOG.critical(f"{executable.name} failed with code {returncode}")
+            sys.exit()
+        else:
+            LOG.info(f'{executable.name} finished successfully')
+            
+    return None
+
 
 def generate_cblaster_session(tables_folder: Path, mode: str) -> Session:
     

@@ -10,12 +10,14 @@ import argparse
 import tempfile
 import sys
 import logging
+import warnings
 from pathlib import Path
 from importlib.metadata import version
 from cblaster.classes import Session
 
 __version__ = version("cagecleaner")
 
+warnings.filterwarnings(action = 'ignore', module = 'cblaster')
 LOG = logging.getLogger()
 
 def parseArguments():
