@@ -35,7 +35,7 @@ def _downloadOneRegion(region: tuple, out_dir: Path) -> None:
             try:
                 subprocess.run(cmd, stdout = handle, check = True, text = True)
             except CalledProcessError:
-                if attempt+1 < max_attempts:
+                if attempt < max_attempts:
                     LOG.warning(f"Error downloading {accession}. Retrying...")
                 else:
                     LOG.error(f"Error downloading {accession}.")
@@ -52,7 +52,7 @@ def _downloadOneRegion(region: tuple, out_dir: Path) -> None:
 
 def get_assembly_accessions(scaffolds: list, source: str, no_progress: bool = False) -> list:
     
-    # In case of requesting Genbank IDs, redirect WGS records to their master record
+    # Only in case of requesting Genbank IDs, redirect WGS records to their master record
     if source == 'Genbank':
         r = re.compile('([A-Z]{4,}[0-9]{8,})\.[0-9]+')
         non_wgs_scaffolds = [sc for sc in scaffolds if not r.findall(sc)]

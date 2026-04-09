@@ -101,7 +101,7 @@ class Run(ABC):
                 self.session: Session = Session.from_file(args.session.resolve())
             # If not supplied, generate one from the alternative hit and cluster tables
             case _:
-                if args.session.is_dir() and {Path('clusters.tsv'), Path('hits.tsv'), Path('queries.tsv')} <= set(args.session.iterdir()):
+                if args.session.is_dir() and {'clusters.tsv', 'hits.tsv', 'queries.tsv'} <= {p.name for p in args.session.iterdir()}:
                     LOG.info('Found tsv tables. Generating cblaster session from these.')
                     self.session: Session = generate_cblaster_session(args.session, args.mode)
                 else:

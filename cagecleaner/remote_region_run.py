@@ -44,10 +44,12 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         ## Treat contig edges downstream
         # First get the length of each contig
         LOG.debug('Retrieving contig lengths via Entrez')
+        
+        contig_ids = regions['Scaffold'].to_list()
         for attempt in range(max_attempts):
             try:
-                with Entrez.esummary(db = 'nucleotide', id = regions['Scaffold'].to_list()) as handle:
-                    summary_set = Entrez.read(handle)
+                with Entrez.efetch(db = 'nucleotide', id = contig_ids, rettype = 'docsum') as handle:
+                    records = Entrez.read(handle)
             except:
                 if attempt+1 < max_attempts:
                     LOG.warning(f'Error getting contig lengths in attempt {attempt+1}. Max. attempts: {max_attempts}')
@@ -55,8 +57,9 @@ class RemoteRegionRun(RemoteRun, RegionRun):
                     LOG.error(f'Error getting contig lengths after {max_attempts} attempts. Exiting...')
                     sys.exit()
                     
-        lengths = [int(s['Length']) for s in summary_set]
-        accessions_with_lengths = [str(s['AccessionVersion']) for s in summary_set]
+        # Parse the response
+        lengths = [int(s['Length']) for s in records]
+        accessions_with_lengths = [str(s['AccessionVersion']) for s in records]
         lengths_df = pd.DataFrame({'Scaffold': accessions_with_lengths, 'Contig_length': lengths})
         lengths_df.drop_duplicates(inplace = True, ignore_index = True)
         regions = regions.merge(lengths_df, on = "Scaffold", how = 'inner') # Discard the ones without length
