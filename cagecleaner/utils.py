@@ -6,13 +6,11 @@ import re
 import shutil
 import threading
 import subprocess
-import sys
 import pandas as pd
 import networkx as nx
 from copy import deepcopy
 from cblaster.classes import Session
 from pathlib import Path
-from tqdm.contrib.logging import logging_redirect_tqdm
 
 
 LOG = logging.getLogger()
@@ -26,7 +24,7 @@ def correctLayouts(binary_df: pd.DataFrame) -> pd.DataFrame:
                              binary_df['Layout_group'].apply(lambda x: tuple(reversed(x)))))
     orig_compl_pairs = list(zip(original, complementary))
     
-    # Break backloops using a direct graph
+    # Break backloops using a directed graph
     G = nx.DiGraph()
     G.add_edges_from(list(set(orig_compl_pairs)))
     G_pruned = G.copy()
@@ -35,7 +33,7 @@ def correctLayouts(binary_df: pd.DataFrame) -> pd.DataFrame:
             G_pruned.remove_edge(u,v)
     backloop_edges = list(G_pruned.edges())
     
-    # Now correct complementary layouts
+    # Now flip complementary layouts
     correction_mapping = dict(backloop_edges)
     corrected = deepcopy(original)
     for orig_idx, orig in enumerate(corrected):
@@ -62,7 +60,7 @@ def _stream_reader(pipe, write_func):
         LOG.exception("stream reader error")
         
 
-def run_command(cmd_list: list) -> None:
+def run_command(cmd_list: list, max_attempts: int = 3) -> None:
     executable = Path(shutil.which(cmd_list[0]))
     cmd = [str(executable)] + cmd_list[1:]
     def command_stdout_log(s): return LOG.debug(s.rstrip())
@@ -70,7 +68,7 @@ def run_command(cmd_list: list) -> None:
     
     LOG.debug(f'Running command: {" ".join(cmd)}')
     
-    with logging_redirect_tqdm(loggers = [LOG]):
+    for attempt in range(max_attempts):
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
         t_out = threading.Thread(target=_stream_reader, args=(proc.stdout, command_stdout_log))
@@ -85,10 +83,12 @@ def run_command(cmd_list: list) -> None:
         t_err.join()
     
         if returncode != 0:
-            LOG.critical(f"{executable.name} failed with code {returncode}")
-            sys.exit()
+            LOG.error(f"{executable.name} failed with code {returncode}.")
+            if attempt < max_attempts:
+                LOG.error(f'Retrying. Attempt {attempt+1} out {max_attempts}.')
         else:
             LOG.info(f'{executable.name} finished successfully')
+            break
             
     return None
 

@@ -254,7 +254,7 @@ class Run(ABC):
             
             # First we check whether we need to bypass this assembly. If yes, don't pop this one and proceed with the next one
             if self.bypass_organisms != {''} and org_full_name in self.bypass_organisms:
-                LOG.debug("-> Bypassing organism {org_full_name}")
+                LOG.debug(f"-> Bypassing organism {org_full_name}")
                 continue
             
             # Now we go to the scaffold level and loop over each scaffold associated with this organism
