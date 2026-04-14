@@ -191,24 +191,26 @@ def run_command(cmd_list: list, max_attempts: int = 3) -> None:
 def generate_cblaster_session(tables_folder: Path, mode: str) -> Session:
     """
     Generate a cblaster Session object from TSV tabular data files.
-    
+
     Reads cluster hit data from a folder containing hits, clusters, and queries TSV files
     and reconstructs a hierarchical cblaster Session object. The function parses tabular
     data into the nested structure required by cblaster (organisms > scaffolds > clusters > subjects).
-    
+
     Args:
         tables_folder (Path): Path to the folder containing three required TSV files:
+
             - hits.tsv: Individual hit records with columns db_id, query, scaff, strand, coords,
               evalue, score, seqid, tcov
             - clusters.tsv: Cluster records with columns number, hits, start, end, length, score,
               scaff, taxon_name, taxon_id
             - queries.tsv: Query sequence records with at least id, start, end columns
+
         mode (str): The search mode to be set in the session parameters (e.g., 'remote', 'local').
-    
+
     Returns:
         Session: A cblaster Session object populated with organisms, scaffolds, clusters,
             and subjects (hits) reconstructed from the input TSV files.
-    
+
     Notes:
         - Query subjects are artificially positioned with a 500 amino acid margin between them,
           as in the original cblaster implementation.

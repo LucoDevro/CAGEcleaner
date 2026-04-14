@@ -127,12 +127,6 @@ class RemoteRegionRun(RemoteRun, RegionRun):
     
     def join_dereplication_with_binary(self) -> None:
         """
-        After dereplication, map the dereplication clustering table to the binary table.
-        The dereplication clustering table is converted to a dataframe and joined with the binary table based on
-        assembly ID (full genome dereplication) or scaffold ID (region dereplication).        
-        Mutates:
-            self.binary_df: pd.DataFrame: Internal representation of the binary table.
-            
         Join MMseqs2 dereplication clustering results with the binary table.
         
         Reads the dereplication clustering output file and parses region coordinates. Assigns

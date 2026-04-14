@@ -219,7 +219,7 @@ def fetch_contig_lengths(contig_ids: list, max_attempts = 3):
         pd.DataFrame: A DataFrame with columns:
             - 'Scaffold': NCBI accession version identifiers
             - 'Contig_length': Sequence length in base pairs (integer)
-            Duplicates are removed and the index is reset.
+            
     """
     LOG.debug('Retrieving contig lengths via Entrez')
     for attempt in range(max_attempts):
