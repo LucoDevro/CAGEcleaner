@@ -11,8 +11,32 @@ LOG = logging.getLogger()
 
 
 class GenomeRun(Run):
+    """
+    Abstract intermediary class grouping the methods shared by every run involving whole-genome dereplication.
+    
+    Inherits from:
+        Run: Base class providing argument parsing, hit recovery, session filtering and output generation functionalities
+        
+     See Also:
+         LocalGenomeRun: Full-genome dereplication for hits in local sequences.
+         RemoteGenomeRun: Full-genome dereplication for hits in remote sequences.
+    """
     
     def __init__(self, args):
+        """
+        Initialise a GenomeRun instance.
+        
+        Runs the base class init and checks for a valid ANI threshold.
+        
+        Args:
+            args (argparse.Namespace): Parsed command-line arguments
+            
+        Raises:
+            AssertionError: If identity threshold is not between 82 and 100, the threshold region support by skani.
+            
+        Returns:
+            None
+        """
         
         super().__init__(args)
         
@@ -20,10 +44,15 @@ class GenomeRun(Run):
         
         return None
     
-    def dereplicateGenomes(self):
+    def dereplicate_genomes(self):
         """
-        This method takes the path to a genome folder and dereplicates the genomes using skDER.
+        Dereplicate the gathered genome files using whole-genome ANI similarity with skDER.
+        
+        Sets the dereplication input directory to the full genome folder, and runs the skDER dereplication command.
         skDER output is stored in TEMP_DIR/dereplication.
+        
+        Returns:
+            None
         """
         self.DEREP_IN_DIR = self.TEMP_GENOME_DIR
         

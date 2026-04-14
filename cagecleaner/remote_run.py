@@ -11,8 +11,30 @@ LOG = logging.getLogger()
 
 
 class RemoteRun(Run):
+    """
+    Abstract intermediary class grouping the methods shared by every run involving remote sequence files.
+    
+    Inherits from:
+        Run: Base class providing argument parsing, hit recovery, session filtering and output generation functionalities
+        
+     See Also:
+         RemoteRegionRun: Region-based dereplication for hits in remote sequences.
+         RemoteGenomeRun: Whole-genome dereplication for hits in remote sequences.
+    """
     
     def __init__(self, args):
+        """
+        Initialise a RemoteRun instance.
+        
+        Runs the base class init.
+        Excludes scaffolds from the analysis as specified by the user.
+        
+        Args:
+            args (argparse.Namespace): Parsed command-line arguments
+            
+        Returns:
+            None
+        """
         # Call the parent constructor:
         super().__init__(args)
         
@@ -36,7 +58,26 @@ class RemoteRun(Run):
         return None
     
     @abstractmethod
-    def mapDereplicationToBinary(self):
+    def join_dereplication_with_binary(self):
+        """
+        Join dereplication results with the binary table.
+        
+        Mutates:
+            self.binary_df: Adds 'representative' and 'dereplication_status' columns.
+            
+         Expected Result:
+             self.binary_df should now have columns:
+             - representative: Genome ID of the dereplication representative
+             - dereplication_status: 'dereplication_representative' | 'redundant'
+             
+         Returns:
+             None
+             
+        Notes:
+            This is the abstract method inherited from the Run parent class.
+            It is not meant to be implemented at this level. Only the child classes inheriting this method
+            are expected to provide a workflow-dependent specific implementation.
+        """
         pass
     
     
