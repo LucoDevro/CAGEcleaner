@@ -1,6 +1,6 @@
 FROM vanallenlab/miniconda:3.12
 
-LABEL description="CAGEcleaner - reducing genomic redundancy in genome mining hit sets"
+LABEL description="CAGEcleaner - Redundancy removal for gene cluster mining hit sets"
 LABEL org.opencontainers.image.authors="lucas.devrieze@vib.be"
 
 # Use bash as shell
