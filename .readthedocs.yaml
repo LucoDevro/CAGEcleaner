@@ -3,6 +3,12 @@
 
 # Required
 version: 2
+python:
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - doc
 
 # Set the OS, Python version, and other tools you might need
 build:
