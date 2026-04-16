@@ -19,7 +19,6 @@ build:
   os: ubuntu-24.04
   tools:
     python: "3.12"
-    conda: "24.11.3"
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:
