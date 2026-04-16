@@ -44,7 +44,7 @@ There is no entrypoint set up so running CAGEcleaner requires prepending your CA
 GitHub
 -------
 
-Alternatively, it is also possible to install the latest semi-stable development version by cloning this repository and running the following command at the root of your local copy of this repository.
+Alternatively, it is possible to install the latest semi-stable development version by cloning this repository and running the following command at the root of your local copy of this repository.
 
 .. code-block:: bash
 
@@ -61,6 +61,6 @@ CAGEcleaner is also installable from PyPi using pip, yet we do not recommend usi
 
 .. warning::
    
-   We do not recommend using this approach as some non-Python dependencies are not available from PyPi (NCBI Datasets CLI, any2fasta, MMseqs2) and therefore should be installed beforehand. Check out the dependencies for more details.
+   We do not recommend using this approach as some non-Python dependencies are not available from PyPi (NCBI Datasets CLI, any2fasta, MMseqs2) and therefore should be installed beforehand. Check out CAGEcleaner's dependencies in the Bioconda recipe for more details.
 
 
