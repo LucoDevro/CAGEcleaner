@@ -29,7 +29,6 @@ dependencies = [
     "cblaster >=1.3.20",
     "pandas <3.0.0",
     "skder >=1.3.4",
-    "mmseqs2",
     "networkx",
 ]
 
