@@ -63,10 +63,9 @@ def parse_arguments() -> argparse.Namespace:
     args_general.add_argument('-h', '--help', action = 'help', help = "Show this help message and exit.")      
     
     args_io = parser.add_argument_group('File inputs and outputs')
-    args_io.add_argument('-s', '--session', dest = "session", type = Path, required = True, help = "Input path, either a cblaster session (*.json), or a folder containing required TSV tables (*/{hits, clusters, queries}.tsv).")
-    args_io.add_argument('--tsv-source', dest = 'source', type = str, default = 'remote', choices = ['remote', 'local'],
-                         help = "Where to search for the hits in the TSV input tables, if any (choices: 'remote' or 'local').")
-    args_io.add_argument('-g', '--genomes', dest = "genome_dir", type = Path, default = '.', help = "[Only relevant for local searches] Path to local genome folder containing genome files. Accepted formats are FASTA and Genbank [.fasta; .fna; .fa; .gbff; .gbk; .gb]. Files can be gzipped. (default: current working directory)")
+    args_io.add_argument('-s', '--session', dest = "session", type = Path, required = True, help = "Path to cblaster session (either obtained from a search run or from cagecleaner-generate-session).")
+    args_io.add_argument('-g', '--genomes', dest = "genome_dir", type = Path, default = '.', 
+                         help = "[Only relevant for local searches] Path to local genome folder containing genome files. Accepted formats are FASTA and Genbank [.fasta; .fna; .fa; .gbff; .gbk; .gb]. Files can be gzipped. (default: current working directory)")
     args_io.add_argument('-o', '--output', dest = "output_dir", type = Path, default = '.', help = "Output directory (default: current working directory).")
     args_io.add_argument('-t', '--temp', dest = "temp_dir", type = Path, default = tempfile.gettempdir(), help = "Path to store temporary files (default: your OS's default temporary directory).")
     args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes.")

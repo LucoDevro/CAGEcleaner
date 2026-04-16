@@ -188,7 +188,7 @@ def run_command(cmd_list: list, max_attempts: int = 3) -> None:
     return None
 
 
-def generate_cblaster_session(tables_folder: Path, mode: str) -> Session:
+def generate_cblaster_session(hits: Path, clusters: Path, queries: Path, mode: str) -> Session:
     """
     Generate a cblaster Session object from TSV tabular data files.
 
@@ -197,14 +197,11 @@ def generate_cblaster_session(tables_folder: Path, mode: str) -> Session:
     data into the nested structure required by cblaster (organisms > scaffolds > clusters > subjects).
 
     Args:
-        tables_folder (Path): Path to the folder containing three required TSV files:
-
-            - hits.tsv: Individual hit records with columns db_id, query, scaff, strand, coords,
+        hits (Path): Path to the hits TSV file, containing individual hit records with columns db_id, query, scaff, strand, coords,
               evalue, score, seqid, tcov
-            - clusters.tsv: Cluster records with columns number, hits, start, end, length, score,
+        clusters (Path): Path to the clusters TSV file, containing cluster records with columns number, hits, start, end, length, score,
               scaff, taxon_name, taxon_id
-            - queries.tsv: Query sequence records with at least id, start, end columns
-
+        queries (Path): Path to the queries TSV file, containing query sequence records with at least id, start, end columns
         mode (str): The search mode to be set in the session parameters (e.g., 'remote', 'local').
 
     Returns:
@@ -221,11 +218,11 @@ def generate_cblaster_session(tables_folder: Path, mode: str) -> Session:
           a flat list in the final session object.
     """
     #### Read tables
-    hits_df = pd.read_table(tables_folder / 'hits.tsv', sep = "\t",
+    hits_df = pd.read_table(hits, sep = "\t",
                             usecols = ['db_id', 'query', 'scaff', 'strand', 'coords', 'evalue', 'score', 'seqid', 'tcov'])
-    clusters_df = pd.read_table(tables_folder / 'clusters.tsv', sep = "\t",
+    clusters_df = pd.read_table(clusters, sep = "\t",
                                 usecols = ['number', 'hits', 'start', 'end', 'length', 'score', 'scaff', 'taxon_name', 'taxon_id'])
-    queries_df = pd.read_table(tables_folder / 'queries.tsv', sep = "\t")
+    queries_df = pd.read_table(queries, sep = "\t")
     
     session_dict = {}
 

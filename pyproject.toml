@@ -46,6 +46,7 @@ doc = [
 
 [project.scripts]
 cagecleaner = "cagecleaner.main:main"
+cagecleaner-generate-session = "cagecleaner.generate_session:main"
 
 [tool.setuptools.packages.find]
 include = ["cagecleaner*"]

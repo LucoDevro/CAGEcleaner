@@ -56,7 +56,7 @@ class Run(ABC):
         Initialise a Run instance.
         
         Links the parsed arguments to the correct attributes, sets paths and controls output directories.
-        Parses the initial binary table, either from a cblaster session, or from TSV tables.
+        Initialises the binary table from the provided cblaster session.
         Generates layout groups for all hits and corrects them for strand location if necessary.
         
         Args:
@@ -74,7 +74,7 @@ class Run(ABC):
         
         ## Some defensive checks: ##
         assert args is not None, "No arguments were given. ArgParse object is None."
-        assert args.session.exists(), "Provided input does not exist."
+        assert args.session.exists(), "Provided session does not exist."
         assert args.genome_dir.exists() and args.genome_dir.is_dir(), "Provided genome directory does not exist or is not a directory."
         assert args.coverage >= 0 and args.coverage <= 100, "Coverage threshold should be a number between 0 and 100."
         assert args.zscore_outlier_threshold > 0, "Z-score threshold for recovery should be greater than zero."
@@ -145,10 +145,10 @@ class Run(ABC):
     
     def _initialise_binary(self, args):
         """
-        Initialise the binary table from the provided input files (cblaster session json, or TSV tables).
+        Initialise the binary table from the provided session file (either obtained from a search run,
+        or from cagecleaner-generate-session).
         
-        Recognises which session parsing mode to use from file extensions and presences. Always generates a 
-        cblaster Session instance, which stored in the self.session attribute.
+        Always generates a cblaster Session instance, which is stored in the self.session attribute.
         Then parses the binary table generated from this Session and joins it with more cluster information
         retrieved using the cluster extraction function get_sorted_cluster_hierarchies.
         Generates cluster layout groups from this and corrects them for strand location.
@@ -163,20 +163,8 @@ class Run(ABC):
             None
         """
         ## Get a Session object from the inputs
-        match args.session.suffix:
-            # If session supplied, just parse it
-            case '.json':
-                LOG.info('Found cblaster session. Parsing it.')
-                self.session: Session = Session.from_file(args.session.resolve())
-            case _:
-                # If not, generate one from the TSV tables
-                if args.session.is_dir() and {'clusters.tsv', 'hits.tsv', 'queries.tsv'} <= {p.name for p in args.session.iterdir()}:
-                    LOG.info('Found tsv tables. Generating cblaster session from these.')
-                    self.session: Session = generate_cblaster_session(args.session, args.source)
-                # Else, we have a problem...
-                else:
-                    LOG.critical('Invalid input mode! Exiting...')
-                    sys.exit()
+        LOG.info('Parsing cblaster session.')
+        self.session: Session = Session.from_file(args.session.resolve())
         
         ## Now get the information we want from the session
         # First generate and parse the binary table
