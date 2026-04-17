@@ -83,6 +83,12 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         lengths_df = fetch_contig_lengths(contig_ids)
         regions = regions.merge(lengths_df, on = "Scaffold", how = 'inner') # Discard the ones without length
         
+        # Stop if we don't have any contig left
+        if lengths_df.empty:
+            msg = "No length information retrieved for any contig!"
+            LOG.error(msg)
+            raise RuntimeError(msg)
+        
         # Report the ones without length
         regions_without = regions.merge(lengths_df, on = "Scaffold", how = 'left', indicator = True)
         regions_without = regions_without[regions_without['_merge'] == 'left_only'].drop(columns = ['_merge'])
@@ -151,6 +157,11 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         Returns:
             None
             
+        Raises:
+            FileNotFoundError: If the dereplication table cannot be read
+            RuntimeError: If the dereplication table is empty, or has empty values due to an invalid filename formatting.
+            RuntimeError: If the binary table is empty after joining with the dereplication table
+            
         Notes:
             The Region temporary column in self.binary_df was added by joining with the MMseqs2 dereplication table.
             The Contig_length temporary column in self.binary_df was added by fetch_regions when the sequence margins
@@ -160,15 +171,27 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         # Read the MMseqs2 clustering table:
         path_to_cluster_file: Path = self.DEREP_OUT_DIR / "derep_cluster.tsv"
         # Convert to dataframe
-        derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
-                                 names = ['representative', 'Region'],
-                                 header = None)
+        try:
+            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
+                                     names = ['representative', 'Region'],
+                                     header = None)
+        except FileNotFoundError as err:
+            LOG.critical('f{err}')
+            raise err
         
         # Parse the dereplicated region coordinates (which includes the margin)
         derep_df[['Scaffold', 'Range']] = derep_df['Region'].str.split(pat = ":", expand = True)
         derep_df[['Start', 'End']] = derep_df['Range'].str.split(pat = "-", expand = True)
         derep_df[['Start', 'End']] = derep_df[['Start', 'End']].astype(int)
         derep_df.drop(columns = ['Range'], inplace = True)
+        if derep_df.isna().values.any():
+            msg = "Invalid filename formatting in dereplication table."
+            LOG.error(msg)
+            raise RuntimeError(msg)
+        if derep_df.empty:
+            msg = "Dereplication table is empty."
+            LOG.error(msg)
+            raise RuntimeError(msg)
         
         # Add dereplication status column based on whether the scaffold's ID is the same as the representative's
         # If there is a match between binary_df['assembly_file'] and derep_dfs['assembly'] (its index column), the representative and status is added.
@@ -218,11 +241,17 @@ class RemoteRegionRun(RemoteRun, RegionRun):
                                                                                             row['Interval_bin'] 
                                                                                             in row['Interval_drep'],
                                                                                             axis = 1)]
-
+        
         # Concat the hits from all cases
         binary_merged = pd.concat([binary_merged_no_edges, binary_merged_edge_up, 
                                    binary_merged_edge_down, binary_merged_two_edges])
         self.binary_df = binary_merged
+        
+        # Verify binary table is not empty
+        if self.binary_df.empty:
+            msg = "Binary table is empty after joining with the dereplication table!"
+            LOG.error(msg)
+            raise RuntimeError(msg)
         
         # Sort by representative ID and then by dereplication status
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])

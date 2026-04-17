@@ -49,13 +49,14 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
             args (argparse.Namespace): Parsed command-line arguments
         
         Raises:
-            AssertionError: If download_batch is not greater than 0.
+            ValueError: If download_batch is not greater than 0.
         """
         
         super().__init__(args)
         
         # Defensive check:
-        assert args.download_batch > 0, "Download batch should be larger than 0."
+        if not(args.download_batch > 0): 
+            raise ValueError("Download batch should be larger than 0.")
         
         # Variable to store assembly accessions:
         self.assembly_accessions: list = []
@@ -70,6 +71,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         
         return None
     
+    
     def fetch_assembly_ids(self) -> None:
         """
         Fetch NCBI assembly accession IDs for all scaffold IDs in the binary table.
@@ -80,6 +82,9 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         
         Mutates:
             self.assembly_accessions (list): Populated with deduplicated NCBI assembly accession IDs.
+            
+        Raises:
+            RuntimeError: If no assembly IDs have been retrieved.
             
         Returns:
             None
@@ -106,10 +111,18 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         ## Gather and deduplicate assembly IDs
         LOG.info('Merging ID sets')
         assembly_accessions = refseq_assembly_accessions + genbank_assembly_accessions
+        
+        ## Stop if empty
+        if len(assembly_accessions) == 0:
+            msg = 'No assembly IDs retrieved!'
+            LOG.critical(msg)
+            raise RuntimeError(msg)
+        
         LOG.info(f'Got {len(assembly_accessions)} accession IDs in total')
         self.assembly_accessions = assembly_accessions
 
         return None
+    
     
     def fetch_genomes(self) -> None:
         """
@@ -152,7 +165,13 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
                          '--filename', str(datasets_zip.resolve()),
                          '--dehydrated',
                          '--no-progressbar']
-            run_command(fetch_cmd)
+            
+            try:
+                run_command(fetch_cmd)
+            except RuntimeError:
+                msg = 'Fetching download URLs from NCBI failed!'
+                LOG.critical(msg)
+                raise RuntimeError(msg)
             
             # Unzip the package
             shutil.unpack_archive(datasets_zip, extract_dir = DOWNLOADS, format = "zip")
@@ -164,7 +183,13 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
                             '--gzip',
                             '--no-progressbar',
                             '--max-workers', str(self.download_workers)]
-            run_command(download_cmd)
+            
+            try:
+                run_command(download_cmd)
+            except RuntimeError:
+                msg = 'Downloading genome assemblies from NCBI failed!'
+                LOG.critical(msg)
+                raise RuntimeError(msg)
             
             # Move all the genome files to the genome folder
             for file in DOWNLOADS.glob('ncbi_dataset/data/GC*/*'):
@@ -176,6 +201,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         LOG.info(f'{len(list(self.TEMP_GENOME_DIR.iterdir()))} genomes in {str(self.TEMP_GENOME_DIR)}')
             
         return None
+    
     
     def map_scaffolds_to_assemblies(self) -> None:
         """
@@ -191,7 +217,9 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         
         Returns:
             None
-        
+            
+        Raises:
+            RuntimeError: If the dereplication input folder does not contain any fasta file.        
         """
         def remove_prefix(scaffold: str) -> str: 
             """
@@ -219,9 +247,17 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
             return [s for s in scaffolds_in_host_assembly if deprefixed_scaffold in s][0]
 
         # Define the set of scaffolds (without prefix) that can be found in the binary:
-        scaffolds_in_binary: set = {scaffold.strip() for scaffold in self.binary_df['Scaffold'].to_list()}
+        scaffolds_in_binary = {scaffold.strip() for scaffold in self.binary_df['Scaffold'].to_list()}
         # Scaffold set in binary without any prefixes:
-        scaffolds_in_binary_no_prefix: set = {remove_prefix(scaffold) for scaffold in scaffolds_in_binary}
+        scaffolds_in_binary_no_prefix = {remove_prefix(scaffold) for scaffold in scaffolds_in_binary}
+        
+        # Verify that the dereplication input directory is not empty
+        try:
+            next(filter(is_fasta, self.DEREP_IN_DIR.iterdir()))
+        except StopIteration:
+            msg = "No fasta files found in the dereplication input folder!"
+            LOG.critical(msg)
+            raise RuntimeError(msg)
         
         # Loop over all fasta files in the genome directory:
         for file in filter(is_fasta, self.DEREP_IN_DIR.iterdir()):
@@ -229,7 +265,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
             # Open the file:
             with gzip.open(file, 'rt') as assembly:
                 # Extract the set of scaffold IDs in the file and remove prefixes
-                scaffolds_in_this_assembly: set = {record.id.strip() for record in SeqIO.parse(assembly, 'fasta')}
+                scaffolds_in_this_assembly = {record.id.strip() for record in SeqIO.parse(assembly, 'fasta')}
                 # Remove the prefixes
                 scaffolds_in_this_assembly_no_prefix = {remove_prefix(record.id.strip()) for record in SeqIO.parse(assembly, 'fasta')}
                 # Now we take the intersection of both sets. All the scaffolds in this intersection are found in the the current file
@@ -243,6 +279,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
                     self.scaffold_assembly_pairs[scaffold] = file.name
                         
         return None
+    
                 
     def join_assemblies_with_binary(self) -> None:
         """
@@ -262,14 +299,16 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         
         Returns:
             None
-        
+            
+        Raises:
+            RuntimeError: If the binary table is empty after joining with the mapping table.
         """
         # Read the dictionary mapping as a dataframe with the scaffold IDs as index and the assembly file to which it belongs as 'assembly_file':
         scaffold_assembly_pairs_df: pd.DataFrame = pd.DataFrame.from_dict(self.scaffold_assembly_pairs, orient='index', columns = ['assembly_file'])
         
         # Join the binary table on the 'Scaffold' column:
         self.binary_df = self.binary_df.join(scaffold_assembly_pairs_df, on='Scaffold')
-            
+        
         # Extract scaffolds that could not be linked to an assembly:
         scaffolds_with_na = self.binary_df[self.binary_df['assembly_file'].isna()]['Scaffold']
         
@@ -278,8 +317,14 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
             LOG.warning(f"{scaffolds_with_na.size} scaffolds could not be linked to a genome assembly. See unmapped.scaffolds.txt") 
             # Drop the NA values:
             self.binary_df = self.binary_df.dropna()
+            
+        if self.binary_df.empty:
+            msg = "No scaffold could be linked with an assembly!"
+            LOG.critical(msg)
+            raise RuntimeError(msg)
         
         return None
+    
     
     def join_dereplication_with_binary(self) -> None:
         """
@@ -294,6 +339,11 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         
         Returns:
             None
+            
+        Raises:
+            FileNotFoundError: If the dereplication table cannot be read
+            RuntimeError: If the dereplication table is empty.
+            RuntimeError: If the binary table is empty after joining with the dereplication table.
             
         Note:
             This is the workflow-specific implementation of the abstract method inherited from its grandparent class Run.
@@ -312,24 +362,40 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         # Read the skder out clustering table:
         path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
         # Convert to dataframe:
-        derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
-                                 converters = {'assembly': extract_filename,
-                                               'representative': extract_filename,
-                                               'dereplication_status': rename_skder_label},
-                                 names = ['assembly', 'representative', 'dereplication_status'],
-                                 usecols = [0,1,4], header = 0, index_col = 'assembly'
-                                 )
+        try:
+            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
+                                     converters = {'assembly': extract_filename,
+                                                   'representative': extract_filename,
+                                                   'dereplication_status': rename_skder_label},
+                                     names = ['assembly', 'representative', 'dereplication_status'],
+                                     usecols = [0,1,4], header = 0, index_col = 'assembly'
+                                     )
+        except FileNotFoundError as err:
+            LOG.critical(f'{err}')
+            raise err
+        if derep_df.empty:
+            msg = "Dereplication table is empty!"
+            LOG.error(msg)
+            raise RuntimeError(msg)
+            
         # Join with binary df on assembly_file column. 
         # Every assembly_file row is retained (left join).
         # If there is a match between binary_df['assembly_file'] and derep_df['assembly'] (its index column), the representative and status is added.
         LOG.debug("Joining skDER clustering table and cblaster binary table.")
         self.binary_df = self.binary_df.join(derep_df, on='assembly_file')
         
+        # Verify binary table is not empty
+        if self.binary_df.empty:
+            msg = "Binary table is empty after joining with the dereplication table!"
+            LOG.error(msg)
+            raise RuntimeError(msg)
+        
         # Sort by representative ID and then by dereplication status
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])
         LOG.info("Mapping done!")
             
         return None
+    
     
     def run(self):
         """

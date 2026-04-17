@@ -5,7 +5,6 @@ import gzip
 import os
 import shutil
 import warnings
-import sys
 import pandas as pd
 from itertools import batched
 from pathlib import Path
@@ -57,14 +56,19 @@ def _download_one_region(region: tuple, out_dir: Path, max_attempts = 3) -> None
     
     for attempt in range(max_attempts):
         with open(out_file, 'w') as handle:
-            try:
-                subprocess.run(cmd, stdout = handle, check = True, text = True)
-            except CalledProcessError:
-                if attempt < max_attempts:
-                    LOG.warning(f"Error downloading {accession}. Retrying...")
-                else:
-                    LOG.error(f"Error downloading {accession}.")
-                    return None
+            with open(os.devnull, 'w') as devnull:
+                try:
+                    subprocess.run(cmd, stdout = handle, stderr = devnull, check = True, text = True)
+                    break
+                except CalledProcessError as err:
+                    if attempt < max_attempts:
+                        LOG.warning(f"Error downloading {accession}. Retrying...")
+                        LOG.warning(f'{err}')
+                        continue
+                    else:
+                        LOG.error(f"Error downloading {accession} for {max_attempts} times. Giving up.")
+                        LOG.error(f'{err}')
+                        return None
         
     compressed_file = out_file.with_suffix('.fasta.gz')
     with open(out_file, "r") as handle:
@@ -91,24 +95,39 @@ def download_regions(regions: pd.DataFrame, directory: Path, download_workers: i
         download_workers (int): Number of concurrent download threads requested. If greater
             than 2, will be automatically reduced to 2.
         no_progress (bool, optional): If True, suppress progress bar display. Defaults to False.
+        
+    Raises:
+        ValueError: If the provided regions dataframe is empty.
+        IOError: If the download directory does not exist.
     
     Returns:
         None
     """
+    if regions.empty:
+        msg = "Regions dataframe is empty."
+        LOG.error(msg)
+        raise ValueError(msg)
+    
+    if not(directory.is_dir()):
+        msg = "Region download directory does not exist."
+        LOG.error(msg)
+        raise IOError(msg)
+    
     accessions = regions['Scaffold'].to_list()
     ranges = (regions['Start'].astype(str) + ':' + regions['End'].astype(str)).to_list()
     regions = list(zip(accessions, ranges))
     
     if download_workers > 2:
         max_workers = 2
-        LOG.warning("You are requesting too many download workers by NCBI policy. Limiting the number to 2 for compliance.")
+        LOG.warning("You are requesting too many download workers by NCBI policy. Limiting to 2 for compliance.")
     else:
         max_workers = download_workers
     
-    thread_map(lambda x: _download_one_region(x, directory), regions, 
-               max_workers = max_workers,
-               leave = False,
-               disable = no_progress)
+    with logging_redirect_tqdm(loggers = [LOG]):
+        thread_map(lambda x: _download_one_region(x, directory), regions, 
+                   max_workers = max_workers,
+                   leave = False,
+                   disable = no_progress)
     
     return None
 
@@ -136,15 +155,29 @@ def get_assembly_accessions(scaffolds: list, source: str, no_progress: bool = Fa
     Returns:
         list: A list of Assembly accession IDs associated with the input scaffolds. Returns
             an empty list if the retrieval fails after all retry attempts.
+            
+    Raises:
+        ValueError: If an invalid NCBI Nucleotide database name was supplied, or if the supplied scaffold ID list is empty.
+        RuntimeError: If the NCBI Assembly IDs could not be fetched from NCBI.
     
     Notes:
         - Processes scaffolds in batches of 100.
         - Retries up to 3 times on network/server errors.
     
     Raises:
-        AssertationError: If the specified source is not a valid NCBI Nucleotide database.
+        ValueError: If the specified source is not a valid NCBI Nucleotide database.
+        ValueErorr: If the scaffold ID list is empty.
+        RuntimeError: If the assembly IDs could not be fetched from NCBI.
     """
-    assert source in {'Genban', 'Refseq'}, 'Invalid NCBI Nucleotide database!'
+    if source not in {'Genbank', 'RefSeq'}:
+        msg = 'Invalid NCBI Nucleotide database!'
+        LOG.error(msg)
+        raise ValueError(msg)
+    
+    if len(scaffolds) == 0:
+        msg = 'Scaffold ID list empty!'
+        LOG.error(msg)
+        raise ValueError(msg)
     
     # Only in case of requesting Genbank IDs, redirect WGS records to their master record
     if source == 'Genbank':
@@ -163,7 +196,8 @@ def get_assembly_accessions(scaffolds: list, source: str, no_progress: bool = Fa
     with logging_redirect_tqdm(loggers = [LOG]):
         LOG.debug('Elinking')
         records = []
-        for b_idx, batch in tqdm(list(enumerate(batched(scaffolds, batch_size))), leave = False, disable = no_progress):
+        for b_idx, batch in tqdm(list(enumerate(batched(scaffolds, batch_size))),
+                                 leave = False, disable = no_progress):
             for attempt in range(max_attempts):
                 try:
                     with Entrez.elink(dbfrom = "nucleotide", db = 'assembly', id = batch) as handle:
@@ -173,8 +207,9 @@ def get_assembly_accessions(scaffolds: list, source: str, no_progress: bool = Fa
                 except:
                     if attempt+1 < max_attempts:
                         LOG.warning(f'Error Elinking batch {b_idx+1} in attempt {attempt+1}. Max. attempts: {max_attempts}')
+                        continue
                     else:
-                        LOG.error(f'Error Elinking batch {b_idx+1} after {max_attempts} attempts. Skipping...')
+                        LOG.error(f'Error Elinking batch {b_idx+1} after {max_attempts} attempts. Giving up...')
         
     # Extract UIDs from Elink records
     uids = [str(l['Id']) for record in records for linksetdb in record['LinkSetDb'] for l in linksetdb['Link']]
@@ -189,9 +224,10 @@ def get_assembly_accessions(scaffolds: list, source: str, no_progress: bool = Fa
         except:
             if attempt+1 < max_attempts:
                 LOG.warning(f'Error getting assembly IDs in attempt {attempt+1}. Max. attempts: {max_attempts}')
+                continue
             else:
-                LOG.error(f'Error getting assembly IDs after {max_attempts} attempts. Skipping...')
-                return []
+                LOG.error(f'Error getting assembly IDs after {max_attempts} attempts. Giving up...')
+                raise RuntimeError('Could not retrieve assembly IDs from NCBI!')
     
     # Extract Assembly accession ID from Esummary object
     summaries = summary_set['DocumentSummarySet']['DocumentSummary']
@@ -214,6 +250,9 @@ def fetch_contig_lengths(contig_ids: list, max_attempts = 3):
             for which to retrieve sequence lengths.
         max_attempts (int, optional): Maximum number of retry attempts on network/server errors.
             Defaults to 3.
+            
+    Raises:
+        RuntimeError: If the fetch fails the maximum number of times, or if it returns an empty response
     
     Returns:
         pd.DataFrame: A DataFrame with columns:
@@ -226,18 +265,27 @@ def fetch_contig_lengths(contig_ids: list, max_attempts = 3):
         try:
             with Entrez.efetch(db = 'nucleotide', id = contig_ids, rettype = 'docsum') as handle:
                 records = Entrez.read(handle)
+            break
         except:
             if attempt+1 < max_attempts:
                 LOG.warning(f'Error getting contig lengths in attempt {attempt+1}. Max. attempts: {max_attempts}')
+                continue
             else:
-                LOG.error(f'Error getting contig lengths after {max_attempts} attempts. Exiting...')
-                sys.exit()
+                msg = f'Error getting contig lengths after {max_attempts} attempts. Giving up...'
+                LOG.error(msg)
+                raise RuntimeError(msg)
                 
     # Parse the response
     lengths = [int(s['Length']) for s in records]
     accessions_with_lengths = [str(s['AccessionVersion']) for s in records]
     lengths_df = pd.DataFrame({'Scaffold': accessions_with_lengths, 'Contig_length': lengths})
     lengths_df.drop_duplicates(inplace = True, ignore_index = True)
+    
+    # A last check
+    if lengths_df.empty:
+        msg = 'Got empty response when retrieving contig lengths'
+        LOG.error(msg)
+        raise RuntimeError(msg)
     
     return lengths_df
 

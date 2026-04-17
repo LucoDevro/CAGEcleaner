@@ -34,6 +34,9 @@ class RemoteRun(Run):
             
         Returns:
             None
+            
+        Raises:
+            ValueError: If there are no hits left in the binary table after excluding scaffolds or organisms.
         """
         # Call the parent constructor:
         super().__init__(args)
@@ -45,11 +48,21 @@ class RemoteRun(Run):
             LOG.debug(f"Excluding the following organisms: {', '.join(self.excluded_organisms)}")
             # Exclude them:
             self.binary_df = self.binary_df[~self.binary_df['Organism'].isin(self.excluded_organisms)]
+            
+            if self.binary_df.empty:
+                msg = "No hits left after excluding organisms!"
+                LOG.error(msg)
+                raise ValueError(msg)
         
         # Remove scaffolds that the user wants excluded:
         if self.excluded_scaffolds != {''}:
             LOG.debug(f"Excluding the following scaffolds: {', '.join(self.excluded_scaffolds)}")
             self.binary_df = self.binary_df[~self.binary_df['Scaffold'].isin(self.excluded_scaffolds)]
+            
+            if self.binary_df.empty:
+                msg = "No hits left after excluding scaffolds!"
+                LOG.error(msg)
+                raise ValueError(msg)
         
         # Replace colons in the bypass assemblies as wel:
         if self.bypass_organisms != {''}:

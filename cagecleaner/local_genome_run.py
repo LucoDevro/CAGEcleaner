@@ -70,7 +70,8 @@ class LocalGenomeRun(LocalRun, GenomeRun):
         
         Raises:
             FileNotFoundError: If the skDER clustering file cannot be found at the expected path.
-            KeyError: If expected columns are missing from the clustering file.
+            RuntimeError: If the dereplication table is empty.
+            RuntimeError: If the binary table is empty after joining with the dereplication table.
             
         Notes:
             This is the workflow-specific implementation of the abstract method inherited from its grandparent class Run.
@@ -88,18 +89,34 @@ class LocalGenomeRun(LocalRun, GenomeRun):
         # Read the skder out clustering table:
         path_to_cluster_file: Path = self.DEREP_OUT_DIR / 'skDER_Clustering.txt'
         # Convert to dataframe:
-        derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
-                                 converters = {'assembly': extract_assembly_id,
-                                               'representative': extract_assembly_id,
-                                               'dereplication_status': rename_label},
-                                 names = ['assembly', 'representative', 'dereplication_status'],
-                                 usecols = [0,1,4], header = 0, index_col = 'assembly'
-                                 )
+        try:
+            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
+                                     converters = {'assembly': extract_assembly_id,
+                                                   'representative': extract_assembly_id,
+                                                   'dereplication_status': rename_label},
+                                     names = ['assembly', 'representative', 'dereplication_status'],
+                                     usecols = [0,1,4], header = 0, index_col = 'assembly'
+                                     )
+        except FileNotFoundError as err:
+            LOG.critical(f'{err}')
+            raise err
+            
+        if derep_df.empty:
+            msg = "Dereplication table is empty."
+            LOG.error(msg)
+            raise RuntimeError(msg)
+            
         # Join with binary df on Organism column. 
         # Every Organism row is retained (left join).
         # If there is a match between binary_df['Organism'] and derep_df['assembly'] (index), the representative and status is added.
         LOG.debug("Joining skDER clustering table and cblaster binary table.")
         self.binary_df = self.binary_df.join(derep_df, on='Organism')
+        
+        # Verify binary table is not empty
+        if self.binary_df.empty:
+            msg = "Binary table is empty after joining with the dereplication table!"
+            LOG.error(msg)
+            raise RuntimeError(msg)
         
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])           
         LOG.info("Mapping done!")

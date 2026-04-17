@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from cagecleaner.file_utils import remove_suffixes
-from cagecleaner.utils import correct_layouts, generate_cblaster_session
+from cagecleaner.utils import correct_layouts
 
 import pandas as pd
 import os
 import shutil
 import logging
-import sys
 from tempfile import TemporaryDirectory
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -63,7 +62,8 @@ class Run(ABC):
             args (argparse.Namespace): Parsed command-line arguments
                 
         Raises:
-            AssertionError: If input validation fails (missing files, invalid ranges, etc).
+            IOError: If provided genome directory does not exist
+            ValueError: If provided input values do not make sense
             FileExistsError: If output directory already exists (unless -f flag used).
             
         Returns:
@@ -73,13 +73,20 @@ class Run(ABC):
         super().__init__()
         
         ## Some defensive checks: ##
-        assert args is not None, "No arguments were given. ArgParse object is None."
-        assert args.session.exists(), "Provided session does not exist."
-        assert args.genome_dir.exists() and args.genome_dir.is_dir(), "Provided genome directory does not exist or is not a directory."
-        assert args.coverage >= 0 and args.coverage <= 100, "Coverage threshold should be a number between 0 and 100."
-        assert args.zscore_outlier_threshold > 0, "Z-score threshold for recovery should be greater than zero."
-        assert args.minimal_score_difference >= 0, "Minimal score difference for recovery cannot be smaller than zero."
-        assert args.cores > 0, "Amount of CPU cores to use should be greater than zero."
+        try:
+            if not (args.genome_dir.exists()):
+                raise IOError(f"Provided genome directory does not exits: {args.genome_dir}.")
+            if not (args.coverage >= 0 and args.coverage <= 100):
+                raise ValueError("Coverage threshold should be a number between 0 and 100.")
+            if not(args.zscore_outlier_threshold > 0):
+                raise ValueError("Z-score threshold for recovery should be greater than zero.")
+            if not(args.minimal_score_difference >= 0):
+                raise ValueError("Minimal score difference for recovery cannot be smaller than zero.")
+            if not(args.cores > 0):
+                raise ValueError("Amount of CPU cores to use should be greater than zero.")
+        except (IOError, ValueError) as err:
+            LOG.error(f'{err}')
+            raise err
         
         ## Passing on the CLI arguments
         # Parse the general arguments:
@@ -96,7 +103,7 @@ class Run(ABC):
         self.OUT_DIR: Path = args.output_dir.resolve()  # Output directory
         Path(args.temp_dir).resolve().mkdir(parents = True, exist_ok = True)
         self.TEMP_DIR_CONTEXT: TemporaryDirectory = TemporaryDirectory(dir = args.temp_dir, delete = False)  # Temporary directory (within the given temporary directory)
-        self.TEMP_DIR = Path(self.TEMP_DIR_CONTEXT.name)
+        self.TEMP_DIR: Path = Path(self.TEMP_DIR_CONTEXT.name)
         self.USER_GENOME_DIR: Path = args.genome_dir.resolve()  # Genome directory provided by the user
         self.DEREP_OUT_DIR: Path = self.TEMP_DIR / 'derep_out'
         self.DEREP_IN_DIR: Path | None = None # Input directory for the dereplication.
@@ -104,13 +111,13 @@ class Run(ABC):
         # Output directory should not exist yet, unless flagged.
         try:
             self.OUT_DIR.mkdir(parents = True)
-        except FileExistsError:
+        except FileExistsError as err:
             if args.force:
                 LOG.warning('Output folder already exists, but it will be overwritten.')
             else:
                 LOG.error('Output folder already exists! Rerun with -f to overwrite it.')
-                sys.exit()
-        
+                raise err
+            
         # Parse bypass and excluded scaffolds/assemblies:
         self.bypass_organisms: set = {i.strip() for i in args.bypass_organisms.split(',')}  # Converts comma-separated sequence to a set.
         self.bypass_scaffolds: set = {i.strip() for i in args.bypass_scaffolds.split(',')}
@@ -158,6 +165,9 @@ class Run(ABC):
             
         Note:
             Exits when no valid input files have been found.
+            
+        Raises:
+            ValueError: If the initial binary is empty, and thus the session is empty.
         
         Returns:
             None
@@ -174,6 +184,12 @@ class Run(ABC):
                                        sep = "\t", 
                                        converters= {'Organism': remove_suffixes})  # removeSuffixes only relevant in local mode. 
         os.remove(self.TEMP_DIR / 'binary.txt')
+        
+        # Stop if binary is empty
+        if self.binary_df.empty:
+            msg = "Session is empty!"
+            LOG.error(msg)
+            raise ValueError(msg)
         
         # Then add columns with cluster numbers, layouts and strand positions to the binary table
         all_scaffolds = {sc for _,sc,_ in get_sorted_cluster_hierarchies(self.session, max_clusters=None)}
@@ -371,6 +387,9 @@ class Run(ABC):
         
         Mutates:
             self.filtered_session (Session): Newly created filtered session object.
+            
+        Raises:
+            RuntimeError: If filtered session is empty.
         
         Returns:
             None
@@ -427,6 +446,12 @@ class Run(ABC):
             
             # Update the total counter
             scaffolds_removed_total += scaffolds_removed  
+        
+        # Stop if session has been completely emptied
+        if len(filtered_session_dict) == 0:
+            msg = 'Filtered session is empty!'
+            LOG.error(msg)
+            raise RuntimeError(msg)
         
         # Store the filtered session internally:
         self.filtered_session = Session.from_dict(filtered_session_dict)

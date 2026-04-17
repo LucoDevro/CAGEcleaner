@@ -7,11 +7,12 @@ import argparse
 import sys
 import logging
 from pathlib import Path
+from cblaster.classes import Session
 
 
 LOG = logging.getLogger()
 logging.basicConfig(
-    level = 3,
+    level = logging.ERROR,
     format = "[%(asctime)s] %(levelname)s [%(filename)s: %(funcName)s] - %(message)s",
     datefmt="%H:%M:%S",
     handlers = [logging.StreamHandler(sys.stdout)]
@@ -27,9 +28,6 @@ def parse_arguments() -> argparse.Namespace:
     
     Returns:
         A Namespace object holding the parsed arguments
-        
-    Note:
-        Also configures the logger.
     """
     
     # Initiate an ArgumentParser object
@@ -62,22 +60,62 @@ def parse_arguments() -> argparse.Namespace:
     
     return args
 
+def validate_arguments(args: argparse.Namespace) -> None:
+    """
+    This function validates the arguments parsed through the command line.
+    
+    Args:
+        A Namespace object holding the parsed arguments
+    
+    Returns:
+        None
+        
+    Raises:
+        IOError: If any of the required input tables (clusters, hits, queries) has not been found, or if the session file already exists.
+        ArgumentError: If there was an error during parsing, which resulted in the parsed arguments being None
+    """
+    if args is None:
+        msg = "No arguments were parsed. ArgParse object is None."
+        LOG.error(msg)
+        raise argparse.ArgumentError(msg)
+    
+    if not args.clusters.exists():
+        msg = "Cluster TSV not found at {args.clusters}"
+        LOG.error(msg)
+        raise IOError(msg)
+    
+    if not args.hits.exists():
+        msg = "Hit TSV not found at {args.clusters}"
+        LOG.error(msg)
+        raise IOError(msg)
+        
+    if not args.queries.exists():
+        msg = "Queries TSV not found at {args.clusters}"
+        LOG.error(msg)
+        raise IOError(msg)
+        
+    if not args.session.exists():
+        if args.force:
+            LOG.warning('Session file already exists, but it will be overwritten.')
+        else:
+            msg = 'Session file already exists! Rerun with -f to overwrite it.'
+            LOG.error(msg)
+            raise IOError(msg)
+            
+    return None
+        
+
 def main():
     
     # Parse arguments
     args = parse_arguments()
     
-    # Check output path
-    if args.session.exists():
-        if args.force:
-            LOG.warning('Output path already exists, but it will be overwritten.')
-        else:
-            LOG.error('Output path already exists! Rerun with -f to overwrite it.')
-            sys.exit()
+    # Validate arguments
+    validate_arguments()
     
     # Generate session
     LOG.info("Generating cblaster session.")
-    session = generate_cblaster_session(args.hits, args.clusters, args.queries, args.mode)
+    session: Session = generate_cblaster_session(args.hits, args.clusters, args.queries, args.mode)
     
     # Save session on harddisk
     LOG.info(f"Writing session to disk at {args.session.resolve()}")

@@ -117,6 +117,17 @@ def parse_arguments() -> argparse.Namespace:
         datefmt="%H:%M:%S",
         handlers = [logging.StreamHandler(sys.stdout)]
         )
+    
+    # Validate required arguments
+    if args is None:
+        msg = "No arguments were parsed. ArgParse object is None."
+        LOG.error(msg)
+        raise argparse.ArgumentError(msg)
+    
+    if not args.session.exists():
+        msg = f"Session not found at {args.session}"
+        LOG.error(msg)
+        raise IOError(msg)
         
     return args
 
@@ -128,10 +139,7 @@ def main():
     
     # Initiate the approriate CAGEcleaner Run object:
     LOG.info("--- Loading session file. ---")
-    if args.session.is_dir():
-        source = args.source
-    else:
-        source = Session.from_file(args.session).params['mode']
+    source = Session.from_file(args.session).params['mode']
     method = args.method
     mode = (source, method)
     match mode:
@@ -149,7 +157,7 @@ def main():
             my_run = LocalRegionRun(args)
         case _:
             LOG.critical(f'Invalid mode detected: {mode}. Exiting.')
-            sys.exit()
+            raise argparse.ArgumentError(f'Invalid search mode detected: {mode}')
     
     # Run the initialised workflow:
     my_run.run()

@@ -100,14 +100,17 @@ def _stream_reader(pipe, write_func):
     Read data from a pipe stream and write output using a provided callback function.
     
     Continuously reads chunks from a pipe (typically subprocess stdout or stderr) and
-    decodes them to UTF-8 text (with fallback to Latin-1). Each chunk is passed to the
-    provided write function for logging or processing.
+    decodes them to UTF-8 text. Each chunk is passed to the provided write function
+    for logging or processing.
     
     Args:
         pipe: A file-like object opened in binary mode (e.g., subprocess.PIPE).
         write_func (callable): A callback function that accepts a string argument
             and handles the decoded text (typically a logging function).
-    
+            
+    Raises:
+        RuntimeError: If there's an error in the stream reader.
+        
     Notes:
         - Silently handles decoding errors by replacing invalid characters.
         - Logs exceptions to the root logger if stream reading fails.
@@ -118,13 +121,12 @@ def _stream_reader(pipe, write_func):
             for chunk in iter(lambda: pipe.readline(), b''):
                 if not chunk:
                     break
-                try:
-                    text = chunk.decode('utf-8', 'replace')
-                except Exception:
-                    text = chunk.decode('latin-1', 'replace')
+                text = chunk.decode('utf-8', 'replace')
                 write_func(text)
     except Exception:
-        LOG.exception("stream reader error")
+        msg = "Stream reader error"
+        LOG.exception(msg)
+        raise RuntimeError(msg)
         
 
 def run_command(cmd_list: list, max_attempts: int = 3) -> None:
@@ -143,6 +145,9 @@ def run_command(cmd_list: list, max_attempts: int = 3) -> None:
     
     Returns:
         None
+        
+    Raises:
+        RuntimeError: If the supplied command fails the maxinum number of times.
     
     Notes:
         - The first element of cmd_list must be an executable available in the system PATH.
@@ -183,9 +188,11 @@ def run_command(cmd_list: list, max_attempts: int = 3) -> None:
                 LOG.error(f'Retrying. Attempt {attempt+1} out {max_attempts}.')
         else:
             LOG.info(f'{executable.name} finished successfully')
-            break
-            
-    return None
+            return None
+    
+    msg = f"{executable.name} failed {max_attempts} times. Giving up."
+    LOG.error(msg)
+    raise RuntimeError(msg)
 
 
 def generate_cblaster_session(hits: Path, clusters: Path, queries: Path, mode: str) -> Session:
@@ -353,8 +360,9 @@ def generate_cblaster_session(hits: Path, clusters: Path, queries: Path, mode: s
                                                   'bitscore': hit.score}]
                 cblaster_this_subject['name'] = hit.db_id
                 cblaster_this_subject['ipg'] = hit.db_id
-                cblaster_this_subject['start'] = min([int(cdr) for cdr in re.findall(r'\d+', hit.coords)])
-                cblaster_this_subject['end'] = max([int(cdr) for cdr in re.findall(r'\d+', hit.coords)])
+                coords_this_subject = [int(cdr) for cdr in re.findall(r'\d+', hit.coords)]
+                cblaster_this_subject['start'] = min(coords_this_subject)
+                cblaster_this_subject['end'] = max(coords_this_subject)
                 cblaster_this_subject['strand'] = int(f"{hit.strand}1")
                 cblaster_this_subject['sequence'] = None
                 this_scaffold['subjects'].append(cblaster_this_subject)

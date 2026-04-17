@@ -33,8 +33,7 @@ class RegionRun(Run):
             args (argparse.Namespace): Parsed command-line arguments
             
         Raises:
-            AssertionError: If identity threshold is not a percentage
-            AssertionError: If sequence margin is not a positive number.
+            ValueError: If identity threshold is not a percentage value, or if sequence margin is not a positive number.
             
         Returns:
             None
@@ -42,8 +41,14 @@ class RegionRun(Run):
         
         super().__init__(args)
         
-        assert args.identity <= 100 and args.identity >= 0, "Identity threshold should be between 0 % and 100 % in case of region-based dereplication."
-        assert args.margin >= 0, "Region margin cannot be negative when dereplicating regions."
+        try:
+            if not(args.identity <= 100 and args.identity >= 0):
+                raise ValueError("Identity threshold should be between 0 and 100 in case of region-based dereplication.")
+            if not(args.margin >= 0):
+                raise ValueError("Region margin cannot be negative when dereplicating regions.")
+        except ValueError as err:
+            LOG.error(f'{err}')
+            raise err
         
         self.DEREP_IN_DIR: Path = self.TEMP_DIR / 'regions' # Path where the genomic regions will be saved temporarily for region-based dereplication
         
@@ -62,9 +67,24 @@ class RegionRun(Run):
         
         Returns:
             None
+            
+        Raises:
+            RuntimeError: If the MMseqs2 command run fails, or if the input folder is empty or does not exist.
         """
         mmseqs_verbosity = str(min(self.verbosity, 3))
         self.DEREP_OUT_DIR.mkdir(parents = True, exist_ok = True)
+        
+        if not(self.DEREP_IN_DIR.exists()):
+            msg = "The dereplication input folder does not exist!"
+            LOG.critical(msg)
+            raise RuntimeError(msg)
+            
+        try:
+            next(self.DEREP_IN_DIR.iterdir())
+        except StopIteration:
+            msg = "The dereplication input folder is empty!"
+            LOG.critical(msg)
+            raise RuntimeError(msg)
         
         cmd = ['mmseqs', 'easy-cluster',
                *[str(p) for p in self.DEREP_IN_DIR.iterdir()],
@@ -75,7 +95,13 @@ class RegionRun(Run):
                '--threads', str(self.cores),
                '-v', mmseqs_verbosity
                ]
-        run_command(cmd)
+        
+        try:
+            run_command(cmd)
+        except RuntimeError:
+            msg = 'Dereplicating regions with MMseqs2 failed!'
+            LOG.critical(msg)
+            raise RuntimeError(msg)
         
         return None
     

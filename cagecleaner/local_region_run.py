@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from tqdm.contrib.concurrent import thread_map
+from tqdm.contrib.logging import logging_redirect_tqdm
 
 LOG = logging.getLogger()
 
@@ -72,12 +73,13 @@ class LocalRegionRun(LocalRun, RegionRun):
         """
         
         regions = [r.to_dict() for i,r in self.binary_df.iterrows()]
-        contig_ends = thread_map(lambda x: _extract_one_region(x, self.margin, self.TEMP_GENOME_DIR, 
-                                                             self.DEREP_IN_DIR, self.strict_regions), 
-                                 regions, 
-                                 max_workers = self.cores,
-                                 leave = False,
-                                 disable = self.no_progress)
+        with logging_redirect_tqdm(loggers = [LOG]):
+            contig_ends = thread_map(lambda x: _extract_one_region(x, self.margin, self.TEMP_GENOME_DIR, 
+                                                                 self.DEREP_IN_DIR, self.strict_regions), 
+                                     regions, 
+                                     max_workers = self.cores,
+                                     leave = False,
+                                     disable = self.no_progress)
         contig_end = sum(contig_ends)
 
         LOG.info(f'{contig_end} regions were at a contig end.')
@@ -108,6 +110,11 @@ class LocalRegionRun(LocalRun, RegionRun):
         
         Returns:
             None
+        
+        Raises:
+            FileNotFoundError: If the dereplication table cannot be read
+            RuntimeError: If the dereplication table is empty, or has empty values due to an invalid filename formatting.
+            RuntimeError: If the binary table is empty after joining with the dereplication table
             
         Notes:
             The Region temporary column in self.binary_df was added by joining with the MMseqs2 dereplication table.
@@ -116,21 +123,39 @@ class LocalRegionRun(LocalRun, RegionRun):
         
         # Parse the MMseqs clustering table
         path_to_cluster_file: Path = self.DEREP_OUT_DIR / "derep_cluster.tsv"
-        derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
-                                 names = ['representative', 'Region'],
-                                 header = None
-                                 )
+        try:
+            derep_df: pd.DataFrame = pd.read_table(path_to_cluster_file,
+                                     names = ['representative', 'Region'],
+                                     header = None
+                                     )
+        except FileNotFoundError as err:
+            LOG.critical(f'{err}')
+            raise err
 
         # Determine dereplication status
         derep_df[['Scaffold', 'Start', 'End']] = derep_df['Region'].str.split(pat = "|", expand = True)
         derep_df[['Start', 'End']] = derep_df[['Start', 'End']].astype(int)
         derep_df['dereplication_status'] = derep_df['Region'] == derep_df['representative']
         derep_df['dereplication_status'] = np.where(derep_df['dereplication_status'], 'dereplication_representative', 'redundant')
+        if derep_df.isna().values.any():
+            msg = "Invalid filename formatting in dereplication table."
+            LOG.error(msg)
+            raise RuntimeError(msg)
+        if derep_df.empty:
+            msg = "Dereplication table is empty."
+            LOG.error(msg)
+            raise RuntimeError(msg)
         
         # Add dereplication status columns to binary table by joining with the clustering table
         LOG.debug("Joining MMseqs2 clustering table and cblaster binary table.")
         self.binary_df = self.binary_df.merge(derep_df, on = ["Scaffold", 'Start', 'End'])
         self.binary_df.drop(columns = ['Region'], inplace = True)
+        
+        # Verify binary table is not empty
+        if self.binary_df.empty:
+            msg = "Binary table is empty after joining with the dereplication table!"
+            LOG.error(msg)
+            raise RuntimeError(msg)
         
         # Sort by representative ID and then by dereplication status
         self.binary_df = self.binary_df.sort_values(['representative', 'dereplication_status'])           

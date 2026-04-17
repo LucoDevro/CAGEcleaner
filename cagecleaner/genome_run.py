@@ -32,7 +32,7 @@ class GenomeRun(Run):
             args (argparse.Namespace): Parsed command-line arguments
             
         Raises:
-            AssertionError: If identity threshold is not between 82 and 100, the threshold region support by skani.
+            ValueError: If identity threshold is not between 82 and 100, the threshold region support by skani.
             
         Returns:
             None
@@ -40,9 +40,11 @@ class GenomeRun(Run):
         
         super().__init__(args)
         
-        assert args.identity <= 100 and args.identity >= 82, "Identity threshold should be between 82 % and 100 % in case of full-genome-based dereplication (see skani documentation)."
+        if not(args.identity <= 100 and args.identity >= 82):
+            raise ValueError("Identity threshold should be between 82 % and 100 % in case of full-genome-based dereplication (see skani documentation).")
         
         return None
+    
     
     def dereplicate_genomes(self):
         """
@@ -53,10 +55,25 @@ class GenomeRun(Run):
         
         Returns:
             None
+            
+        Raises:
+            RuntimeError: If the input folder is empty or does not exist, or if the skDER command run fails.
         """
         self.DEREP_IN_DIR = self.TEMP_GENOME_DIR
         
         LOG.info(f'Dereplicating genomes in {str(self.DEREP_IN_DIR)} with identity cutoff of {str(self.identity)} % and coverage cutoff of {str(self.coverage)} %')
+        
+        if not(self.DEREP_IN_DIR.exists()):
+            msg = "Dereplication input directory does not exist!"
+            LOG.critical(msg)
+            raise RuntimeError(msg)
+        
+        try:
+            next(self.DEREP_IN_DIR.iterdir())
+        except StopIteration:
+            msg = "The dereplication input folder is empty!"
+            LOG.critical(msg)
+            raise RuntimeError(msg)
         
         LOG.info("Starting skDER")
         
@@ -69,7 +86,13 @@ class GenomeRun(Run):
                '-d', "low_mem_"*self.low_mem + 'greedy',
                '-n'
                ]
-        run_command(cmd)
+        
+        try:
+            run_command(cmd)
+        except RuntimeError:
+            msg = "Dereplicating genomes with skDER failed!"
+            LOG.critical(msg)
+            raise RuntimeError(msg)
         
         LOG.info("Dereplication done!")
         

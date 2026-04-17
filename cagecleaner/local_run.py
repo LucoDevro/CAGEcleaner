@@ -5,7 +5,6 @@ from cagecleaner.run import Run
 from cagecleaner.file_utils import is_fasta, is_genbank, remove_suffixes, convert_genbanks_to_fastas
 
 import logging
-import sys
 from abc import abstractmethod
 
 LOG = logging.getLogger()
@@ -34,33 +33,42 @@ class LocalRun(Run):
         Args:
             args (argparse.Namespace): Parsed command-line arguments
             
-        Raises:
-            AssertionError: If download flag is enabled in local mode.
-            AssertionError: If the genome directory does not only contain valid fasta or genbank files.
-            
         Returns:
             None
+            
+        Raises:
+            ValueError: If the download flag has been enabled in local mode.
+            ValueError: If the user-supplied local genome directory does not contain any fasta or genbank file.
+            ValueError: If there are no hits left in the binary table after excluding scaffolds or organisms.
         """
                 
         # Call the parent class initiator
         super().__init__(args)
         
-        # Can't keep downloads in local mode:
-        assert self.keep_downloads == False, "Can't keep downloads in local mode."
-        # Also make sure keep_intermediate doesn't fail:
+        # Can't keep downloads in local mode. Also make sure keep_intermediate doesn't fail.
+        if self.keep_downloads == True:
+            raise ValueError("Can't keep downloads in local mode.")
         if self.keep_intermediate:
             self.keep_intermediate = False
             self.keep_dereplication = True
         
         # Make sure there is no exotic stuff in the provided genome folder
-        for file in self.USER_GENOME_DIR.iterdir():
-            assert file.is_file(), f"The following object in the genome folder is not a file: {file}. Please move or remove it."
-            assert (is_fasta(str(file)) or is_genbank(str(file))), f"The following file is not in the correct format: {file}.\nWe only accept the following extensions: [.fasta, .fna, .fa, .gbff, .gbk, .gb]. The '.gz' extension is allowed."
+        try:
+            next(filter(lambda x: is_fasta(x) or is_genbank(x), self.USER_GENOME_DIR.iterdir()))
+        except StopIteration:
+            msg = "The user-supplied genome directory does not contain any fasta or genbank file!"
+            LOG.critical(msg)
+            raise ValueError(msg)
         
         # Remove organisms that the user wants to be excluded:
         if self.excluded_organisms != {''}:
             LOG.debug(f"Excluding the following organisms: {', '.join(self.excluded_organisms)}")
             self.binary_df = self.binary_df[~self.binary_df['Organism'].isin(self.excluded_organisms)]
+            
+            if self.binary_df.empty:
+                msg = "No hits left after excluding organisms!"
+                LOG.error(msg)
+                raise ValueError(msg)
 
         # Remove scaffold IDs specified by the user:
         if self.excluded_scaffolds != {''}:
@@ -73,7 +81,13 @@ class LocalRun(Run):
             # Clean up:
             self.binary_df = self.binary_df.drop(columns=['prefixed_scaffold'])
             
+            if self.binary_df.empty:
+                msg = "No hits left after excluding scaffolds!"
+                LOG.error(msg)
+                raise ValueError(msg)
+            
         return None
+    
     
     @abstractmethod
     def join_dereplication_with_binary(self):
@@ -97,6 +111,7 @@ class LocalRun(Run):
             are expected to provide a workflow-dependent specific implementation.
         """
         pass
+    
             
     def prepare_genomes(self) -> None:
         """
@@ -116,40 +131,46 @@ class LocalRun(Run):
         Returns:
             None
             
+        Raises:
+            ValueError: If an organism is found of which the genome is not present in the user-supplied genome directory.
+            RuntimeError: If no fasta or genbank files have been found in the supplied genome directory.
+            
         Notes:
             The sequence files in the user genome folder should be either all fasta files or all genbank files. There is
             no mix case support.
         """
         
         # Assert that Organism and filenames correspond:
-        files_in_genomes_dir: set = {remove_suffixes(file.name) for file in self.USER_GENOME_DIR.iterdir()}
-        organisms_in_session: set = {remove_suffixes(organism.name) for organism in self.session.organisms}
-        
-        assert files_in_genomes_dir >= organisms_in_session, "The genomes of all organisms in the cblaster session have not been found in the genome directory. Check the paths and please make sure you have not changed the genome filenames between a cblaster run and a CAGEcleaner run."
+        files_in_genomes_dir = {remove_suffixes(file.name) for file in self.USER_GENOME_DIR.iterdir()}
+        organisms_in_session = {remove_suffixes(organism.name) for organism in self.session.organisms}
+        if not(files_in_genomes_dir >= organisms_in_session): 
+            raise ValueError("Not all genomes of the organisms in the session have been found in the genome directory. Make sure you have not changed the genome filenames between a cblaster run and a CAGEcleaner run.")
         
         # Check if there are valid sequence files in the genome folder:
+        try:
+            next(filter(lambda x: is_fasta(x) or is_genbank(x), self.USER_GENOME_DIR.iterdir()))
+        except StopIteration:
+            msg = "No fasta files or Genbank files were found in the provided genome folder!"
+            LOG.critical(msg)
+            raise RuntimeError(msg)
+            
         fasta_in_folder = [is_fasta(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
         genbank_in_folder = [is_genbank(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
 
-        if any(fasta_in_folder):
+        if any(filter(is_fasta, self.USER_GENOME_DIR.iterdir())):
             # In this case the genome folder path should remain the same
             LOG.info(f"Detected {sum(fasta_in_folder)} FASTA files in {self.USER_GENOME_DIR}. These will be used for dereplication.")
             # Redirect the genome dir to the user-provided folder:
             self.TEMP_GENOME_DIR = self.USER_GENOME_DIR
             
-        elif any(genbank_in_folder):
+        elif any(filter(is_genbank, self.USER_GENOME_DIR.iterdir())):
             # In this case we convert to FASTA and redirect to genome folder, which is in the temp folder by default.
             LOG.info(f"Detected {sum(genbank_in_folder)} GenBank files in {self.USER_GENOME_DIR}.")
             # Convert to FASTA files:
             self.TEMP_GENOME_DIR = self.TEMP_DIR / 'genomes'
-            self.TEMP_GENOME_DIR.mkdir(exist_ok=True)  # Make the temporary genome folder if it does not exist already.
+            self.TEMP_GENOME_DIR.mkdir(exist_ok = True)  # Make the temporary genome folder if it does not exist already.
             convert_genbanks_to_fastas(self.USER_GENOME_DIR, self.TEMP_GENOME_DIR, workers = self.cores)
             LOG.info(f"Saved genomes in FASTA format to {self.TEMP_GENOME_DIR}")
-            
-        else:
-            # If there are no FASTA or GenBank files, the program cannot proceed:
-            LOG.critical("No FASTA files or GenBank files were detected in the provided genome folder. Exiting the program.")
-            sys.exit()
             
         assembly_files = [acc + ".fasta.gz" for acc in self.binary_df['Organism']]
         self.binary_df['assembly_file'] = assembly_files
