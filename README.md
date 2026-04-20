@@ -1,33 +1,37 @@
 # CAGEcleaner
 
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](https://bioconda.github.io/recipes/cagecleaner/README.html) [![Conda](https://img.shields.io/conda/dn/bioconda/CAGEcleaner.svg)](https://anaconda.org/bioconda/cagecleaner/files)
+[![Docs](https://img.shields.io/readthedocs/cagecleaner/latest?style=flat-square&maxAge=600)](https://cagecleaner.readthedocs.io)
+[![Downloads](https://anaconda.org/bioconda/cagecleaner/badges/downloads.svg)](https://bioconda.github.io/recipes/cagecleaner/README.html#download-stats)
+[![Bioconda](https://img.shields.io/conda/vn/bioconda/cagecleaner?style=flat-square&maxAge=3600&logo=anaconda)](https://anaconda.org/bioconda/cagecleaner)
+[![PyPI version](https://badge.fury.io/py/CAGEcleaner.svg?cache-control=no-cache)](https://pypi.org/project/CAGEcleaner/)
 [![Manuscript](https://img.shields.io/badge/Manuscript-Bioinformatics-darkblue?style=flat-square&maxAge=2678400)](https://doi.org/10.1093/bioinformatics/btaf373)
 [![DOI](https://zenodo.org/badge/904110273.svg)](https://doi.org/10.5281/zenodo.14726119)
 
-> [!NOTE]
-> `CAGEcleaner` supports all functional `cblaster` modes (remote, local, hmm). We do not recommend using sessions from one of the combi modes.
-
 ## Description
 
-`CAGEcleaner` removes genomic redundancy from gene cluster mining hit sets. The redundancy in typical genome mining target databases (e.g. NCBI nr) often propagates into the result set, requiring extensive manual curation before downstream analyses and visualisation can be carried out efficiently.
+`CAGEcleaner` reduces redundancy in gene cluster mining hit sets. The redundancy in typical genome mining target databases (e.g. NCBI nr) often propagates into the result set, requiring extensive manual curation to carry out downstream analyses and visualisation efficiently.
 
-Starting from a session file or hit table from a `cblaster` or [`CAGECAT`](https://cagecat.bioinformatics.nl/) run, `CAGEcleaner` dereplicates the hits based on a representative sample of the sequence regions that encode these hits (either full genomes or direct genomic neighbourhoods). In addition, `CAGEcleaner` can automatically retain additional hits associated with non-representative sequences if they exhibit significant diversity in gene cluster contents or sequence similarity. Finally, `CAGEcleaner` returns a filtered `cblaster` session file or hit table.
+Starting from a session file from a [`cblaster`](https://github.com/gamcil/cblaster), [`CAGECAT`](https://cagecat.bioinformatics.nl/), or ✨ [`cfoldseeker`](https://github.com/LucoDevro/cfoldseeker) ✨ (our new protein structure similarity-based tool), `CAGEcleaner` dereplicates the hits based on a representative sample of the sequence regions that encode these hits (either full genomes or only the direct genomic neighbourhood). In addition, `CAGEcleaner` can automatically retain additional hits associated with non-representative sequences if they exhibit significant diversity in gene cluster contents or sequence similarity. Finally, `CAGEcleaner` returns a filtered `cblaster` session file and hit table, ready for downstream analyses.
 
-`CAGEcleaner` offers two dereplication approaches.
-
-- **Full genome dereplication *(default option)***: Dereplicates the full genome assemblies of the host organisms using an ANI-based approach via `skDER`, and retains the hits that are encoded by a representative assembly. The more conservative option that also takes the diversity of the host organism into account. Choose this option if you're concerned about preserving host diversity during compression, for example to identify HGT events.
-- **Neighbourhood dereplication**: Extracts a genomic region of a predefined length around each hit, clusters all extracted regions by sequence similarity using `MMseqs2`, and retains the hits associated with the representative genomic regions. The more aggressive option that ignores host diversity. Choose this option if losing host diversity is not an issue.
-
-> [!NOTE]
-> Although `CAGEcleaner` has been designed to use in conjunction with [`cblaster`](https://github.com/gamcil/cblaster), it supports output from other mining tools by converting your hit table to the `cblaster` hit table format. See the example output for the specifics.
+> [!TIP]
+> Although `CAGEcleaner` can be used as a stand-alone tool, it is the dereplication engine of the ✨ [`csuite`](https://github.com/LucoDevro/csuite) ✨, our new integrated toolbox featuring streamlined workflows for both sequence and protein structure-based gene cluster mining. Try it out!
 
 ![workflow](workflow.png)
 
-## Installation and more
-For installation instructions, usage, explanations and more, head over to the [`CAGEcleaner` wiki](https://github.com/LucoDevro/CAGEcleaner/wiki)!
+## Features
+
+- **Full genome hit dereplication**: Dereplicates the full genome assemblies of the host organisms using an ANI-based approach via `skDER`, and retains the hits that are encoded by a representative genome assembly. The more conservative option that also takes the diversity of the host organism into account. Choose this option if you're concerned about preserving host diversity during compression, for example to identify HGT events.
+- **Neighbourhood hit dereplication**: Extracts a genomic region of a predefined length around each hit, clusters all extracted regions by sequence similarity using `MMseqs2`, and retains the hits associated with the representative genomic regions. The more aggressive option that ignores host diversity. Choose this option if losing host diversity is not an issue.
+- **Non-cblaster input**: `CAGEcleaner` has originally been designed to use together with [`cblaster`](https://github.com/gamcil/cblaster), but now it supports output from other mining tools too by supplying your hits as multiple formatted TSV files. See the [docs](https://cagecleaner.readthedocs.io/en/latest/) and the [example output](https://github.com/LucoDevro/CAGEcleaner/tree/main/examples/cfoldseeker_query) for the specific formatting.
+
+## Installation, documentation and more
+For installation instructions, usage, explanations and more, head over to the [`CAGEcleaner` docs](https://cagecleaner.readthedocs.io/en/latest/)!
+
+> [!NOTE]
+> `CAGEcleaner` only supports the single-mode `cblaster` modes (remote, local, hmm). We do not recommend using sessions from one of the combi modes.
 
 > [!IMPORTANT]
-> `CAGEcleaner` has no direct Windows support anymore. If you have a seemingly successful installation directly on your Windows system, you likely have installed v1.1.0, an old version with known bugs! There are alternative options to run CAGEcleaner on Windows.
+> `CAGEcleaner` has no direct Windows support. If you have a seemingly successful installation directly on your Windows system, you likely have installed v1.1.0, an old version with known bugs! There are alternative options to run CAGEcleaner on Windows.
 
 ## Citations
 If you found `CAGEcleaner` useful, please cite our manuscript:
