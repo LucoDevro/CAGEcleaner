@@ -1,0 +1,59 @@
+[13:51:35] INFO [main.py: main] - --- Loading session file. ---
+[13:51:35] INFO [main.py: main] - Entering remote genome mode
+[13:51:35] INFO [run.py: __init__] - Found cblaster session. Parsing it.
+[13:51:35] INFO [remote_genome_run.py: run] - --- STEP 1: Fetching NCBI assembly IDs for each scaffold ID. ---
+[13:51:35] INFO [remote_genome_run.py: fetchAssemblyIDs] - Got 1146 scaffold IDs to crossref
+[13:51:35] INFO [remote_genome_run.py: fetchAssemblyIDs] - ..., of which 619 are RefSeq IDs
+[13:51:35] INFO [remote_genome_run.py: fetchAssemblyIDs] - ..., and 527 are Genbank IDs.
+[13:51:35] INFO [remote_genome_run.py: fetchAssemblyIDs] - Fetching RefSeq Assembly IDs
+[13:51:35] INFO [communication.py: get_assembly_accessions] - Getting Assembly accession IDs in 7 batches of 100
+[13:54:14] INFO [communication.py: get_assembly_accessions] - Got 618 accession IDs from RefSeq
+[13:54:14] INFO [remote_genome_run.py: fetchAssemblyIDs] - Fetching Genbank Assembly IDs
+[13:54:14] INFO [communication.py: get_assembly_accessions] - Redirected 520 Nucleotide WGS IDs to their master records
+[13:54:14] INFO [communication.py: get_assembly_accessions] - Getting Assembly accession IDs in 6 batches of 100
+[13:56:18] INFO [communication.py: get_assembly_accessions] - Got 497 accession IDs from Genbank
+[13:56:18] INFO [remote_genome_run.py: fetchAssemblyIDs] - Merging ID sets
+[13:56:18] INFO [remote_genome_run.py: fetchAssemblyIDs] - Got 1115 accession IDs in total
+[13:56:18] INFO [remote_genome_run.py: run] - --- STEP 2: Downloading genomes for each assembly ID. ---
+[13:56:18] INFO [remote_genome_run.py: downloadGenomes] - Preparing to download assembies...
+[13:56:18] INFO [remote_genome_run.py: downloadGenomes] - Got 1115 assembly IDs. Downloading genomes in 4 batches.
+[13:56:18] INFO [remote_genome_run.py: downloadGenomes] - Downloading batch 1 out of 4
+[13:56:18] WARNING [utils.py: command_stderr_log] - New version of client (18.23.0) available at https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/LATEST/linux-amd64/datasets.
+[13:56:19] INFO [utils.py: run_command] - datasets finished successfully
+[13:58:22] INFO [utils.py: run_command] - datasets finished successfully
+[13:58:22] INFO [remote_genome_run.py: downloadGenomes] - Downloading batch 2 out of 4
+[13:58:23] WARNING [utils.py: command_stderr_log] - New version of client (18.23.0) available at https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/LATEST/linux-amd64/datasets.
+[13:58:24] INFO [utils.py: run_command] - datasets finished successfully
+[14:00:45] INFO [utils.py: run_command] - datasets finished successfully
+[14:00:45] INFO [remote_genome_run.py: downloadGenomes] - Downloading batch 3 out of 4
+[14:00:45] WARNING [utils.py: command_stderr_log] - New version of client (18.23.0) available at https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/LATEST/linux-amd64/datasets.
+[14:00:47] INFO [utils.py: run_command] - datasets finished successfully
+[14:03:17] INFO [utils.py: run_command] - datasets finished successfully
+[14:03:17] INFO [remote_genome_run.py: downloadGenomes] - Downloading batch 4 out of 4
+[14:03:18] WARNING [utils.py: command_stderr_log] - New version of client (18.23.0) available at https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/LATEST/linux-amd64/datasets.
+[14:03:18] INFO [utils.py: run_command] - datasets finished successfully
+[14:05:49] INFO [utils.py: run_command] - datasets finished successfully
+[14:05:49] INFO [remote_genome_run.py: downloadGenomes] - 1115 genomes in /tmp/tmp1akyp_c3/genomes
+[14:05:49] INFO [remote_genome_run.py: run] - --- STEP 3: Mapping scaffold IDs to assembly IDs ---
+[14:06:06] WARNING [remote_genome_run.py: mapAssembliesToBinary] - 31 scaffolds could not be linked to a genome assembly. See unmapped.scaffolds.txt
+[14:06:06] INFO [remote_genome_run.py: run] - --- STEP 4: Dereplicating ---
+[14:06:06] INFO [genome_run.py: dereplicateGenomes] - Dereplicating genomes in /tmp/tmp1akyp_c3/genomes with identity cutoff of 92.0 % and coverage cutoff of 50.0 %
+[14:06:06] INFO [genome_run.py: dereplicateGenomes] - Starting skDER
+[14:06:09] WARNING [utils.py: command_stderr_log] -   0%|          | 0/14 [00:00<?, ?it/s]  7%|▋         | 1/14 [00:01<00:21,  1.67s/it] 21%|██▏       | 3/14 [00:01<00:05,  1.88it/s] 29%|██▊       | 4/14 [00:02<00:03,  2.58it/s] 57%|█████▋    | 8/14 [00:02<00:00,  6.67it/s]100%|██████████| 14/14 [00:02<00:00,  6.36it/s]
+[14:10:58] INFO [utils.py: run_command] - skder finished successfully
+[14:10:58] INFO [genome_run.py: dereplicateGenomes] - Dereplication done!
+[14:10:58] INFO [genome_run.py: dereplicateGenomes] - 1115 genomes were reduced to 4 genomes.
+[14:10:58] INFO [remote_genome_run.py: run] - --- STEP 5: Mapping dereplication clustering to binary table ---
+[14:10:58] INFO [remote_genome_run.py: mapDereplicationToBinary] - Mapping done!
+[14:10:58] INFO [remote_genome_run.py: run] - --- STEP 6: Recovering hit diversity ---
+[14:10:58] INFO [run.py: recoverHits] - Total hits recovered by alternative gene cluster composition: 0
+[14:10:58] INFO [run.py: recoverHits] - Total hits recovered by outlier hit score: 0
+[14:10:58] INFO [remote_genome_run.py: run] - --- STEP 7: Filtering original session file. ---
+[14:10:58] INFO [run.py: filterSession] - Filtering done.
+[14:10:58] INFO [run.py: filterSession] - 3361 redundant scaffolds have been removed.
+[14:10:58] INFO [run.py: filterSession] - 4 scaffolds have been retained.
+[14:10:58] INFO [remote_genome_run.py: run] - --- STEP 8: Generating output files ---
+[14:10:58] INFO [run.py: generateOutput] - Copying downloaded genomes to output folder.
+[14:10:58] INFO [run.py: generateOutput] - Copying dereplication results to output folder.
+[14:10:59] INFO [run.py: generateOutput] - Finished! Output files can be found in /home/lucas/bin/cagecleaner/testing/session/cblaster/remote/genomes.
+[14:10:59] INFO [remote_genome_run.py: run] - Cleaning up temporary directory.

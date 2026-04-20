@@ -1,0 +1,25 @@
+cagecleaner --cores 14 -s .. -o regions --mode local --keep_intermediate --method regions -m 5000 -i 92 -c 50 -f -g /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas
+Importing genomicsqlite failed, falling back to SQLite3
+[16:25:27] INFO [main.py: main] - --- Loading session file. ---
+[16:25:27] INFO [main.py: main] - Entering local region mode
+{PosixPath('../hits.tsv'), PosixPath('../local'), PosixPath('../queries.tsv'), PosixPath('../clusters.tsv'), PosixPath('../remote')}
+[16:25:27] INFO [run.py: __init__] - Found tsv tables. Generating cblaster session from these.
+[16:25:27] INFO [local_region_run.py: run] - --- STEP 1: Staging genomes for dereplication. ---
+[16:25:27] INFO [local_run.py: prepareGenomes] - Detected 1010 FASTA files in /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas. These will be used for dereplication.
+[16:25:27] INFO [local_region_run.py: run] - --- STEP 2: Extracting genomic regions. ---
+[16:25:37] INFO [local_region_run.py: extractRegions] - 11 regions were at a contig end.                             
+[16:25:37] INFO [local_region_run.py: run] - --- STEP 3: Dereplicating. ---
+[16:25:45] INFO [utils.py: run_command] - mmseqs finished successfully
+[16:25:45] INFO [local_region_run.py: run] - --- STEP 4: Mapping dereplication output to binary table. ---
+[16:25:45] INFO [local_region_run.py: mapDereplicationToBinary] - Mapping done!
+[16:25:45] INFO [local_region_run.py: run] - --- STEP 5: Recovering hit diversity. ---
+[16:25:45] INFO [run.py: recoverHits] - Total hits recovered by alternative gene cluster composition: 2
+[16:25:45] INFO [run.py: recoverHits] - Total hits recovered by outlier hit score: 1
+[16:25:45] INFO [local_region_run.py: run] - --- STEP 6: Filtering session file. ---
+[16:25:45] INFO [run.py: filterSession] - Filtering done.
+[16:25:45] INFO [run.py: filterSession] - 46 redundant scaffolds have been removed.
+[16:25:45] INFO [run.py: filterSession] - 354 scaffolds have been retained.
+[16:25:45] INFO [local_region_run.py: run] - --- STEP 7: Generating output files
+[16:25:45] INFO [run.py: generateOutput] - Copying dereplication results to output folder.
+[16:25:45] INFO [run.py: generateOutput] - Finished! Output files can be found in /home/lucas/bin/cagecleaner/testing/from_tables/cfoldseeker/local/regions.
+[16:25:45] INFO [local_region_run.py: run] - Cleaning up temporary directory.

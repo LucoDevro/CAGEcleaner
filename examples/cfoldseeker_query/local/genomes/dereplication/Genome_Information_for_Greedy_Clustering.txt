@@ -1,0 +1,1010 @@
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000009905.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000010045.1.fasta.gz	5.72753e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900143285.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000012865.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000014725.1.fasta.gz	2.9362e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001570625.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000016505.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000018325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000018425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000018685.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000019065.1.fasta.gz	4.91452e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000806225.2.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003722315.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000019165.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000020005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000022065.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000025645.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000092405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000143685.1.fasta.gz	1.38902e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001636845.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019056555.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004006395.2.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000144695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000145275.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000147675.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000154245.1.fasta.gz	197148	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003461085.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000160035.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000160115.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000163895.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000165465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000166415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000169255.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000179595.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000179635.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000183545.2.fasta.gz	2.49798e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003403315.2.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000185385.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000189775.2.fasta.gz	2.53436e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_028895185.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000190355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000196455.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000204565.1.fasta.gz	2.77316e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017100085.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000209855.1.fasta.gz	1.28577e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027668885.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347295.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003287405.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347235.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000210015.1.fasta.gz	3.75749e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900120195.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000213255.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000214455.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000230835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000231385.2.fasta.gz	9.74713e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000765145.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900100785.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000231405.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000233715.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000235605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000238055.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000238115.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000242235.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000243135.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000243155.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000244875.1.fasta.gz	4.61375e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000421965.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000244895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000247605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000270305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000300195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000305815.1.fasta.gz	3.09205e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009796305.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000305935.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000307265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000307585.2.fasta.gz	5.45306e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_028895185.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036763025.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000092945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000184705.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000237085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000308275.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000426305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000687955.1.fasta.gz	3.02379e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000498755.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000746025.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001311925.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001623875.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002006165.1.fasta.gz	482513	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013407205.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002196705.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000364165.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000371465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000383295.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000389635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000403395.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000403435.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000403845.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000421965.1.fasta.gz	179871	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000244875.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000423525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000424125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000424285.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000424325.1.fasta.gz	83167	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042852215.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000424445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000424505.1.fasta.gz	247516	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900102515.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000430885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000430995.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000469565.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000498355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000498755.1.fasta.gz	95059	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000687955.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000518765.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000526495.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000526795.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000526935.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000526995.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000571935.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000577895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000619945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000620305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621505.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621565.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621745.1.fasta.gz	472400	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013294615.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013297045.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621845.1.fasta.gz	237713	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900119075.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000622085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000686065.1.fasta.gz	3.46403e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900116865.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000686105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000686125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000686705.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000686725.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000687515.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000687555.1.fasta.gz	213027	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026723765.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000699585.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000701765.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000702205.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000702265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000702885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000702945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000702985.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000703125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000709435.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000723465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000724385.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000732635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000732725.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000744935.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000765145.1.fasta.gz	192178	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000231385.2.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900100785.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000806225.2.fasta.gz	3.02882e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003722315.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000019065.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000968375.1.fasta.gz	5.74941e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003096175.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000981035.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000983115.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001038625.1.fasta.gz	5.73288e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_033561535.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001042715.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001047375.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001262605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001263795.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001280565.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001282685.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001282725.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001299475.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001317355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001403635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001440545.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001454945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001487105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001517425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001559865.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001562415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001562425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001570625.1.fasta.gz	119813	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000014725.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001571775.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001592105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001593985.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001594005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001636845.1.fasta.gz	483972	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019056555.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004006395.2.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000143685.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001655775.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001693735.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001697285.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001729945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001748365.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001750685.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001758365.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001854185.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001886775.1.fasta.gz	8.23311e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001889365.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900447155.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001889365.1.fasta.gz	4.23558e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001886775.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001940245.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001940315.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002005145.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002006235.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002007235.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002025875.1.fasta.gz	444104	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_037059035.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002029235.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002051585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002074155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002157465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002159175.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002159265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002159465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002159835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160135.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160145.1.fasta.gz	242506	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027853465.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161595.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160515.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160765.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160825.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160985.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161065.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161085.1.fasta.gz	176838	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016899585.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161175.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161235.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161595.1.fasta.gz	309116	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160145.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027853465.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161645.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161675.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002196785.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002216005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002222595.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002224645.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002250075.1.fasta.gz	5.79145e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030534315.2.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017874545.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002250835.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002252565.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002270055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002355795.1.fasta.gz	3.08837e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_047150065.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002441855.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002724055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002735305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002735925.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002777255.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002797975.1.fasta.gz	5.27284e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900105615.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002874775.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002896855.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002899675.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002904165.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002934545.1.fasta.gz	636722	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_048627165.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013036995.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002964605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002969215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002995745.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002995805.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003012055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003024715.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003047205.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003096175.1.fasta.gz	5.69524e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000968375.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003201285.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003208175.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003254825.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003287405.1.fasta.gz	694084	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000209855.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347235.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027668885.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347295.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003324155.1.fasta.gz	126312	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_005848555.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003337415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003363435.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003368535.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003403315.2.fasta.gz	2.82092e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000183545.2.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003435225.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003435515.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003458705.1.fasta.gz	56031	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003466705.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003460605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003460955.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003463035.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003463065.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003466705.1.fasta.gz	134846	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003458705.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003473545.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003477605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003477765.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003477885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003477935.1.fasta.gz	193966	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003480105.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003478085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003478505.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003478995.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003480105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003480225.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003480945.1.fasta.gz	270390	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024462365.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003481445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003481595.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003574295.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003575225.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003600355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003609635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003611835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003612395.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003625475.1.fasta.gz	501501	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003625505.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003625485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003625505.1.fasta.gz	348565	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003625475.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003627965.1.fasta.gz	2.8565e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_011393055.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003718715.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003722315.1.fasta.gz	5.82256e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000806225.2.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000019065.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003815015.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003862485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003885045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003991135.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004006395.2.fasta.gz	1.37374e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001636845.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019056555.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000143685.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004015185.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004102745.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004103695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004103735.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004123145.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004134775.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004138105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004138215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004216775.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004345005.1.fasta.gz	179634	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020564405.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004345705.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004346165.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004353525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004364155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004365685.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004369205.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004369225.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004793585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004794105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004803955.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_005121165.3.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_005280655.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_005473905.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_005848555.1.fasta.gz	3.73158e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003324155.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_005886215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_006016075.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_006351925.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_006714885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_007115085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_007115105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008086585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008086595.1.fasta.gz	179628	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014284395.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008124625.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008124715.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008151785.1.fasta.gz	2.5219e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_047528295.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008152325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008274215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008691045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008807835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008830185.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008933955.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008935055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009362815.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009684695.1.fasta.gz	3.78553e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040915805.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009695815.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009695995.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009696005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009696045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009696065.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009696145.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009696375.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009696465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009696485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009720735.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009734445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009765695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009796305.1.fasta.gz	3.04943e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000305815.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009830285.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009877425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009877435.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009910325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009911265.1.fasta.gz	195283	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900626135.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009917525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009928445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009928485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009932395.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009935845.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_010179735.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_010669305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_010692705.1.fasta.gz	91086	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902374755.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_011065855.2.fasta.gz	7.50683e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019838995.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023845585.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_011065905.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_011065935.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_011065955.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_011393055.1.fasta.gz	1.94586e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142025.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003627965.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_012070565.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_012843905.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_012926525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013036995.1.fasta.gz	241846	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002934545.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_048627165.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013167955.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013294265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013294615.1.fasta.gz	1.29038e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013297045.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621745.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013297045.1.fasta.gz	1.30077e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013294615.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621745.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013297125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013304925.1.fasta.gz	148241	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020537125.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013394775.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013394805.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013407205.1.fasta.gz	5.11016e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002006165.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013781885.1.fasta.gz	4.79678e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_035905475.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014050525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014174405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014193895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014202115.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014205875.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014218335.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014218355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014229965.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014230005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014253005.1.fasta.gz	394316	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900129515.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014269355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014281125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014284395.1.fasta.gz	160928	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008086595.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014284475.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014284495.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014287275.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014287355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014287475.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014287775.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014287815.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014287825.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014287895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014290175.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014297245.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014297275.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014297285.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014303955.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014333425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014334055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014337155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014337195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014337215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014384895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014384905.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014384985.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014384995.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014385005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014385025.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014385085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014385105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014385265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014385375.1.fasta.gz	220581	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039060295.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014385405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014467015.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014467055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014931565.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014982785.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014982975.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015234215.1.fasta.gz	457346	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024705715.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015243575.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015351765.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015352425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015549285.1.fasta.gz	126233	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025149785.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015550495.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015554605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015554745.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015555225.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015555905.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015557425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015557495.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003175155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003461085.1.fasta.gz	579390	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000154245.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003481325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003752155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004342165.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_005601135.1.fasta.gz	2.44023e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040096105.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008281175.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009696445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009931695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013112015.1.fasta.gz	5.4982e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900258535.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014202695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014287675.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014384805.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015594845.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015666175.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015667795.1.fasta.gz	113871	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019734195.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015669365.1.fasta.gz	398790	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900447045.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902652345.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015670405.1.fasta.gz	149210	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039832495.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015999265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016071375.1.fasta.gz	2.30153e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017100085.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016316925.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016591975.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016595795.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016651435.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016697365.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016765585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016765615.1.fasta.gz	452056	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_028728205.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016899585.1.fasta.gz	54904	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161085.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016900595.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016901775.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016901795.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016901815.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016901855.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016906045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016907915.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016908015.1.fasta.gz	396038	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900185645.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016908315.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016908355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016908415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016908635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017100085.1.fasta.gz	5.67776e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016071375.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000204565.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017255415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017301615.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017312485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017348895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017357865.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017368455.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017811815.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017873235.1.fasta.gz	282761	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030813415.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017873395.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017874315.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017874355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017874415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017874425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017874545.1.fasta.gz	154358	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030534315.2.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002250075.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018128025.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018128545.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018128945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018140635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018141405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018141425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018141445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018326305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018332455.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018390735.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018408575.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018408705.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018784445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018785655.1.fasta.gz	132796	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022900215.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861755.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861795.1.fasta.gz	1.16154e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443575.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585505.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650965.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861905.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585465.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650925.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026651005.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861865.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861905.1.fasta.gz	1.46337e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861795.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443575.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585505.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650965.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585465.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650925.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026651005.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018917145.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018917235.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018917925.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018917965.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018918025.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018918095.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018918125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018918145.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018918155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018918265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018918325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018919205.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019042245.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019042275.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019056555.1.fasta.gz	1.38425e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001636845.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004006395.2.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000143685.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019144085.1.fasta.gz	71003	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036670035.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019203185.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019355395.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019431045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019668485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019734195.1.fasta.gz	90601	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015667795.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019838995.1.fasta.gz	2.98512e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_011065855.2.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019967955.1.fasta.gz	2.99224e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040026365.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019967975.1.fasta.gz	3.03923e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027663405.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019977655.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020176155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443565.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443575.1.fasta.gz	1.58671e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585505.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650965.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585465.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650925.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026651005.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861795.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861905.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443705.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020537125.1.fasta.gz	143597	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013304925.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020537505.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020539825.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020540675.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020554865.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020560745.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020564405.1.fasta.gz	266162	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_004345005.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020595055.1.fasta.gz	260122	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030500275.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900129935.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020686965.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020687045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020687385.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020687485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020687545.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020711195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020731525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020736365.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020908015.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020911725.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021029595.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021043395.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021044725.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021044755.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021432385.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021531435.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021531715.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021531795.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021531815.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021531915.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021531975.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021561035.1.fasta.gz	7.85072e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024628745.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024919155.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022132365.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022174665.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022410535.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022440595.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022440645.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022440845.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022440865.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022539405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022834975.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022867805.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022900215.1.fasta.gz	221407	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018785655.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023161605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023223645.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023227765.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347235.1.fasta.gz	1.29118e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000209855.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003287405.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027668885.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347295.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347295.1.fasta.gz	1.19791e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000209855.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027668885.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003287405.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347235.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023653455.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023656515.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023806125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023838525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023845585.1.fasta.gz	303456	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_011065855.2.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024168045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024341925.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024345225.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024363565.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024433635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024461735.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024462365.1.fasta.gz	122964	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003480945.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024462815.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024464735.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024498295.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024622505.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024622585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024622825.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024628745.1.fasta.gz	8.98487e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024919155.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021561035.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024721265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024721305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024723825.1.fasta.gz	7.57738e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027853495.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900002825.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024919155.1.fasta.gz	7.82133e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024628745.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021561035.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024958695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025146005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025147765.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025148125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025148285.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025149125.1.fasta.gz	6.35328e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046603895.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025149785.1.fasta.gz	3.37307e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015549285.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025150085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025150745.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025151995.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025152575.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025336545.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025398335.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025566885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025567005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025567095.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025567165.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025567215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025567305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025567365.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025567405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025567525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025630755.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025961515.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026012015.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026155355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026410065.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650925.1.fasta.gz	3.14594e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443575.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585505.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650965.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585465.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026651005.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861795.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861905.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650965.1.fasta.gz	3.57014e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585465.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585505.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026651005.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443575.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650925.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861795.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861905.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026651005.1.fasta.gz	3.72972e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650965.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443575.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650925.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585465.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585505.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861795.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861905.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026719745.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026723765.1.fasta.gz	4.51622e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000687555.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026735135.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026735165.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026738875.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027125355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027662505.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027663405.1.fasta.gz	108461	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019967975.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015594625.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016889665.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017168145.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018118585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861735.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018918285.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019968035.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020686985.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_021531375.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022440885.1.fasta.gz	5.32736e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902375555.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024135845.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024705715.1.fasta.gz	89976	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015234215.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025152405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027668885.1.fasta.gz	1.07848e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000209855.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347295.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_003287405.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_023347235.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027688095.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027689445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027696135.1.fasta.gz	211147	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042848345.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027853465.1.fasta.gz	274798	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002160145.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002161595.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027853495.1.fasta.gz	598898	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900002825.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024723825.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027923465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027942055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_028326585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_028728205.1.fasta.gz	2.4565e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016765615.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_028767025.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_028895185.1.fasta.gz	5.03779e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000189775.2.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000307585.2.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_029218125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_029318685.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_029542625.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_029689925.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_029914245.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030013905.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030053595.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030067835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030131965.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030166575.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030263895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030296815.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030371415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030372275.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030500275.1.fasta.gz	406176	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900129935.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020595055.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030534315.2.fasta.gz	6.03962e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017874545.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002250075.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030577015.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585465.1.fasta.gz	3.27511e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650965.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443575.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650925.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585505.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026651005.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861795.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861905.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585505.1.fasta.gz	3.32081e+07	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650965.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020443575.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026650925.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030585465.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_026651005.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861795.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_018861905.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030644385.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030812885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030813415.1.fasta.gz	206628	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_017873235.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030815025.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030815255.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030848475.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030863805.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030908625.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030913655.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030913705.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_031202285.1.fasta.gz	4.03417e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036812735.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_031626875.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_032335695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_032380655.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_032380675.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_033043255.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_033096465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_033097505.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_033100115.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_033193315.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_033561535.1.fasta.gz	6.31279e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001038625.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_034334985.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_034335015.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_034356035.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_034439435.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_035621135.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_035905475.1.fasta.gz	4.68642e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013781885.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036419155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036419255.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036670035.1.fasta.gz	3.24261e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019144085.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036763025.1.fasta.gz	130244	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000307585.2.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036763075.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036812735.1.fasta.gz	8.07855e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_048568315.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_031202285.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036941035.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036941055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036941085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036941125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036941135.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_037018265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_037059035.1.fasta.gz	3.4394e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002025875.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_037113525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_037572415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_037844525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_037890165.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_037890305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_038181555.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_038396635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_038439875.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_038739695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_038739805.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039060295.1.fasta.gz	108992	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014385375.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039061345.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039062515.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039414295.1.fasta.gz	182894	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900182905.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039503245.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039521365.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039521405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039521425.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039521465.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039521565.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039541035.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039545435.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039719005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039753335.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039789045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039832105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039832125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039851975.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040026365.1.fasta.gz	3.07617e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_019967955.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040088595.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040095835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040095935.1.fasta.gz	498880	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902387655.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040096055.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040096075.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040096105.1.fasta.gz	52678	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_005601135.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040096155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040096205.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040096225.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040096355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040096615.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040207125.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040267685.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040515995.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040719375.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040915805.1.fasta.gz	156867	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009684695.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040929965.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_041205085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_041861885.3.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_041925195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_041925235.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042434865.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042652965.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042845895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042846195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042846325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042848345.1.fasta.gz	5.53296e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027696135.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042848525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042848755.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042848975.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042849935.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042850285.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042852215.1.fasta.gz	5.83242e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000424325.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042852765.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042853075.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042853085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042853185.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042853845.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_043633585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_043951855.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_044987295.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045002895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045038935.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045061075.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045063725.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045310525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045310675.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045310695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045819885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045819895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045865195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_045865535.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046097105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046244355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046523925.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046529625.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046581255.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046603775.1.fasta.gz	4.49941e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900683775.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046603895.1.fasta.gz	6.44436e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025149125.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_047150065.1.fasta.gz	3.63526e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002355795.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_047456265.2.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_047528295.1.fasta.gz	2.54677e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_008151785.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_047900555.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_048319855.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_048568315.1.fasta.gz	3.975e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_036812735.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_048627165.1.fasta.gz	6.77158e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002934545.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013036995.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_048984525.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_049060325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_049562855.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900002825.1.fasta.gz	7.55343e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027853495.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_024723825.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900070325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900078195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900078395.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900086595.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900086725.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900095305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900095445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900095725.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900096945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900100785.1.fasta.gz	293048	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000231385.2.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000765145.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900100845.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900101355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900101605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900102515.1.fasta.gz	134644	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000424505.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900103015.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900103815.1.fasta.gz	411924	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900108125.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900103835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900104335.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900104415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900104615.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900104675.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900105615.1.fasta.gz	5.30024e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002797975.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900106845.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900107485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900107545.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900107835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_027665665.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_029478095.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030546345.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_031432315.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_035573695.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_037057455.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039134705.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039832495.1.fasta.gz	134469	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015670405.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040267475.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_042847945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_044502415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046365365.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_049200475.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900101375.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900108045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900112955.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900119535.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142075.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900167085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900186535.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900291975.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900626285.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902377545.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_918026835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_002796935.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014982745.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_025999835.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900108125.1.fasta.gz	168539	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900103815.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900108555.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900109475.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900110045.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900111235.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900111595.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900111615.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900111985.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900112085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900112195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900112485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900112775.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900112855.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900112885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900113335.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900113415.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900113635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900113655.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900115135.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900115215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900115385.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900115635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900115765.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900115975.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900116855.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900116865.1.fasta.gz	290953	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000686065.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900119075.1.fasta.gz	383642	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000621845.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900119155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900120155.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900120195.1.fasta.gz	3.302e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000210015.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900128885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900129075.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900129195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900129515.1.fasta.gz	984592	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_014253005.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900129935.1.fasta.gz	473736	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_030500275.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_020595055.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900129965.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900130005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900130065.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900141825.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900141845.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900141895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142025.1.fasta.gz	72011	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_011393055.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142145.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142165.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142225.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142245.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142275.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900142955.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900143025.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900143285.1.fasta.gz	359338	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_000010045.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900143645.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900155545.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900155615.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900155735.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900167115.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900167185.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900167305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900167445.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900167505.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900167605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900169665.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900176005.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900176145.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900176305.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900176335.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900182905.1.fasta.gz	202017	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_039414295.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900184995.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900185645.1.fasta.gz	414566	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_016908015.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900186585.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900188145.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900197595.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900199395.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900199405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900199635.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900205865.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900205925.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900205945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900205965.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900215265.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900240385.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900248245.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900258535.1.fasta.gz	6.16321e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_013112015.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900447045.1.fasta.gz	1.95046e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902652345.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015669365.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900447155.1.fasta.gz	4.19189e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_001886775.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900461065.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900461105.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900538275.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900562175.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900604335.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900604345.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900604355.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900604945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900625025.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900626075.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900626095.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900626135.1.fasta.gz	1.95157e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_009911265.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900683755.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900683775.1.fasta.gz	4.74053e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_046603775.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_901482605.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902143515.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902363655.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902364725.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902373955.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902374755.1.fasta.gz	721927	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_010692705.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902375375.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902375485.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902375555.1.fasta.gz	1.06938e+06	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_022440885.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902375855.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902375885.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902376185.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902381675.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902385375.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902386665.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902386815.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902386895.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902386975.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902387655.1.fasta.gz	80809	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_040095935.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902387945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902387955.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902497435.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902652075.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902652255.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902652345.1.fasta.gz	185546	/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_900447045.1.fasta.gz; /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_015669365.1.fasta.gz
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_902729405.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_934924865.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_940670685.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_943192995.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_943193085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_943193115.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_943193195.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_943193215.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_943736985.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_947381515.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_947568225.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_951230135.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_963668945.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_964238185.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_964240875.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_964246085.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_964248325.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_964248855.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_964259345.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_964272205.1.fasta.gz	0.0	
+/media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas/GCF_965140945.1.fasta.gz	0.0	

@@ -1,0 +1,5 @@
+representative	cluster_size
+GCF_017893125.1_ASM1789312v1_genomic.fna.gz	7
+GCF_037694565.1_ASM3769456v1_genomic.fna.gz	163
+GCF_900126155.1_17175_2_50_genomic.fna.gz	879
+GCF_900128715.1_14324_2_63_genomic.fna.gz	66
