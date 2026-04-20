@@ -51,6 +51,7 @@ class RegionRun(Run):
             raise err
         
         self.DEREP_IN_DIR: Path = self.TEMP_DIR / 'regions' # Path where the genomic regions will be saved temporarily for region-based dereplication
+        self.DEREP_IN_DIR.mkdir(parents = True)
         
         return None
     

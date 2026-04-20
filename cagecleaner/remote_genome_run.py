@@ -160,6 +160,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
             datasets_zip = DOWNLOADS / "ncbi_dataset.zip"
             
             # download command
+            LOG.debug('Fetching download URLs')
             fetch_cmd = ['datasets', 'download', 'genome', 'accession',
                          ','.join(batch),
                          '--filename', str(datasets_zip.resolve()),
@@ -178,6 +179,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
             os.remove(datasets_zip)
                 
             # Do the actual download
+            LOG.debug('Downloading')
             download_cmd = ['datasets', 'rehydrate',
                             '--directory', str(DOWNLOADS.resolve()),
                             '--gzip',
@@ -267,7 +269,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
                 # Extract the set of scaffold IDs in the file and remove prefixes
                 scaffolds_in_this_assembly = {record.id.strip() for record in SeqIO.parse(assembly, 'fasta')}
                 # Remove the prefixes
-                scaffolds_in_this_assembly_no_prefix = {remove_prefix(record.id.strip()) for record in SeqIO.parse(assembly, 'fasta')}
+                scaffolds_in_this_assembly_no_prefix = {remove_prefix(scaffold_id) for scaffold_id in scaffolds_in_this_assembly}
                 # Now we take the intersection of both sets. All the scaffolds in this intersection are found in the the current file
                 found_scaffolds_no_prefix = scaffolds_in_binary_no_prefix.intersection(scaffolds_in_this_assembly_no_prefix)
                 # Now we have to add the prefix again by using the original scaffold list from the host assembly:

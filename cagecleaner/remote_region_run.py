@@ -126,7 +126,7 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         download_regions(regions, 
                          directory = self.DEREP_IN_DIR, 
                          download_workers = self.download_workers,
-                         progress_bar = self.no_progress)
+                         no_progress = self.no_progress)
         
         return None
     
