@@ -1,6 +1,6 @@
 # CAGEcleaner
 
-[![Docs](https://img.shields.io/readthedocs/cagecleaner/latest?style=flat-square&maxAge=600)](https://cagecleaner.readthedocs.io)
+[![Docs](https://img.shields.io/readthedocs/cagecleaner/latest?style=flat-square&maxAge=600)](https://cagecleaner.readthedocs.io/en/latest/)
 [![Downloads](https://anaconda.org/bioconda/cagecleaner/badges/downloads.svg)](https://bioconda.github.io/recipes/cagecleaner/README.html#download-stats)
 [![Bioconda](https://img.shields.io/conda/vn/bioconda/cagecleaner?style=flat-square&maxAge=3600&logo=anaconda)](https://anaconda.org/bioconda/cagecleaner)
 [![PyPI version](https://badge.fury.io/py/CAGEcleaner.svg?cache-control=no-cache)](https://pypi.org/project/CAGEcleaner/)
