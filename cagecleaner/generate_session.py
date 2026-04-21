@@ -111,7 +111,7 @@ def main():
     args = parse_arguments()
     
     # Validate arguments
-    validate_arguments()
+    validate_arguments(args)
     
     # Generate session
     LOG.info("Generating cblaster session.")
