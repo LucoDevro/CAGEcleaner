@@ -1,0 +1,29 @@
+cagecleaner --cores 14 -s .. -o genomes --mode local --keep_intermediate --method genomes -i 92 -c 50 -f -g /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas
+Importing genomicsqlite failed, falling back to SQLite3
+[16:24:26] INFO [main.py: main] - --- Loading session file. ---
+[16:24:26] INFO [main.py: main] - Entering local genome mode
+[16:24:26] WARNING [run.py: __init__] - Output folder already exists, but it will be overwritten.
+{PosixPath('../local'), PosixPath('../queries.tsv'), PosixPath('../hits.tsv'), PosixPath('../remote'), PosixPath('../clusters.tsv')}
+[16:24:26] INFO [run.py: __init__] - Found tsv tables. Generating cblaster session from these.
+[16:24:26] INFO [local_genome_run.py: run] - --- STEP 1: Staging genomes for dereplication. ---
+[16:24:26] INFO [local_run.py: prepareGenomes] - Detected 1010 FASTA files in /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas. These will be used for dereplication.
+[16:24:26] INFO [local_genome_run.py: run] - --- STEP 2: Dereplicating. ---
+[16:24:26] INFO [genome_run.py: dereplicateGenomes] - Dereplicating genomes in /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas with identity cutoff of 92.0 % and coverage cutoff of 50.0 %
+[16:24:26] INFO [genome_run.py: dereplicateGenomes] - Starting skDER
+100%|██████████| 14/14 [00:03<00:00,  3.64it/s]g] - 
+[16:24:35] INFO [utils.py: run_command] - skder finished successfully
+[16:24:35] INFO [genome_run.py: dereplicateGenomes] - Dereplication done!
+[16:24:35] INFO [genome_run.py: dereplicateGenomes] - 1010 genomes were reduced to 911 genomes.
+[16:24:35] INFO [local_genome_run.py: run] - --- STEP 3: Mapping dereplication output to binary table. ---
+[16:24:35] INFO [local_genome_run.py: mapDereplicationToBinary] - Mapping done!
+[16:24:35] INFO [local_genome_run.py: run] - --- STEP 4: Recovering hit diversity. ---
+[16:24:36] INFO [run.py: recoverHits] - Total hits recovered by alternative gene cluster composition: 2
+[16:24:36] INFO [run.py: recoverHits] - Total hits recovered by outlier hit score: 1
+[16:24:36] INFO [local_genome_run.py: run] - --- STEP 5: Filtering session file. ---
+[16:24:36] INFO [run.py: filterSession] - Filtering done.
+[16:24:36] INFO [run.py: filterSession] - 38 redundant scaffolds have been removed.
+[16:24:36] INFO [run.py: filterSession] - 362 scaffolds have been retained.
+[16:24:36] INFO [local_genome_run.py: run] - --- STEP 6: Generating output files
+[16:24:36] INFO [run.py: generateOutput] - Copying dereplication results to output folder.
+[16:24:36] INFO [run.py: generateOutput] - Finished! Output files can be found in /home/lucas/bin/cagecleaner/testing/from_tables/cfoldseeker/local/genomes.
+[16:24:36] INFO [local_genome_run.py: run] - Cleaning up temporary directory.

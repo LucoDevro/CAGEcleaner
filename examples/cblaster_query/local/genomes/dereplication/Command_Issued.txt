@@ -1,0 +1,1 @@
+/home/lucas/bin/anaconda3/envs/cagecleaner_dev/bin/skder -g /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas -o /tmp/tmpq1b4jmqo/derep_out -i 98.0 -f 50.0 -c 14 -d greedy -n

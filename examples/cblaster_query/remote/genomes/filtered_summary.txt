@@ -1,0 +1,44 @@
+cblaster search
+===============
+Staphylococcus lugdunensis JONWP143
+===================================
+NZ_JBBLTI010000002.1
+--------------------
+Cluster 139, score 3.1762:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start   End     Strand
+STS_E1-like        WP_062078359.1  99.093    99.7738   0         899       300096  301422  -     
+STS_YcaO           WP_062078361.1  99.667    99.6678   0         600       301408  302338  -     
+STS_Dehydrogenase  WP_062078363.1  99.231    98.4848   1.19e-88  263       302345  303224  -     
+
+
+Staphylococcus sp. GDX8P65P
+===========================
+NZ_JAESML010000031.1
+--------------------
+Cluster 316, score 3.1645:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start  End    Strand
+STS_Dehydrogenase  WP_046206893.1  93.846    98.4848   1.48e-82  248       13741  14620  +     
+STS_YcaO           WP_046206894.1  89.667    99.6678   0         550       14627  15557  +     
+STS_E1-like        WP_046206895.1  92.517    99.7738   0         847       15543  16869  +     
+
+
+Staphylococcus aureus 3688STDY6124922
+=====================================
+NZ_FQIS01000001.1
+-----------------
+Cluster 989, score 3.1683:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start   End     Strand
+STS_Dehydrogenase  WP_000611635.1  96.923    98.4848   1.16e-86  258       365401  366280  +     
+STS_YcaO           WP_000846700.1  93.667    99.6678   0         568       366287  367217  +     
+STS_E1-like        WP_000627618.1  94.104    99.7738   0         857       367203  368529  +     
+
+
+Staphylococcus argenteus 2588STDY5890910
+========================================
+NZ_FQTG01000001.1
+-----------------
+Cluster 2421, score 3.1691:
+Query              Subject         Identity  Coverage  E-value   Bitscore  Start    End      Strand
+STS_E1-like        WP_047526672.1  94.331    99.7738   0         861       1028345  1029671  -     
+STS_YcaO           WP_047526674.1  94.333    99.6678   0         572       1029657  1030587  -     
+STS_Dehydrogenase  WP_047526677.1  96.923    98.4848   1.24e-86  258       1030594  1031473  -     

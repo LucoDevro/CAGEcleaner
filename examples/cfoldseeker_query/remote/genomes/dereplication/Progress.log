@@ -1,0 +1,18 @@
+2026-04-09 17:09 - INFO - 
+NEW RUN!!!
+**************************************
+2026-04-09 17:09 - INFO - Running version 1.3.4
+2026-04-09 17:09 - INFO - Appending command issued for future records to: /tmp/tmpflo6kvkl/derep_out/Command_Issued.txt
+2026-04-09 17:09 - INFO - Setting ANI screening parameter to 82.000000.
+2026-04-09 17:09 - INFO - Number of valid genomes provided as input: 394
+2026-04-09 17:09 - INFO - Calculating assembly N50 for 394 genomic assemblies
+2026-04-09 17:09 - INFO - Running skani triangle -l /tmp/tmpflo6kvkl/derep_out/All_Genomes_Listing.txt --min-af 50.0 -E -s 82.0 -t 14 -o /tmp/tmpflo6kvkl/derep_out/Skani_Triangle_Edge_Output.txt
+2026-04-09 17:09 - INFO - Successfully ran: skani triangle -l /tmp/tmpflo6kvkl/derep_out/All_Genomes_Listing.txt --min-af 50.0 -E -s 82.0 -t 14 -o /tmp/tmpflo6kvkl/derep_out/Skani_Triangle_Edge_Output.txt
+2026-04-09 17:09 - INFO - Running skDERsum /tmp/tmpflo6kvkl/derep_out/Skani_Triangle_Edge_Output.txt /tmp/tmpflo6kvkl/derep_out/Concatenated_N50.txt 92.0 50.0 > /tmp/tmpflo6kvkl/derep_out/Genome_Information_for_Greedy_Clustering.txt
+2026-04-09 17:09 - INFO - Successfully ran: skDERsum /tmp/tmpflo6kvkl/derep_out/Skani_Triangle_Edge_Output.txt /tmp/tmpflo6kvkl/derep_out/Concatenated_N50.txt 92.0 50.0 > /tmp/tmpflo6kvkl/derep_out/Genome_Information_for_Greedy_Clustering.txt
+2026-04-09 17:09 - INFO - Running sort -k 2 --parallel=14 -gr /tmp/tmpflo6kvkl/derep_out/Genome_Information_for_Greedy_Clustering.txt > /tmp/tmpflo6kvkl/derep_out/Genome_Information_for_Greedy_Clustering.sorted.txt
+2026-04-09 17:09 - INFO - Successfully ran: sort -k 2 --parallel=14 -gr /tmp/tmpflo6kvkl/derep_out/Genome_Information_for_Greedy_Clustering.txt > /tmp/tmpflo6kvkl/derep_out/Genome_Information_for_Greedy_Clustering.sorted.txt
+2026-04-09 17:09 - INFO - ******************
+skDER finished!
+******************
+Directory with representative genomes can be found at: /tmp/tmpflo6kvkl/derep_out/

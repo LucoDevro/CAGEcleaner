@@ -1,0 +1,22 @@
+[12:35:30] INFO [main.py: main] - --- Loading session file. ---
+[12:35:30] INFO [main.py: main] - Entering local region mode
+[12:35:30] INFO [run.py: _initialise_binary] - Parsing cblaster session.
+[12:35:30] INFO [local_region_run.py: run] - --- STEP 1: Staging genomes for dereplication. ---
+[12:35:30] INFO [local_run.py: prepare_genomes] - Detected 1010 FASTA files in /media/lucas/SHUTTLE/prostt5_downloads/clostridia/fnas. These will be used for dereplication.
+[12:35:30] INFO [local_region_run.py: run] - --- STEP 2: Extracting genomic regions. ---
+[12:35:42] INFO [local_region_run.py: extract_regions] - 12 regions were at a contig end.
+[12:35:42] INFO [local_region_run.py: run] - --- STEP 3: Dereplicating. ---
+[12:35:52] INFO [utils.py: run_command] - mmseqs finished successfully
+[12:35:52] INFO [local_region_run.py: run] - --- STEP 4: Mapping dereplication output to binary table. ---
+[12:35:52] INFO [local_region_run.py: join_dereplication_with_binary] - Mapping done!
+[12:35:52] INFO [local_region_run.py: run] - --- STEP 5: Recovering hit diversity. ---
+[12:35:52] INFO [run.py: recover_hits] - Total hits recovered by alternative gene cluster composition: 1
+[12:35:52] INFO [run.py: recover_hits] - Total hits recovered by outlier hit score: 0
+[12:35:52] INFO [local_region_run.py: run] - --- STEP 6: Filtering session file. ---
+[12:35:52] INFO [run.py: filter_session] - Filtering done.
+[12:35:52] INFO [run.py: filter_session] - 1432 redundant scaffolds have been removed.
+[12:35:52] INFO [run.py: filter_session] - 405 scaffolds have been retained.
+[12:35:52] INFO [local_region_run.py: run] - --- STEP 7: Generating output files
+[12:35:53] INFO [run.py: generate_output] - Copying dereplication results to output folder.
+[12:35:53] INFO [run.py: generate_output] - Finished! Output files can be found in /home/lucas/bin/cagecleaner/testing/session/cblaster/local/regions.
+[12:35:53] INFO [local_region_run.py: run] - Cleaning up temporary directory.

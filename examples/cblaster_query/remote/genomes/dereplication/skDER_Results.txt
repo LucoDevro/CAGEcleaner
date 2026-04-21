@@ -1,0 +1,4 @@
+/tmp/tmp1akyp_c3/genomes/GCF_017893125.1_ASM1789312v1_genomic.fna.gz
+/tmp/tmp1akyp_c3/genomes/GCF_900128715.1_14324_2_63_genomic.fna.gz
+/tmp/tmp1akyp_c3/genomes/GCF_900126155.1_17175_2_50_genomic.fna.gz
+/tmp/tmp1akyp_c3/genomes/GCF_037694565.1_ASM3769456v1_genomic.fna.gz
