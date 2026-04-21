@@ -27,13 +27,13 @@ CAGEcleaner
 
 *CAGEcleaner: A tool to reduce redundancy in gene mining hit sets.*
    
-*CAGEcleaner* reduces redundancy in gene cluster hit sets, easing downstream analyses and visualisation. It features a taxonomically conservative dereplication mode that acts at the full genome level, and a more aggressive mode that acts at the level of the genomic neighbourhood of the cluster. In addition, it prevents clusters from being discarded if they show remarkable diversity based on gene cluster contents and homology scores.
+**CAGEcleaner** reduces redundancy in gene cluster hit sets, easing downstream analyses and visualisation. It features a taxonomically conservative dereplication mode that acts at the full genome level, and a more aggressive mode that acts at the level of the genomic neighbourhood of the cluster. In addition, it prevents clusters from being discarded if they show remarkable diversity based on gene cluster contents and homology scores.
 
-In full genome mode, *CAGEcleaner* retrieves the full genome assemblies of the clusters' host genomes, performs a fast ANI-based full genome dereplication using skDER, and only keeps clusters that were part of the retained genomes.
+In full genome mode, **CAGEcleaner** retrieves the full genome assemblies of the clusters' host genomes, performs a fast ANI-based full genome dereplication using *skDER*, and only keeps clusters that were part of the retained genomes.
 
-In region mode, *CAGEcleaner* retrieves the nucleotide sequence of each cluster with an optional sequence margin on both sides, dereplicates these using MMseqs2, and only keeps clusters part of a representative region.
+In region mode, **CAGEcleaner** retrieves the nucleotide sequence of each cluster with an optional sequence margin on both sides, dereplicates these using *MMseqs2*, and only keeps clusters part of a representative region.
 
-*CAGEcleaner* offers seamless integration with **cblaster**, as it has originally been developed as an auxiliary tool to be used in interaction with **cblaster**. Other inputs are now also possible via TSV files. Sessions filtered by *CAGEcleaner* can be plugged back in into the **cblaster** workflow.
+**CAGEcleaner** offers seamless integration with *cblaster*, as it has originally been developed as an auxiliary tool to be used in interaction with *cblaster*. Other inputs are now also possible via TSV files. Sessions filtered by *CAGEcleaner* can be plugged back in into the *cblaster* workflow.
 
 If you find ``CAGEcleaner`` useful, please cite:
 
