@@ -1,9 +1,10 @@
 # CAGEcleaner
 
-[![Docs](https://img.shields.io/readthedocs/cagecleaner/latest?style=flat-square&maxAge=600)](https://cagecleaner.readthedocs.io/en/latest/)
+[![Docs](https://img.shields.io/readthedocs/cagecleaner/latest?style=flat-square&maxAge=600&logo=readthedocs)](https://cagecleaner.readthedocs.io/en/latest/)
 [![Downloads](https://anaconda.org/bioconda/cagecleaner/badges/downloads.svg)](https://bioconda.github.io/recipes/cagecleaner/README.html#download-stats)
 [![Bioconda](https://img.shields.io/conda/vn/bioconda/cagecleaner?style=flat-square&maxAge=3600&logo=anaconda)](https://anaconda.org/bioconda/cagecleaner)
-[![PyPI version](https://badge.fury.io/py/CAGEcleaner.svg?cache-control=no-cache)](https://pypi.org/project/CAGEcleaner/)
+[![Docker Image Version](https://img.shields.io/docker/v/lucodevro/cagecleaner?sort=semver&label=docker&logo=docker)](https://hub.docker.com/r/lucodevro/cagecleaner)
+[![PyPI version](https://img.shields.io/pypi/v/cagecleaner?sort=semver&logo=pypi)](https://pypi.org/project/CAGEcleaner/)
 [![Manuscript](https://img.shields.io/badge/Manuscript-Bioinformatics-darkblue?style=flat-square&maxAge=2678400)](https://doi.org/10.1093/bioinformatics/btaf373)
 [![DOI](https://zenodo.org/badge/904110273.svg)](https://doi.org/10.5281/zenodo.14726119)
 
