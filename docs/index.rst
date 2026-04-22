@@ -8,13 +8,25 @@ CAGEcleaner
 
 **Welcome to CAGECleaner's documentation!**
 
-|bioconda|
+|docs|
 |conda|
+|bioconda|
+|docker|
+|pypi|
 |manuscript|
 |doi|
 
-.. |bioconda| image:: https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat
-   :target: https://bioconda.github.io/recipes/cagecleaner/README.html
+.. |docs| image:: https://img.shields.io/readthedocs/cagecleaner/latest?style=flat-square&maxAge=600&logo=readthedocs
+   :target: https://cagecleaner.readthedocs.io/en/latest/
+
+.. |bioconda| image:: https://img.shields.io/conda/vn/bioconda/cagecleaner?style=flat-square&maxAge=3600&logo=anaconda
+   :target: https://anaconda.org/bioconda/cagecleaner
+
+.. |docker| image:: https://img.shields.io/docker/v/lucodevro/cagecleaner?sort=semver&label=docker&logo=docker
+   :target: https://hub.docker.com/r/lucodevro/cagecleaner
+
+.. |pypi| image:: https://img.shields.io/pypi/v/cagecleaner?sort=semver&logo=pypi
+   :target: https://pypi.org/project/CAGEcleaner/
 
 .. |conda| image:: https://img.shields.io/conda/dn/bioconda/CAGEcleaner.svg
    :target: https://anaconda.org/bioconda/cagecleaner/files
@@ -27,13 +39,13 @@ CAGEcleaner
 
 *CAGEcleaner: A tool to reduce redundancy in gene mining hit sets.*
    
-**CAGEcleaner** reduces redundancy in gene cluster hit sets, easing downstream analyses and visualisation. It features a taxonomically conservative dereplication mode that acts at the full genome level, and a more aggressive mode that acts at the level of the genomic neighbourhood of the cluster. In addition, it prevents clusters from being discarded if they show remarkable diversity based on gene cluster contents and homology scores.
+**CAGEcleaner** reduces redundancy in gene cluster hit sets, easing downstream analyses and visualisation. It features a taxonomically conservative dereplication mode that acts at the full genome level, and a more aggressive mode that acts at the level of the genomic neighbourhood of the cluster. In addition, it prevents clusters from being discarded if they show remarkable diversity based on gene cluster contents and homology scores. Sessions filtered by **CAGEcleaner** can be plugged back in into the *cblaster* workflow.
 
-In full genome mode, **CAGEcleaner** retrieves the full genome assemblies of the clusters' host genomes, performs a fast ANI-based full genome dereplication using *skDER*, and only keeps clusters that were part of the retained genomes.
+*In full genome mode*, **CAGEcleaner** retrieves the full genome assemblies of the clusters' host genomes, performs a fast ANI-based full genome dereplication using *skDER*, and only keeps clusters that were part of the retained genomes.
 
-In region mode, **CAGEcleaner** retrieves the nucleotide sequence of each cluster with an optional sequence margin on both sides, dereplicates these using *MMseqs2*, and only keeps clusters part of a representative region.
+*In region mode*, **CAGEcleaner** retrieves the nucleotide sequence of each cluster with an optional sequence margin on both sides, dereplicates these using *MMseqs2*, and only keeps clusters part of a representative region.
 
-**CAGEcleaner** offers seamless integration with *cblaster*, as it has originally been developed as an auxiliary tool to be used in interaction with *cblaster*. Other inputs are now also possible via TSV files. Sessions filtered by *CAGEcleaner* can be plugged back in into the *cblaster* workflow.
+**CAGEcleaner** offers seamless integration with *cblaster*, as it has originally been developed as an auxiliary tool for *cblaster*. Other inputs are now also possible via the helper tool **cagecleaner-generate-session**, which builds a session from formatted TSV files.
 
 If you find ``CAGEcleaner`` useful, please cite:
 
