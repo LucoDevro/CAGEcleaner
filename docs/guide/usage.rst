@@ -52,7 +52,7 @@ A more complicated example to run CAGEcleaner at 14 cores in region dereplicatio
 
 .. code-block:: bash
 
-	cagecleaner -s session.json -g genomes --cores 14 -i 90 -c 90 --method regions -m 5000 --strict
+	cagecleaner -s session.json -g genomes --cores 14 -i 95 -c 95 --method regions -m 5000 --strict
 
 A complex example that runs CAGEcleaner at 14 cores in region dereplication mode with the identity threshold at 95 %, the coverage threshold at 80 %, a sequence margin of size 10 kb, saving the results in a subfolder `results`, keeping all intermediate files, excluding a scaffold with a duplicate ID from the analysis, bypassing another one with a unique label, and disabling the hit recovery by outlier homology scores.
 
@@ -101,7 +101,9 @@ Input from TSV files
 
 CAGEcleaner can process outputs from other gene mining tools than cblaster, although you need to wrangle your non-cblaster output into three TSV files with specific formatting (see also the example files). Using our provided helper tool ``cagecleaner-generate-session``, generate a new cblaster session file, which you can use as input for CAGEcleaner.
 
-The **formatting of these three TSV files** is described below. ***Don't forget the header line in each file!***
+The **formatting of these three TSV files** is described below.
+
+***Don't forget the header line in each file!***
 
 hits.tsv
 ~~~~~~~~
