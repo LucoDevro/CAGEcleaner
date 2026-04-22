@@ -1,7 +1,7 @@
 FROM vanallenlab/miniconda:3.12
 
-LABEL description="CAGEcleaner - Redundancy removal for gene cluster mining hit sets"
-LABEL org.opencontainers.image.authors="lucas.devrieze@vib.be"
+LABEL description="CAGEcleaner - Redundancy removal tool for gene cluster mining hit sets"
+LABEL org.opencontainers.image.authors="lucas.devrieze@kuleuven.be"
 
 # Use bash as shell
 SHELL ["/bin/bash", "-c"]
