@@ -19,7 +19,7 @@ from Bio import SeqIO
 from tqdm import tqdm
 
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class RemoteGenomeRun(RemoteRun, GenomeRun):
@@ -38,7 +38,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         GenomeRun: Intermediary class providing genome dereplication utilities.
     """
     
-    def __init__(self, args):
+    def __init__(self, parsed_args):
         """
         Initialise a RemoteGenomeRun instance.
         
@@ -46,17 +46,10 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         for tracking assembly accessions and scaffold-to-assembly mappings.
         
         Args:
-            args (argparse.Namespace): Parsed command-line arguments
-        
-        Raises:
-            ValueError: If download_batch is not greater than 0.
+            parsed_args (dict): Parsed and validated command-line arguments
         """
         
-        super().__init__(args)
-        
-        # Defensive check:
-        if not(args.download_batch > 0): 
-            raise ValueError("Download batch should be larger than 0.")
+        super().__init__(parsed_args)
         
         # Variable to store assembly accessions:
         self.assembly_accessions: list = []
@@ -440,7 +433,7 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         
         # Remove the temporary directory:
         LOG.info("Cleaning up temporary directory.")
-        self.TEMP_DIR_CONTEXT.cleanup()
+        shutil.rmtree(self.TEMP_DIR)
         
         return None
     

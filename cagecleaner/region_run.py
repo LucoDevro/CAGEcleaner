@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class RegionRun(Run):
@@ -23,14 +23,14 @@ class RegionRun(Run):
          RemoteRegionRun: Region-based dereplication for hits in remote sequences.
     """
     
-    def __init__(self, args):
+    def __init__(self, parsed_args):
         """
         Initialise a RegionRun instance.
         
         Runs the base class init and checks for a valid identity threshold and sequence margin.
         
         Args:
-            args (argparse.Namespace): Parsed command-line arguments
+            parsed_args (dict): Parsed and validated command-line arguments
             
         Raises:
             ValueError: If identity threshold is not a percentage value, or if sequence margin is not a positive number.
@@ -39,16 +39,7 @@ class RegionRun(Run):
             None
         """
         
-        super().__init__(args)
-        
-        try:
-            if not(args.identity <= 100 and args.identity >= 0):
-                raise ValueError("Identity threshold should be between 0 and 100 in case of region-based dereplication.")
-            if not(args.margin >= 0):
-                raise ValueError("Region margin cannot be negative when dereplicating regions.")
-        except ValueError as err:
-            LOG.error(f'{err}')
-            raise err
+        super().__init__(parsed_args)
         
         self.DEREP_IN_DIR: Path = self.TEMP_DIR / 'regions' # Path where the genomic regions will be saved temporarily for region-based dereplication
         self.DEREP_IN_DIR.mkdir(parents = True)

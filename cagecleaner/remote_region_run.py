@@ -7,12 +7,13 @@ from cagecleaner.communication import fetch_contig_lengths, download_regions
 
 import logging
 import warnings
+import shutil
 import pandas as pd
 import numpy as np
 from pathlib import Path
 
 warnings.filterwarnings(action = "ignore", module = "Bio")
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class RemoteRegionRun(RemoteRun, RegionRun):
@@ -37,7 +38,7 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         RegionRun: Intermediary class providing region dereplication utilities
     """
     
-    def __init__(self, args):
+    def __init__(self, parsed_args):
         """
         Initialise a RemoteRegionRun instance.
         
@@ -45,13 +46,13 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         and logging infrastructure.
         
         Args:
-            args (argparse.Namespace): Parsed command-line arguments
+            parsed_args (dict): Parsed and validated command-line arguments
         
         Returns:
             None
         """
         
-        super().__init__(args)
+        super().__init__(parsed_args)
         
         return None
     
@@ -296,7 +297,7 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         
         # Remove the temporary directory:
         LOG.info("Cleaning up temporary directory.")
-        self.TEMP_DIR_CONTEXT.cleanup()
+        shutil.rmtree(self.TEMP_DIR)
         
         return None
     

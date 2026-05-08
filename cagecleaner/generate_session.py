@@ -10,7 +10,8 @@ from pathlib import Path
 from cblaster.classes import Session
 
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
+
 logging.basicConfig(
     level = logging.ERROR,
     format = "[%(asctime)s] %(levelname)s [%(filename)s: %(funcName)s] - %(message)s",

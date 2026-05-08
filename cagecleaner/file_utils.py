@@ -10,7 +10,7 @@ from Bio import SeqIO
 from subprocess import CalledProcessError
 
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 def remove_suffixes(string: str | Path) -> str:
@@ -160,7 +160,7 @@ def _convert_one_genbank_to_fasta(input_output_paths: tuple[Path]) -> None:
                 # use -q for quiet mode, text=True because output is not in byte form.
                 subprocess.run(['any2fasta', '-q', '-g', str(in_file)], stdout=handle, check=True, text=True)
             except CalledProcessError as err:
-                LOG.err(err)
+                LOG.error(err)
                 raise err
             
     except FileNotFoundError as err:

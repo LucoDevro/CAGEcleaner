@@ -7,7 +7,7 @@ from cagecleaner.file_utils import is_fasta, is_genbank, remove_suffixes, conver
 import logging
 from abc import abstractmethod
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class LocalRun(Run):
@@ -22,43 +22,31 @@ class LocalRun(Run):
          LocalGenomeRun: Whole-genome dereplication for hits in local sequences.
     """
     
-    def __init__(self, args):
+    def __init__(self, parsed_args):
         """
         Initialise a LocalRun instance.
         
-        Runs the base class init and checks for valid keep flags.
-        Checks whether genome folder only contains valid genome sequence files.
-        Excludes scaffolds from the analysis as specified by the user.
+        Runs the base class init and excludes scaffolds from the analysis as specified by the user.
         
         Args:
-            args (argparse.Namespace): Parsed command-line arguments
+            parsed_args (dict): Parsed and validated command-line arguments
             
         Returns:
             None
             
         Raises:
-            ValueError: If the download flag has been enabled in local mode.
-            ValueError: If the user-supplied local genome directory does not contain any fasta or genbank file.
-            ValueError: If there are no hits left in the binary table after excluding scaffolds or organisms.
+            RuntimeError: If there are no hits left in the binary table after excluding scaffolds or organisms.
         """
                 
         # Call the parent class initiator
-        super().__init__(args)
+        super().__init__(parsed_args)
         
-        # Can't keep downloads in local mode. Also make sure keep_intermediate doesn't fail.
-        if self.keep_downloads == True:
-            raise ValueError("Can't keep downloads in local mode.")
+        # Automatically toggle off keeping both downloads and dereplication in local mode,
+        # since there won't be downloaded anything.
         if self.keep_intermediate:
             self.keep_intermediate = False
+            self.keep_downloads = False
             self.keep_dereplication = True
-        
-        # Make sure there is no exotic stuff in the provided genome folder
-        try:
-            next(filter(lambda x: is_fasta(x) or is_genbank(x), self.USER_GENOME_DIR.iterdir()))
-        except StopIteration:
-            msg = "The user-supplied genome directory does not contain any fasta or genbank file!"
-            LOG.critical(msg)
-            raise ValueError(msg)
         
         # Remove organisms that the user wants to be excluded:
         if self.excluded_organisms != {''}:
@@ -68,7 +56,7 @@ class LocalRun(Run):
             if self.binary_df.empty:
                 msg = "No hits left after excluding organisms!"
                 LOG.error(msg)
-                raise ValueError(msg)
+                raise RuntimeError(msg)
 
         # Remove scaffold IDs specified by the user:
         if self.excluded_scaffolds != {''}:
@@ -84,7 +72,7 @@ class LocalRun(Run):
             if self.binary_df.empty:
                 msg = "No hits left after excluding scaffolds!"
                 LOG.error(msg)
-                raise ValueError(msg)
+                raise RuntimeError(msg)
             
         return None
     

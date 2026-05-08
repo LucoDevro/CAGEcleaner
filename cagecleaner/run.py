@@ -8,7 +8,6 @@ import pandas as pd
 import os
 import shutil
 import logging
-from tempfile import TemporaryDirectory
 from abc import ABC, abstractmethod
 from pathlib import Path
 from copy import deepcopy
@@ -18,7 +17,7 @@ from cblaster.classes import Session
 from cblaster.extract_clusters import get_sorted_cluster_hierarchies
 
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class Run(ABC):
@@ -50,7 +49,7 @@ class Run(ABC):
         RemoteRegionRun: Region-based dereplication for hits in remote sequences.
     """
     
-    def __init__(self, args):
+    def __init__(self, parsed_args):
         """
         Initialise a Run instance.
         
@@ -59,7 +58,7 @@ class Run(ABC):
         Generates layout groups for all hits and corrects them for strand location if necessary.
         
         Args:
-            args (argparse.Namespace): Parsed command-line arguments
+            parsed_args (dict): Parsed and validated command-line arguments
                 
         Raises:
             IOError: If provided genome directory does not exist
@@ -72,85 +71,57 @@ class Run(ABC):
         
         super().__init__()
         
-        ## Some defensive checks: ##
-        try:
-            if not (args.genome_dir.exists()):
-                raise IOError(f"Provided genome directory does not exits: {args.genome_dir}.")
-            if not (args.coverage >= 0 and args.coverage <= 100):
-                raise ValueError("Coverage threshold should be a number between 0 and 100.")
-            if not(args.zscore_outlier_threshold > 0):
-                raise ValueError("Z-score threshold for recovery should be greater than zero.")
-            if not(args.minimal_score_difference >= 0):
-                raise ValueError("Minimal score difference for recovery cannot be smaller than zero.")
-            if not(args.cores > 0):
-                raise ValueError("Amount of CPU cores to use should be greater than zero.")
-        except (IOError, ValueError) as err:
-            LOG.error(f'{err}')
-            raise err
-        
         ## Passing on the CLI arguments
         # Parse the general arguments:
-        self.cores: int = args.cores
-        self.verbosity: int = args.verbosity
-        self.no_progress: bool = args.no_progress
+        self.cores: int = parsed_args['cores']
+        self.verbosity: int = parsed_args['verbosity']
+        self.no_progress: bool = parsed_args['no_progress']
         
         # Parse IO arguments:
-        self.keep_dereplication: bool = args.keep_dereplication
-        self.keep_downloads: bool = args.keep_downloads
-        self.keep_intermediate: bool = args.keep_intermediate
+        self.keep_dereplication: bool = parsed_args['keep_dereplication']
+        self.keep_downloads: bool = parsed_args['keep_downloads']
+        self.keep_intermediate: bool = parsed_args['keep_intermediate']
         
         # Define paths and check output folder
-        self.OUT_DIR: Path = args.output_dir.resolve()  # Output directory
-        Path(args.temp_dir).resolve().mkdir(parents = True, exist_ok = True)
-        self.TEMP_DIR_CONTEXT: TemporaryDirectory = TemporaryDirectory(dir = args.temp_dir, delete = False)  # Temporary directory (within the given temporary directory)
-        self.TEMP_DIR: Path = Path(self.TEMP_DIR_CONTEXT.name)
-        self.USER_GENOME_DIR: Path = args.genome_dir.resolve()  # Genome directory provided by the user
+        self.OUT_DIR: Path = parsed_args['output'].resolve()  # Output directory
+        self.TEMP_DIR: Path = parsed_args['temp'].resolve()
+        self.USER_GENOME_DIR: Path = parsed_args['genome_dir'].resolve()  # Genome directory provided by the user
         self.DEREP_OUT_DIR: Path = self.TEMP_DIR / 'derep_out'
         self.DEREP_IN_DIR: Path | None = None # Input directory for the dereplication.
         
-        # Output directory should not exist yet, unless flagged.
-        try:
-            self.OUT_DIR.mkdir(parents = True)
-        except FileExistsError as err:
-            if args.force:
-                LOG.warning('Output folder already exists, but it will be overwritten.')
-            else:
-                LOG.error('Output folder already exists! Rerun with -f to overwrite it.')
-                raise err
-            
         # Parse bypass and excluded scaffolds/assemblies:
-        self.bypass_organisms: set = {i.strip() for i in args.bypass_organisms.split(',')}  # Converts comma-separated sequence to a set.
-        self.bypass_scaffolds: set = {i.strip() for i in args.bypass_scaffolds.split(',')}
-        self.excluded_organisms: set = {i.strip() for i in args.excluded_organisms.split(',')}
-        self.excluded_scaffolds: set = {i.strip() for i in args.excluded_scaffolds.split(',')}
+        self.bypass_organisms: set = {i.strip() for i in parsed_args['bypass_organisms'].split(',')}  # Converts comma-separated sequence to a set.
+        self.bypass_scaffolds: set = {i.strip() for i in parsed_args['bypass_scaffolds'].split(',')}
+        self.excluded_organisms: set = {i.strip() for i in parsed_args['excluded_organisms'].split(',')}
+        self.excluded_scaffolds: set = {i.strip() for i in parsed_args['excluded_scaffolds'].split(',')}
 
         # Download arguments:
-        self.download_workers: int = args.download_workers
-        self.download_batch: int = args.download_batch
+        self.download_workers: int = parsed_args['download_workers']
+        self.download_batch: int = parsed_args['download_batch']
         
         # Dereplication arguments:
-        self.strict_regions: bool = args.strict_regions
-        self.identity: float = args.identity
-        self.coverage: float = args.coverage
-        self.low_mem: bool = args.low_mem
-        self.margin: int = args.margin
+        self.strict_regions: bool = parsed_args['strict_regions']
+        self.identity: float = parsed_args['identity']
+        self.coverage: float = parsed_args['coverage']
+        self.low_mem: bool = parsed_args['low_mem']
+        self.margin: int = parsed_args['margin']
         
         # Hit recovery arguments:
-        self.no_recovery_by_content: bool = args.no_recovery_by_content
-        self.no_recovery_by_score: bool = args.no_recovery_by_score
-        self.zscore_outlier_threshold: float = args.zscore_outlier_threshold
-        self.minimal_score_difference: float = args.minimal_score_difference
+        self.no_recovery_by_content: bool = parsed_args['no_recovery_by_content']
+        self.no_recovery_by_score: bool = parsed_args['no_recovery_by_score']
+        self.zscore_outlier_threshold: float = parsed_args['zscore_outlier_threshold']
+        self.minimal_score_difference: float = parsed_args['minimal_score_difference']
         
         # This variable will store the filtered session file, the end result.
         self.filtered_session: Session | None = None
         
         ## Initialise the binary table
-        self._initialise_binary(args)
+        self.initialise_binary(parsed_args['session'])
         
         return None
     
     
-    def _initialise_binary(self, args):
+    def initialise_binary(self, session: Path):
         """
         Initialise the binary table from the provided session file (either obtained from a search run,
         or from cagecleaner-generate-session).
@@ -161,20 +132,17 @@ class Run(ABC):
         Generates cluster layout groups from this and corrects them for strand location.
         
         Args:
-            args (argparse.Namespace): Parsed command-line arguments
-            
-        Note:
-            Exits when no valid input files have been found.
+            session (pathlib.Path): Path of the session file from which the initial binary table will be created.
             
         Raises:
-            ValueError: If the initial binary is empty, and thus the session is empty.
+            ValueError: If the initial binary is empty, and thus the supplied session was empty.
         
         Returns:
             None
         """
         ## Get a Session object from the inputs
         LOG.info('Parsing cblaster session.')
-        self.session: Session = Session.from_file(args.session.resolve())
+        self.session: Session = Session.from_file(session.resolve())
         
         ## Now get the information we want from the session
         # First generate and parse the binary table

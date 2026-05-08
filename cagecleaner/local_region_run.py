@@ -6,13 +6,14 @@ from cagecleaner.region_run import RegionRun
 from cagecleaner.file_utils import _extract_one_region
 
 import logging
+import shutil
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from tqdm.contrib.concurrent import thread_map
 from tqdm.contrib.logging import logging_redirect_tqdm
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class LocalRegionRun(LocalRun, RegionRun):
@@ -31,7 +32,7 @@ class LocalRegionRun(LocalRun, RegionRun):
         LocalRun: Intermediary class providing local file handling utilities.
         RegionRun: Intermediary class providing region dereplication utilities.
     """
-    def __init__(self, args):
+    def __init__(self, parsed_args):
         """
         Initialise a LocalRegionRun instance.
         
@@ -39,13 +40,13 @@ class LocalRegionRun(LocalRun, RegionRun):
         and logging infrastructure.
         
         Args:
-            args (argparse.Namespace): Parsed command-line arguments
+            parsed_args (dict): Parsed and validated command-line arguments
         
         Returns:
             None
         """
         
-        super().__init__(args)
+        super().__init__(parsed_args)
         
         return None
     
@@ -204,7 +205,7 @@ class LocalRegionRun(LocalRun, RegionRun):
         
         # Remove the temporary directory:
         LOG.info("Cleaning up temporary directory.")
-        self.TEMP_DIR_CONTEXT.cleanup()
+        shutil.rmtree(self.TEMP_DIR)
     
         return None
     

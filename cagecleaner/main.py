@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from cagecleaner.local_genome_run import LocalGenomeRun
-from cagecleaner.local_region_run import LocalRegionRun
-from cagecleaner.remote_genome_run import RemoteGenomeRun
-from cagecleaner.remote_region_run import RemoteRegionRun
-
 import argparse
 import tempfile
 import sys
@@ -15,20 +10,29 @@ from pathlib import Path
 from importlib.metadata import version
 from cblaster.classes import Session
 
+from cagecleaner.local_genome_run import LocalGenomeRun
+from cagecleaner.local_region_run import LocalRegionRun
+from cagecleaner.remote_genome_run import RemoteGenomeRun
+from cagecleaner.remote_region_run import RemoteRegionRun
+from cagecleaner.validators import parse_and_validate_arguments
+
 __version__ = version("cagecleaner")
 
 warnings.filterwarnings(action = 'ignore', module = 'cblaster')
-LOG = logging.getLogger()
 
-def parse_arguments() -> argparse.Namespace:
+
+LOG = logging.getLogger(__name__)
+
+
+def create_parser() -> argparse.Namespace:
     """
-    This function parses the arguments given through the command line.
+    This function creates a parser object that will collect the arguments given through the command line.
     
     Args:
         None
     
     Returns:
-        A Namespace object holding the parsed arguments
+        parser (argparse.ArgumentParser): An ArgumentParser object holding the CLI ready to collect the arguments when called
         
     Note:
         Also configures the logger.
@@ -64,10 +68,10 @@ def parse_arguments() -> argparse.Namespace:
     
     args_io = parser.add_argument_group('File inputs and outputs')
     args_io.add_argument('-s', '--session', dest = "session", type = Path, required = True, help = "Path to cblaster session (either obtained from a search run or from cagecleaner-generate-session).")
-    args_io.add_argument('-g', '--genomes', dest = "genome_dir", type = Path, default = '.', 
+    args_io.add_argument('-g', '--genomes', dest = "genome_dir", type = Path, default = Path('.'), 
                          help = "[Only relevant for local searches] Path to local genome folder containing genome files. Accepted formats are FASTA and Genbank [.fasta; .fna; .fa; .gbff; .gbk; .gb]. Files can be gzipped. (default: current working directory)")
-    args_io.add_argument('-o', '--output', dest = "output_dir", type = Path, default = '.', help = "Output directory (default: current working directory).")
-    args_io.add_argument('-t', '--temp', dest = "temp_dir", type = Path, default = tempfile.gettempdir(), help = "Path to store temporary files (default: your OS's default temporary directory).")
+    args_io.add_argument('-o', '--output', dest = "output", type = Path, default = Path('.'), help = "Output directory (default: current working directory).")
+    args_io.add_argument('-t', '--temp', dest = "temp", type = Path, default = Path(tempfile.gettempdir()), help = "Path to store temporary files (default: your OS's default temporary directory).")
     args_io.add_argument('--keep_downloads', dest = "keep_downloads", default = False, action = "store_true", help = "Keep downloaded genomes.")
     args_io.add_argument('--keep_dereplication', dest = "keep_dereplication", default = False, action = "store_true", help = "Keep dereplication intermediary output.")
     args_io.add_argument('--keep_intermediate', dest = "keep_intermediate", default = False, action = "store_true", help = "Keep all intermediate data. This overrules other keep flags.")
@@ -101,10 +105,23 @@ def parse_arguments() -> argparse.Namespace:
     args_recovery.add_argument('--min_z_score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
     args_recovery.add_argument('--min_score_diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
 
-    # Parse arguments
-    args = parser.parse_args()
+    return parser
+
+
+def setup_logging(verbosity: int) -> None:
+    """
+    Set up the root logger if it has not been set up yet.
     
-    # Set up logger
+    Args:
+        verbosity (int): Verbosity level (choices: 0,1,2,3,4).
+        
+    Returns:
+        None
+    """
+    root_logger = logging.getLogger()
+    if root_logger.handlers:
+        return None
+    
     log_levels = {0: logging.CRITICAL,
                   1: logging.ERROR,
                   2: logging.WARNING,
@@ -112,49 +129,54 @@ def parse_arguments() -> argparse.Namespace:
                   4: logging.DEBUG
                   }
     logging.basicConfig(
-        level = log_levels[args.verbosity],
+        level = log_levels[verbosity],
         format = "[%(asctime)s] %(levelname)s [%(filename)s: %(funcName)s] - %(message)s",
         datefmt="%H:%M:%S",
         handlers = [logging.StreamHandler(sys.stdout)]
         )
     
-    # Validate required arguments
-    if args is None:
-        msg = "No arguments were parsed. ArgParse object is None."
-        LOG.error(msg)
-        raise argparse.ArgumentError(msg)
+    return None
     
+
+def main():
+    # First we parse the arguments:
+    parser = create_parser()
+    args = parser.parse_args()
+    
+    # Check whether the session file exist and the verbosity value is valid. We'll definitely need these
+    # to find out which workflow we need to initiate, which validation checks to run and to set up the logger.
     if not args.session.exists():
         msg = f"Session not found at {args.session}"
         LOG.error(msg)
-        raise IOError(msg)
+        raise FileNotFoundError(msg)
+    if args.verbosity not in [0,1,2,3,4]:
+        msg = f'Invalid verbosity level: {args.verbosity}. Valid levels are 0, 1, 2, 3, and 4.'
+        LOG.error(msg)
+        raise ValueError(msg)
         
-    return args
-
-
-def main():
+    # Set up logger
+    setup_logging(args.verbosity)
     
-    # First we parse the arguments:
-    args = parse_arguments()
+    # Validate arguments
+    parsed_args = parse_and_validate_arguments(args)
     
-    # Initiate the approriate CAGEcleaner Run object:
-    LOG.info("--- Loading session file. ---")
+    # Initiate the approriate CAGEcleaner Run object
     source = Session.from_file(args.session).params['mode']
-    method = args.method
+    method = parsed_args['method']
     mode = (source, method)
     match mode:
         case ('remote', 'genomes'):
             LOG.info('Entering remote genome mode')
-            my_run = RemoteGenomeRun(args)
+            my_run = RemoteGenomeRun(parsed_args)
         case ('remote', 'regions'):
             LOG.info('Entering remote region mode')
-            my_run = RemoteRegionRun(args)
+            my_run = RemoteRegionRun(parsed_args)
         case ('local', 'genomes') | ('hmm', 'genomes'):
             LOG.info('Entering local genome mode')
-            my_run = LocalGenomeRun(args)
+            my_run = LocalGenomeRun(parsed_args)
         case ('local', 'regions') | ('hmm', 'regions'):
             LOG.info('Entering local region mode')
-            my_run = LocalRegionRun(args)
+            my_run = LocalRegionRun(parsed_args)
         case _:
             LOG.critical(f'Invalid mode detected: {mode}. Exiting.')
             raise argparse.ArgumentError(f'Invalid search mode detected: {mode}')
