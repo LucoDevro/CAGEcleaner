@@ -7,7 +7,7 @@ from cagecleaner.utils import run_command
 import logging
 
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class GenomeRun(Run):
@@ -26,22 +26,16 @@ class GenomeRun(Run):
         """
         Initialise a GenomeRun instance.
         
-        Runs the base class init and checks for a valid ANI threshold.
+        Runs the base class init.
         
         Args:
             args (argparse.Namespace): Parsed command-line arguments
-            
-        Raises:
-            ValueError: If identity threshold is not between 82 and 100, the threshold region support by skani.
             
         Returns:
             None
         """
         
         super().__init__(args)
-        
-        if not(args.identity <= 100 and args.identity >= 82):
-            raise ValueError("Identity threshold should be between 82 % and 100 % in case of full-genome-based dereplication (see skani documentation).")
         
         return None
     

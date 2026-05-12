@@ -7,7 +7,7 @@ import logging
 from abc import abstractmethod
 
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class RemoteRun(Run):
@@ -22,7 +22,7 @@ class RemoteRun(Run):
          RemoteGenomeRun: Whole-genome dereplication for hits in remote sequences.
     """
     
-    def __init__(self, args):
+    def __init__(self, parsed_args):
         """
         Initialise a RemoteRun instance.
         
@@ -30,16 +30,16 @@ class RemoteRun(Run):
         Excludes scaffolds from the analysis as specified by the user.
         
         Args:
-            args (argparse.Namespace): Parsed command-line arguments
+            parsed_args (dict): Parsed and validated command-line arguments
             
         Returns:
             None
             
         Raises:
-            ValueError: If there are no hits left in the binary table after excluding scaffolds or organisms.
+            RuntimeError: If there are no hits left in the binary table after excluding scaffolds or organisms.
         """
         # Call the parent constructor:
-        super().__init__(args)
+        super().__init__(parsed_args)
         
         # Remove Organisms specified by the user:
         if self.excluded_organisms != {''}:
@@ -52,7 +52,7 @@ class RemoteRun(Run):
             if self.binary_df.empty:
                 msg = "No hits left after excluding organisms!"
                 LOG.error(msg)
-                raise ValueError(msg)
+                raise RuntimeError(msg)
         
         # Remove scaffolds that the user wants excluded:
         if self.excluded_scaffolds != {''}:
@@ -62,13 +62,14 @@ class RemoteRun(Run):
             if self.binary_df.empty:
                 msg = "No hits left after excluding scaffolds!"
                 LOG.error(msg)
-                raise ValueError(msg)
+                raise RuntimeError(msg)
         
         # Replace colons in the bypass assemblies as wel:
         if self.bypass_organisms != {''}:
             self.bypass_organisms = {org.replace(':', ' ') for org in self.bypass_organisms}
             
         return None
+    
     
     @abstractmethod
     def join_dereplication_with_binary(self):

@@ -6,11 +6,12 @@ from cagecleaner.genome_run import GenomeRun
 from cagecleaner.file_utils import remove_suffixes
 
 import logging
+import shutil
 import pandas as pd
 from pathlib import Path
 
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class LocalGenomeRun(LocalRun, GenomeRun):
@@ -27,7 +28,7 @@ class LocalGenomeRun(LocalRun, GenomeRun):
         GenomeRun: Intermediary class providing genome dereplication utilities.
     """
     
-    def __init__(self, args):
+    def __init__(self, parsed_args):
         """
         Initialise a LocalGenomeRun instance.
         
@@ -35,15 +36,16 @@ class LocalGenomeRun(LocalRun, GenomeRun):
         and logging infrastructure.
         
         Args:
-            args (argparse.Namespace): Parsed command-line arguments
+            parsed_args (dict): Parsed and validated command-line arguments
         
         Returns:
             None
         """
         
-        super().__init__(args)
+        super().__init__(parsed_args)
         
         return None
+    
     
     def join_dereplication_with_binary(self) -> None:
         """
@@ -157,7 +159,7 @@ class LocalGenomeRun(LocalRun, GenomeRun):
         
         # Remove the temporary directory:
         LOG.info("Cleaning up temporary directory.")
-        self.TEMP_DIR_CONTEXT.cleanup()
+        shutil.rmtree(self.TEMP_DIR)
         
         return None
     

@@ -13,7 +13,7 @@ from cblaster.classes import Session
 from pathlib import Path
 
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 def correct_layouts(binary_df: pd.DataFrame) -> pd.DataFrame:
