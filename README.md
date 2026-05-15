@@ -47,7 +47,7 @@ De Vrieze, L., Biltjes, M., Lukashevich, S., Tsurumi, K., Masschelein, J. (2025)
 Salamzade, R., & Kalan, L. R. (2025). skDER and CiDDER: two scalable approaches for microbial genome dereplication. Microbial Genomics, 11(7), https://doi.org/10.1099/mgen.0.001438
 Shaw, J., & Yu, Y. W. (2023). Fast and robust metagenomic sequence comparison through sparse chaining with skani. Nature Methods, 20(11), 1661–1665. https://doi.org/10.1038/s41592-023-02018-3
 Steinegger, M., & Söding, J. (2017). MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nature Biotechnology, 35, https://doi.org/10.1038/nbt.3988
-Gilchrist, C.L.M., Booth, T.J., van Wersch, B., van Grieken, L., Medema, M.H., & Chooi, Y-H, cblaster: a remote search tool for rapid identification and visualisation of homologous gene clusters. Bioinformatics Advances, 2021, https://doi.org/10.1093/bioadv/vbab016
+Gilchrist, C.L.M., Booth, T.J., van Wersch, B., van Grieken, L., Medema, M.H., & Chooi, Y-H. (2021). cblaster: a remote search tool for rapid identification and visualisation of homologous gene clusters. Bioinformatics Advances, https://doi.org/10.1093/bioadv/vbab016
 ```
 
 ## License
