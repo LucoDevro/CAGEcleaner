@@ -135,32 +135,31 @@ class LocalRun(Run):
             raise ValueError("Not all genomes of the organisms in the session have been found in the genome directory. Make sure you have not changed the genome filenames between a cblaster run and a CAGEcleaner run.")
         
         # Check if there are valid sequence files in the genome folder:
-        try:
-            next(filter(lambda x: is_fasta(x) or is_genbank(x), self.USER_GENOME_DIR.iterdir()))
-        except StopIteration:
+        fasta_in_folder = [file for file in self.USER_GENOME_DIR.iterdir() if is_fasta(str(file))]
+        genbank_in_folder = [file for file in self.USER_GENOME_DIR.iterdir() if is_genbank(str(file))]
+        if (not fasta_in_folder) and (not genbank_in_folder):
             msg = "No fasta files or Genbank files were found in the provided genome folder!"
             LOG.critical(msg)
             raise RuntimeError(msg)
-            
-        fasta_in_folder = [is_fasta(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
-        genbank_in_folder = [is_genbank(str(file)) for file in self.USER_GENOME_DIR.iterdir()]
 
-        if any(filter(is_fasta, self.USER_GENOME_DIR.iterdir())):
+        if any(fasta_in_folder):
             # In this case the genome folder path should remain the same
-            LOG.info(f"Detected {sum(fasta_in_folder)} FASTA files in {self.USER_GENOME_DIR}. These will be used for dereplication.")
+            LOG.info(f"Detected {len(fasta_in_folder)} FASTA files in {self.USER_GENOME_DIR}. These will be used for dereplication.")
             # Redirect the genome dir to the user-provided folder:
             self.TEMP_GENOME_DIR = self.USER_GENOME_DIR
             
-        elif any(filter(is_genbank, self.USER_GENOME_DIR.iterdir())):
+        elif any(genbank_in_folder):
             # In this case we convert to FASTA and redirect to genome folder, which is in the temp folder by default.
-            LOG.info(f"Detected {sum(genbank_in_folder)} GenBank files in {self.USER_GENOME_DIR}.")
+            LOG.info(f"Detected {len(genbank_in_folder)} GenBank files in {self.USER_GENOME_DIR}.")
             # Convert to FASTA files:
             self.TEMP_GENOME_DIR = self.TEMP_DIR / 'genomes'
             self.TEMP_GENOME_DIR.mkdir(exist_ok = True)  # Make the temporary genome folder if it does not exist already.
             convert_genbanks_to_fastas(self.USER_GENOME_DIR, self.TEMP_GENOME_DIR, workers = self.cores)
             LOG.info(f"Saved genomes in FASTA format to {self.TEMP_GENOME_DIR}")
             
-        assembly_files = [acc + ".fasta.gz" for acc in self.binary_df['Organism']]
+        assembly_files = [[file.name for file in self.TEMP_GENOME_DIR.iterdir() 
+                           if accession in file.name][0]
+                          for accession in self.binary_df['Organism']]
         self.binary_df['assembly_file'] = assembly_files
         
         return None
