@@ -141,7 +141,6 @@ def validate_local_run_args(args: argparse.Namespace, skip_base: bool = False):
     try:
         next(filter(lambda x: is_fasta(x) or is_genbank(x), args.genome_dir.iterdir()))
     except StopIteration:
-        print(args.genome_dir.resolve())
         msg = "The user-supplied genome directory does not contain any fasta or genbank file!"
         LOG.critical(msg)
         raise ValueError(msg)

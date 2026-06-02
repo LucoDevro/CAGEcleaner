@@ -123,7 +123,7 @@ def _extract_one_region(row: dict, margin: int, in_dir: Path, out_dir: Path, str
     region = scaffold_to_extract_from[begin:end]
     
     # Write in a new compressed fasta file, using the original cluster coordinates as sequence ID and filename
-    region.id = '|'.join([scaffold_to_extract_from.id, str(begin_cluster), str(end_cluster)])
+    region.id = '§'.join([scaffold_to_extract_from.id, str(begin_cluster), str(end_cluster)])
     out_file = str(Path(out_dir / region.id)) + '.fasta.gz'
     try:
         with gzip.open(out_file, "wt") as out_handle:

@@ -134,7 +134,7 @@ class LocalRegionRun(LocalRun, RegionRun):
             raise err
 
         # Determine dereplication status
-        derep_df[['Scaffold', 'Start', 'End']] = derep_df['Region'].str.split(pat = "|", expand = True)
+        derep_df[['Scaffold', 'Start', 'End']] = derep_df['Region'].str.split(pat = "§", expand = True)
         derep_df[['Start', 'End']] = derep_df[['Start', 'End']].astype(int)
         derep_df['dereplication_status'] = derep_df['Region'] == derep_df['representative']
         derep_df['dereplication_status'] = np.where(derep_df['dereplication_status'], 'dereplication_representative', 'redundant')
