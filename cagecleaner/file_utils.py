@@ -61,6 +61,26 @@ def is_genbank(file: str | Path) -> bool:
         return True
     
     
+def read_genome(file: str | Path):
+    """
+    Open the appropriate file handle for a genome file.
+    
+    Automatically distinguishes between compressed and uncompressed files based on the file extension.
+    
+    Args:
+        file (str | Path): genome file to open
+        
+    Returns:
+        handle: A file handle to open the genome file
+    """
+    if '.gz' in Path(file).suffixes:
+        open_file = gzip.open(file, mode = 'rt')
+    else:
+        open_file = open(file, mode = 'r')
+        
+    return open_file
+    
+    
 def _extract_one_region(row: dict, margin: int, in_dir: Path, out_dir: Path, strict: bool) -> bool:
     """
     Extract a genomic region from a fasta file.
@@ -99,7 +119,7 @@ def _extract_one_region(row: dict, margin: int, in_dir: Path, out_dir: Path, str
     
     in_file = in_dir / assembly_file
     try:
-        with gzip.open(in_file, "rt") as handle:
+        with read_genome(in_file) as handle:
             # Parse sequences
             seqs = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
     except FileNotFoundError as err:
@@ -137,7 +157,7 @@ def _extract_one_region(row: dict, margin: int, in_dir: Path, out_dir: Path, str
 
 def _convert_one_genbank_to_fasta(input_output_paths: tuple[Path]) -> None:
     """
-    Convert a genbank file to a fasta file.
+    Convert a genbank file to a compressed fasta file.
     
     Converts a genbank file to a fasta file using any2fasta. Gzips the new file.
     
@@ -177,9 +197,10 @@ def _convert_one_genbank_to_fasta(input_output_paths: tuple[Path]) -> None:
 
 def convert_genbanks_to_fastas(in_dir: Path, out_dir: Path, workers: int = 1, no_progress: bool = False) -> None:
     """
-    Convert all genbank files in an input directory to fasta files.
+    Convert all genbank files in an input directory to compressed fasta files.
     
-    All genbank files in the input directory are converted to fasta files in parallel using any2fasta.
+    All genbank files in the input directory are converted to compressed fasta
+    files in parallel using any2fasta and gzip.
     
     Args:
         in_dir (Path): input directory containing the genbank files
