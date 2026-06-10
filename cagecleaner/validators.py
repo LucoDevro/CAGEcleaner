@@ -99,17 +99,8 @@ def validate_run_args(args: argparse.Namespace):
             LOG.error('Output folder already exists! Rerun with -f to overwrite it.')
             raise err
             
-    # Temporary directory should not exist yet if not default, unless flagged.
-    if args.temp != Path(tempfile.gettempdir()):
-        try:
-            args.temp.mkdir(parents = True)
-        except FileExistsError as err:
-            if args.force:
-                LOG.warning('Temporary folder already exists, but it will be overwritten.')
-            else:
-                msg = 'Temporary folder already exists! Rerun with -f to overwrite it.'
-                LOG.error(msg)
-                raise err
+    # Temporary directory will always be unique
+    args.temp.mkdir(parents = True, exist_ok = True)
     args.temp = Path(tempfile.mkdtemp(dir = args.temp))
             
     return None
@@ -137,7 +128,7 @@ def validate_local_run_args(args: argparse.Namespace, skip_base: bool = False):
     if args.keep_downloads == True:
         raise ValueError("Can't keep downloads in local mode.")
         
-    # Make sure there is no exotic stuff in the provided genome folder
+    # Make sure there is valid stuff in the provided genome folder
     try:
         next(filter(lambda x: is_fasta(x) or is_genbank(x), args.genome_dir.iterdir()))
     except StopIteration:
