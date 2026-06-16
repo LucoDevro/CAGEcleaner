@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "CAGEcleaner"
-version = "1.5.0"
+version = "1.5.2"
 description = "Redundancy removal tool for gene cluster mining hit sets"
 
 authors = [
@@ -26,7 +26,7 @@ classifiers = [
 dependencies = [
     "scipy <=1.14.1",
     "biopython",
-    "cblaster >=1.3.20",
+    "cblaster >=1.4.0",
     "pandas <3.0.0",
     "skder >=1.3.4",
     "networkx",
