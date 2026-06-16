@@ -22,8 +22,8 @@ Starting from a session file from a [`cblaster`](https://github.com/gamcil/cblas
 ## Features
 
 - **Full genome hit dereplication**: Dereplicates the full genome assemblies of the host organisms using an ANI-based approach via `skDER`, and retains the hits that are encoded by a representative genome assembly. The more conservative option that also takes the diversity of the host organism into account. Choose this option if you're concerned about preserving host diversity during compression, for example to identify HGT events.
-- **Neighbourhood hit dereplication**: Extracts a genomic region of a predefined length around each hit, clusters all extracted regions by sequence similarity using `MMseqs2`, and retains the hits associated with the representative genomic regions. The more aggressive option that ignores host diversity. Choose this option if losing host diversity is not an issue.
-- **Non-cblaster input**: `CAGEcleaner` has originally been designed to use together with [`cblaster`](https://github.com/gamcil/cblaster), but now it supports output from other mining tools too by supplying your hits as multiple formatted TSV files. See the [docs](https://cagecleaner.readthedocs.io/en/latest/) and the [example output](https://github.com/LucoDevro/CAGEcleaner/tree/main/examples/cfoldseeker_query) for the specific formatting.
+- **Neighbourhood hit dereplication**: Extracts a genomic region of a predefined length around each hit, clusters all extracted regions by sequence similarity using `MMseqs2`, and retains the hits associated with the representative genomic regions. The more aggressive option that only accounts for host diversity in the direct genomic neighbourhood. Choose this option if losing host diversity is not an issue.
+- **Non-cblaster input**: `CAGEcleaner` has originally been designed to use together with [`cblaster`](https://github.com/gamcil/cblaster), but it supports output from other mining tools as well by supplying your hits as three formatted TSV files. See the [docs](https://cagecleaner.readthedocs.io/en/stable/guide/usage.html#input-from-tsv-files) and the [example output](https://github.com/LucoDevro/CAGEcleaner/tree/main/examples/cfoldseeker_query) for the specific formatting.
 
 ## Installation, documentation and more
 For installation instructions, usage, explanations and more, head over to the [`CAGEcleaner` docs](https://cagecleaner.readthedocs.io/en/latest/)!
@@ -32,7 +32,7 @@ For installation instructions, usage, explanations and more, head over to the [`
 > `CAGEcleaner` only supports the single-mode `cblaster` modes (remote, local, hmm). We do not recommend using sessions from one of the combi modes.
 
 > [!IMPORTANT]
-> `CAGEcleaner` has no direct Windows support. If you have a seemingly successful installation directly on your Windows system, you likely have installed v1.1.0, an old version with known bugs! There are alternative options to run CAGEcleaner on Windows.
+> `CAGEcleaner` has no direct Windows support. If you have a seemingly successful installation directly on your Windows system, you likely have installed v1.1.0, an old version with known bugs! Please use on of the alternative options to run CAGEcleaner on Windows.
 
 ## Citations
 If you found `CAGEcleaner` useful, please cite our manuscript:
