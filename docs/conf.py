@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('../'))
 project = 'CAGEcleaner'
 copyright = '2026, Lucas De Vrieze'
 author = 'Lucas De Vrieze, Miguel Biltjes'
-version = '1.5.0'
+version = '1.5.2'
 release = version
 
 # -- General configuration ---------------------------------------------------

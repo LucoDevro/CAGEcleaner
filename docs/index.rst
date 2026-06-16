@@ -64,8 +64,6 @@ If you find ``CAGEcleaner`` useful, please cite:
    guide/usage
 
 
-Comprehensive documentation for all API exposed by ``CAGEcleaner``:
-
 .. toctree::
    :caption: API Reference
    :maxdepth: 1

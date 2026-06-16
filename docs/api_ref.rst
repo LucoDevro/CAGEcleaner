@@ -1,6 +1,8 @@
 CAGEcleaner
 ===================
 
+Comprehensive documentation for all API exposed by ``CAGEcleaner``:
+
 main
 -----------------------
 

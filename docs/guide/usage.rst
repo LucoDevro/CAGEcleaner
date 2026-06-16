@@ -1,24 +1,24 @@
 Usage
 =====
 
-Normally, you don't have to choose between remote and local modes. **CAGEcleaner automatically recognises from the cblaster session in which mode it was generated and thus should be dereplicated.**
+Normally, you don't have to choose between remote and local modes. **CAGEcleaner automatically deduces this from the session file.**
 
 Remote mode
 ------------
 
-The remote mode does not require other file inputs than your cblaster session. A dereplication run using default settings can be started as simply as:
+The remote mode does not require other file inputs than your session file. A dereplication run using default settings can be started as simply as:
 
 .. code-block:: bash
 
 	cagecleaner -s session.json
 
-A slightly more complex example to run CAGEcleaner at 14 cores in full-genome dereplication mode with an identity threshold of 90 % and a coverage threshold of 50 %.
+A slightly more complex example to run CAGEcleaner at 14 cores in full-genome dereplication mode with an identity threshold of 90 % and a coverage threshold of 50 %:
 
 .. code-block:: bash
 
 	cagecleaner -s session.json --cores 14 -i 90 -c 50
 
-A more complicated example to run CAGEcleaner at 14 cores in region dereplication mode with both thresholds at 95 %, adding a sequence margin of 5 kb to both sides of each cluster, discarding clusters that are at a contig edge.
+A more complicated example to run CAGEcleaner at 14 cores in region dereplication mode with both thresholds at 95 %, adding a sequence margin of 5 kb to both sides of each cluster, and discarding clusters that are at a contig edge.
 
 .. code-block:: bash
 
@@ -34,9 +34,9 @@ A complex example that runs CAGEcleaner at 14 cores in region dereplication mode
 Local mode
 ----------
 
-To get a local mode cblaster session, you probably have generated a local cblaster database from a folder of fasta or genbank files. In local mode, **CAGEcleaner needs the path to that folder** to be passed on via the ``-g`` flag. For each one of the examples in section above, you can just add the ``-g`` flag and that path to run CAGEcleaner from a local search session.
+To get a local mode session, you probably have generated a local cblaster database from a folder of fasta or genbank files. **CAGEcleaner needs the path to that folder** to be passed on via the ``-g`` flag. For each one of the examples in section above, you can just add the ``-g`` flag and that path to run CAGEcleaner from a local search session.
 
-A dereplication run using default settings can be started as simply as:
+A dereplication run using default settings with genome folder ``genomes`` can be started as simply as:
 
 .. code-block:: bash
 
@@ -65,29 +65,29 @@ Output files
 
 This tool produces at least six output files:
 
-- ``filtered_session.json`` a filtered cblaster session file
-- ``filtered_binary.txt`` a cblaster binary presence/absence table, containing only the retained hits
-- ``filtered_summary.txt`` a cblaster summary file, containing only the retained hits
-- ``extended_binary.txt`` a cblaster binary table extended with the following columns
+- ``filtered_session.json`` a filtered session file
+- ``filtered_binary.txt`` a cblaster-like binary presence/absence table, containing only the retained hits
+- ``filtered_summary.txt`` a cblaster-like summary file, containing only the retained hits
+- ``extended_binary.txt`` a cblaster-like binary table extended with the following columns
 
-	- ``Number`` Number of the cluster in the cblaster session
+	- ``Number`` Number of the cluster in the original session
 	- ``Strand`` Tuple representing on which strand each query gene homolog was found.
-	- ``Layout_group`` Tuple representing in which layout/order the genes are ordered on the genome
+	- ``Layout_group`` Tuple representing the synteny layout
 	- ``representative`` the representative genome or region
 	- ``dereplication_status`` status of this cluster (Was it removed/kept? Why?)
-	- ``assembly_file`` fasta file of the genome or region
+	- ``assembly_file`` fasta file of the hosting genome or region
 
-- ``retained_cluster_numbers.txt`` the cluster numbers of each retained hit
+- ``retained_cluster_numbers.txt`` the cluster numbers of each selected hit
 - ``genome_cluster_sizes.txt`` a tab-separated text file with the number of genomes in each dereplication genome cluster
 
-**In genome dereplication mode**, the file ``unmapped.scaffolds.txt`` may be generated. This file contains scaffold IDs for which no associated genome file was found. There are several reasons this might happen: ID mismatch between the session and the downloaded fasta file, a failed download...
+**In genome dereplication mode**, the file ``unmapped.scaffolds.txt`` may be generated. This file contains scaffold IDs for which no associated genome file was found. There are several reasons this might happen: ID mismatch between the ID in the session and the ID in the downloaded fasta file, a genome/region failed downloading...
 
 Optionally, the downloaded sequence files and the dereplication output files generated by skDER or MMseqs2 can be saved in an additional subfolder ``downloads`` or ``dereplication``, resp. (see also flags ``keep_downloads``, ``--keep_dereplication``, and ``--keep_intermediate``).
 
 In ``extended_binary.txt``, there are four possible dereplication statuses.
 
 +--------------------------------+-----------------------------------------------------------------------------+
-| `dereplication_representative` | Part of the sequence selected as a sequence cluster representative.         |
+| `dereplication_representative` | Hit part of the sequence selected as sequence cluster representative.       |
 +--------------------------------+-----------------------------------------------------------------------------+
 | `readded_by_content`           | Kept due to a different group layout than the dereplication representative. |
 +--------------------------------+-----------------------------------------------------------------------------+
@@ -99,7 +99,7 @@ In ``extended_binary.txt``, there are four possible dereplication statuses.
 Input from TSV files
 --------------------
 
-CAGEcleaner can process outputs from other gene mining tools than cblaster, although you need to wrangle your non-cblaster output into three TSV files with specific formatting (see also the example files). Using our provided helper tool ``cagecleaner-generate-session``, generate a new cblaster session file, which you can use as input for CAGEcleaner.
+CAGEcleaner can process outputs from other gene mining tools than cblaster, although you need to wrangle your non-cblaster output into three TSV files with specific formatting (see also the example files). Using our provided helper tool ``cagecleaner-generate-session``, generate then a new cblaster session file, which you can use as input for CAGEcleaner.
 
 The **formatting of these three TSV files** is described below.
 
