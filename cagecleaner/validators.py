@@ -46,13 +46,13 @@ def parse_and_validate_arguments(args: argparse.Namespace, bypass_source: None |
             validate_remote_genome_run_args(args)
         case ('remote', 'regions'):
             validate_remote_region_run_args(args)
-        case ('local', 'genomes') | ('hmm', 'genomes'):
+        case ('local', 'genomes') | ('hmm', 'genomes') | ('local_clustered', 'genomes'):
             validate_local_genome_run_args(args)
-        case ('local', 'regions') | ('hmm', 'regions'):
+        case ('local', 'regions') | ('hmm', 'regions') | ('local_clustered', 'regions'):
             validate_local_region_run_args(args)
         case _:
             LOG.critical(f'Invalid mode detected: {mode}. Exiting.')
-            raise argparse.ArgumentError(f'Invalid search mode detected: {mode}')
+            raise ValueError(f'Invalid search mode detected: {mode}')
     
     # Parse arguments
     parsed_args = vars(args)

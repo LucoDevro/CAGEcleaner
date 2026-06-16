@@ -178,15 +178,15 @@ def main():
         case ('remote', 'regions'):
             LOG.info('Entering remote region mode')
             my_run = RemoteRegionRun(parsed_args)
-        case ('local', 'genomes') | ('hmm', 'genomes'):
+        case ('local', 'genomes') | ('hmm', 'genomes') | ('local_clustered', 'genomes'):
             LOG.info('Entering local genome mode')
             my_run = LocalGenomeRun(parsed_args)
-        case ('local', 'regions') | ('hmm', 'regions'):
+        case ('local', 'regions') | ('hmm', 'regions') | ('local_clustered', 'regions'):
             LOG.info('Entering local region mode')
             my_run = LocalRegionRun(parsed_args)
         case _:
             LOG.critical(f'Invalid mode detected: {mode}. Exiting.')
-            raise argparse.ArgumentError(f'Invalid search mode detected: {mode}')
+            raise ValueError(f'Invalid search mode detected: {mode}')
     
     # Run the initialised workflow:
     my_run.run()
