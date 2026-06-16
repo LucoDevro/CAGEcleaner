@@ -45,7 +45,7 @@ about:
   license_family: MIT
   license_file: LICENSE
   summary: "Redundancy removal for gene cluster mining hit sets"
-  doc_url: "https://github.com/LucoDevro/CAGEcleaner/wiki"
+  doc_url: "https://cagecleaner.readthedocs.io/en/stable"
   dev_url: "https://github.com/LucoDevro/CAGEcleaner"
 
 extra:
