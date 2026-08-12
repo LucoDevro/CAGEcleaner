@@ -81,17 +81,17 @@ def validate_arguments(args: argparse.Namespace) -> None:
         raise argparse.ArgumentError(msg)
     
     if not args.clusters.exists():
-        msg = "Cluster TSV not found at {args.clusters}"
+        msg = f"Cluster TSV not found at {args.clusters}"
         LOG.error(msg)
         raise IOError(msg)
     
     if not args.hits.exists():
-        msg = "Hit TSV not found at {args.clusters}"
+        msg = f"Hit TSV not found at {args.clusters}"
         LOG.error(msg)
         raise IOError(msg)
         
     if not args.queries.exists():
-        msg = "Queries TSV not found at {args.clusters}"
+        msg = f"Queries TSV not found at {args.clusters}"
         LOG.error(msg)
         raise IOError(msg)
         
