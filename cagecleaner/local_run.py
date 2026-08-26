@@ -5,7 +5,11 @@ from cagecleaner.run import Run
 from cagecleaner.file_utils import is_fasta, is_genbank, remove_suffixes, convert_genbanks_to_fastas
 
 import logging
+import os
+import shutil
 from abc import abstractmethod
+from pathlib import Path
+from cblaster.extract_clusters import get_sorted_cluster_hierarchies
 
 LOG = logging.getLogger(__name__)
 
@@ -103,18 +107,18 @@ class LocalRun(Run):
             
     def prepare_genomes(self) -> None:
         """
-        Prepare the genome sequence files in the specified genome directory for dereplication.
+        Prepare the genome sequence files in the specified genome directory for dereplication, ignoring genomes without hit.
         
-        Checks whether The filenames of the genome sequence files are among the names of the organisms in the Session object,
-        ignoring file extensions. Checks whether there are fasta and genbank files in the user-specified genome folder,
-        converting genbank files to fasta files on-the-fly.
+        Checks whether The filelabels of the genome sequence files are among the names of the organisms in the Session object,
+        ignoring file extensions. Selects only genome files with a hit, and checks whether these are fasta and genbank files.
+        Converts any genbank file to fasta on-the-fly.
         
         Adds a column assembly_file to binary table specifying the filepath of each scaffold's associated genome assembly.
-        In Genbank mode, this will point to converted files in the temporary directories.
+        For Genbank files, this will be the filename of the converted fasta file.
         
         Mutates:
             self.binary_df (pd.DataFrame): Updated in-place with an additional column for
-                'assembly_file' and 'dereplication_status'.
+                'assembly_file'.
                 
         Returns:
             None
@@ -122,41 +126,62 @@ class LocalRun(Run):
         Raises:
             ValueError: If an organism is found of which the genome is not present in the user-supplied genome directory.
             RuntimeError: If no fasta or genbank files have been found in the supplied genome directory.
-            
-        Notes:
-            The sequence files in the user genome folder should be either all fasta files or all genbank files. There is
-            no mix case support.
         """
+        ## Get an overview of the genome files in the genome directory, and the hit-containing genomes included in the session
+        # Make it a mapping from filename to filelabel
+        files_in_genomes_dir = [file.name for file in self.USER_GENOME_DIR.iterdir()]
+        assemblies_in_session = [hit[2] for hit in get_sorted_cluster_hierarchies(self.session, max_clusters = None)]
+
+        ## Assert that all hit-coding assemblies included in the session have an assembly file
+        files_in_genomes_dir_no_suffix = [remove_suffixes(file) for file in files_in_genomes_dir]
+        assemblies_in_session_no_suffix = [remove_suffixes(label) for label in assemblies_in_session]
+        if not(set(files_in_genomes_dir_no_suffix) >= set(assemblies_in_session_no_suffix)): 
+            raise ValueError("Not all relevant genome files have been found in the genome directory. Make sure you have not changed the genome filenames between a cblaster run and a CAGEcleaner run.")
         
-        # Assert that Organism and filenames correspond:
-        files_in_genomes_dir = {remove_suffixes(file.name) for file in self.USER_GENOME_DIR.iterdir()}
-        organisms_in_session = {remove_suffixes(organism.name) for organism in self.session.organisms}
-        if not(files_in_genomes_dir >= organisms_in_session): 
-            raise ValueError("Not all genomes of the organisms in the session have been found in the genome directory. Make sure you have not changed the genome filenames between a cblaster run and a CAGEcleaner run.")
+        ## Make a mapping from filelabel to actual path, discarding assembly files without a hit
+        relevant_paths = set([[path for path in files_in_genomes_dir if label in str(path)][0]
+                              for label in assemblies_in_session])
         
-        # Check if there are valid sequence files in the genome folder:
-        fasta_in_folder = [file for file in self.USER_GENOME_DIR.iterdir() if is_fasta(str(file))]
-        genbank_in_folder = [file for file in self.USER_GENOME_DIR.iterdir() if is_genbank(str(file))]
-        if (not fasta_in_folder) and (not genbank_in_folder):
+        ## Gather all genomes file, checking whether the files have valid file extensions
+        # Make the temporary genome folder if it does not exist already
+        self.TEMP_GENOME_DIR = self.TEMP_DIR / 'genomes'
+        self.TEMP_GENOME_DIR.mkdir(exist_ok = True)
+        # Same for the Genbank temporary subfolder
+        genbanks_temp_subfolder = self.TEMP_GENOME_DIR / 'genbanks'
+        genbanks_temp_subfolder.mkdir()
+        
+        fastas_found = 0
+        genbanks_found = 0
+        for path in relevant_paths:
+            if is_fasta(path):
+                fastas_found += 1
+                target_path = self.TEMP_GENOME_DIR / path
+            elif is_genbank(path):
+                genbanks_found += 1
+                target_path = genbanks_temp_subfolder / path
+            try:
+                os.symlink(self.USER_GENOME_DIR / path, target_path)
+            except FileExistsError:
+                os.unlink(target_path)
+                os.symlink(self.USER_GENOME_DIR / path, target_path)
+                
+        if not(fastas_found + genbanks_found):
             msg = "No fasta files or Genbank files were found in the provided genome folder!"
             LOG.critical(msg)
             raise RuntimeError(msg)
-
-        if any(fasta_in_folder):
-            # In this case the genome folder path should remain the same
-            LOG.info(f"Detected {len(fasta_in_folder)} FASTA files in {self.USER_GENOME_DIR}. These will be used for dereplication.")
-            # Redirect the genome dir to the user-provided folder:
-            self.TEMP_GENOME_DIR = self.USER_GENOME_DIR
+        
+        LOG.info(f"Detected {fastas_found} relevant FASTA files.")
+        LOG.info(f"Detected {genbanks_found} relevant GenBank files.")
+        
+        # Convert Genbank files to fasta format:
+        convert_genbanks_to_fastas(genbanks_temp_subfolder, self.TEMP_GENOME_DIR, workers = self.cores)
             
-        elif any(genbank_in_folder):
-            # In this case we convert to FASTA and redirect to genome folder, which is in the temp folder by default.
-            LOG.info(f"Detected {len(genbank_in_folder)} GenBank files in {self.USER_GENOME_DIR}.")
-            # Convert to FASTA files:
-            self.TEMP_GENOME_DIR = self.TEMP_DIR / 'genomes'
-            self.TEMP_GENOME_DIR.mkdir(exist_ok = True)  # Make the temporary genome folder if it does not exist already.
-            convert_genbanks_to_fastas(self.USER_GENOME_DIR, self.TEMP_GENOME_DIR, workers = self.cores)
-            LOG.info(f"Saved genomes in FASTA format to {self.TEMP_GENOME_DIR}")
+        # Remove temporary subfolder
+        shutil.rmtree(genbanks_temp_subfolder)
             
+        LOG.info(f"Prepared {fastas_found + genbanks_found} genomes FASTA files in {self.TEMP_GENOME_DIR}")
+            
+        ## Add the assembly file column to the extended binary table
         assembly_files = [[file.name for file in self.TEMP_GENOME_DIR.iterdir() 
                            if accession in file.name][0]
                           for accession in self.binary_df['Organism']]
