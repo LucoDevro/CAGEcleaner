@@ -210,17 +210,7 @@ def convert_genbanks_to_fastas(in_dir: Path, out_dir: Path, workers: int = 1, no
         
     Returns:
         None
-        
-    Raises:
-        RuntimeError: If the input directory is empty.
     """
-    try:
-        next(in_dir.iterdir())
-    except StopIteration:
-        msg = "Input directory is empty!"
-        LOG.error(msg)
-        raise RuntimeError(msg)
-    
     input_output_paths = [(i, out_dir / i.with_suffix('.fasta').name) for i in in_dir.iterdir()]
     LOG.info(f'Converting {len(input_output_paths)} Genbank genomes to Fasta format.')
     with logging_redirect_tqdm(loggers = [LOG]):

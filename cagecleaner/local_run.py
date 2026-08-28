@@ -8,7 +8,6 @@ import logging
 import os
 import shutil
 from abc import abstractmethod
-from pathlib import Path
 from cblaster.extract_clusters import get_sorted_cluster_hierarchies
 
 LOG = logging.getLogger(__name__)
@@ -173,8 +172,9 @@ class LocalRun(Run):
         LOG.info(f"Detected {fastas_found} relevant FASTA files.")
         LOG.info(f"Detected {genbanks_found} relevant GenBank files.")
         
-        # Convert Genbank files to fasta format:
-        convert_genbanks_to_fastas(genbanks_temp_subfolder, self.TEMP_GENOME_DIR, workers = self.cores)
+        # Convert Genbank files to fasta format
+        if genbanks_found:
+            convert_genbanks_to_fastas(genbanks_temp_subfolder, self.TEMP_GENOME_DIR, workers = self.cores)
             
         # Remove temporary subfolder
         shutil.rmtree(genbanks_temp_subfolder)
