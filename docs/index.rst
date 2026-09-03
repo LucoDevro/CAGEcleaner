@@ -39,7 +39,7 @@ CAGEcleaner
 
 *CAGEcleaner: A tool to reduce redundancy in gene mining hit sets.*
    
-**CAGEcleaner** reduces redundancy in gene cluster hit sets, easing downstream analyses and visualisation. It features a taxonomically conservative dereplication mode that acts at the full genome level, and a more aggressive mode that acts at the level of the genomic neighbourhood of the cluster. In addition, it prevents clusters from being discarded if they show remarkable diversity based on gene cluster contents and homology scores. Sessions filtered by **CAGEcleaner** can be plugged back in into the *cblaster* workflow.
+**CAGEcleaner** reduces redundancy in gene cluster hit sets, easing downstream analyses and visualisation. It features a high-level dereplication mode that acts at the full genome level, and a more scrutinous mode that acts at the level of the genomic neighbourhood of the cluster. In addition, it prevents clusters from being discarded if they show remarkable diversity based on gene cluster contents and homology scores. Sessions filtered by **CAGEcleaner** can be plugged back in into the *cblaster* workflow.
 
 *In full genome mode*, **CAGEcleaner** retrieves the full genome assemblies of the clusters' host genomes, performs a fast ANI-based full genome dereplication using *skDER*, and only keeps clusters that were part of the retained genomes.
 

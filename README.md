@@ -21,9 +21,12 @@ Starting from a session file from a [`cblaster`](https://github.com/gamcil/cblas
 
 ## Features
 
-- **Full genome hit dereplication**: Dereplicates the full genome assemblies of the host organisms using an ANI-based approach via `skDER`, and retains the hits that are encoded by a representative genome assembly. The more conservative option that also takes the diversity of the host organism into account. Choose this option if you're concerned about preserving host diversity during compression, for example to identify HGT events.
-- **Neighbourhood hit dereplication**: Extracts a genomic region of a predefined length around each hit, clusters all extracted regions by sequence similarity using `MMseqs2`, and retains the hits associated with the representative genomic regions. The more aggressive option that only accounts for host diversity in the direct genomic neighbourhood. Choose this option if losing host diversity is not an issue.
+- **Full genome hit dereplication**: Dereplicates the full genome assemblies of the host organisms using an ANI-based approach via `skDER`, and retains the hits that are encoded by a representative genome assembly. The more high-level option that focuses on the whole genome. Choose this option if keeping host diversity at the cost of some gene cluster diversity is not an issue for you.
+- **Neighbourhood hit dereplication**: Extracts a genomic region of a predefined length around each hit, clusters all extracted genomic regions by nucleotide sequence similarity using `MMseqs2`, and retains the hits associated with the representative regions. The more scrutinous option that accounts for nucleotide diversity in the direct genomic neighbourhood. Choose this option if you're really concerned about gene cluster diversity.
 - **Non-cblaster input**: `CAGEcleaner` has originally been designed to use together with [`cblaster`](https://github.com/gamcil/cblaster), but it supports output from other mining tools as well by supplying your hits as three formatted TSV files. See the [docs](https://cagecleaner.readthedocs.io/en/stable/guide/usage.html#input-from-tsv-files) and the [example output](https://github.com/LucoDevro/CAGEcleaner/tree/main/examples/cfoldseeker_query) for the specific formatting.
+
+> [!NOTE]
+> `CAGEcleaner` intentionally aims to preserve as much taxonomic diversity as possible by working on the nucleotide level, although this may come at the cost of dereplication power. If you want stronger dereplication, please consider other amino-acid-based dereplication approaches.
 
 ## Installation, documentation and more
 For installation instructions, usage, explanations and more, head over to the [`CAGEcleaner` docs](https://cagecleaner.readthedocs.io/en/latest/)!
