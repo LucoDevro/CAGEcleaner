@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import re
 import logging
 import subprocess
@@ -13,6 +16,11 @@ from subprocess import CalledProcessError
 LOG = logging.getLogger(__name__)
 
 
+SEQ_FILE_EXTENSIONS = r'\.(fasta|fna|fa|gb|gbk|gbff)(\.gz)?$' # valid extensions for fasta and genbank files, potentially gzipped
+FASTA_FILE_EXTENSIONS = r'\.(fasta|fna|fa)(\.gz)?$'
+GENBANK_FILE_EXTENSIONS = r'\.(gbff|gbk|gb)(\.gz)?$'
+
+
 def remove_suffixes(string: str | Path) -> str:
     """
     Split off any valid sequence file suffix either in the form of .<suffix> or .<suffix>.gz.
@@ -24,9 +32,8 @@ def remove_suffixes(string: str | Path) -> str:
         str: the string without the sequence file suffix
     """
     
-    pattern = r'\.(fasta|fna|fa|gb|gbk|gbff)(\.gz)?$' # valid extensions for fasta and genbank files, potentially gzipped
-    
-    return re.sub(pattern, '', str(string))
+    return re.sub(SEQ_FILE_EXTENSIONS, '', str(string))
+
 
 def is_fasta(file: str | Path) -> bool:
     """
@@ -38,11 +45,11 @@ def is_fasta(file: str | Path) -> bool:
     Returns:
         bool: Boolean result of the check
     """
-    pattern = r'\.(fasta|fna|fa)(\.gz)?$'
-    if re.search(pattern, str(file)) is None:
+    if re.search(FASTA_FILE_EXTENSIONS, str(file)) is None:
         return False
     else:
         return True
+    
 
 def is_genbank(file: str | Path) -> bool:
     """
@@ -54,8 +61,7 @@ def is_genbank(file: str | Path) -> bool:
     Returns:
         bool: Boolean result of the check
     """
-    pattern = r'\.(gbff|gbk|gb)(\.gz)?$'
-    if re.search(pattern, str(file)) is None:
+    if re.search(GENBANK_FILE_EXTENSIONS, str(file)) is None:
         return False
     else:
         return True
@@ -144,7 +150,8 @@ def _extract_one_region(row: dict, margin: int, in_dir: Path, out_dir: Path, str
     
     # Write in a new compressed fasta file, using the original cluster coordinates as sequence ID and filename
     region.id = '§'.join([scaffold_to_extract_from.id, str(begin_cluster), str(end_cluster)])
-    out_file = str(Path(out_dir / region.id)) + '.fasta.gz'
+    # Flexible search pattern to remove sequence file extensions
+    out_file = Path(re.sub(SEQ_FILE_EXTENSIONS, '', str(out_dir / region.id)) + '.fasta.gz')
     try:
         with gzip.open(out_file, "wt") as out_handle:
             SeqIO.write(region, out_handle, "fasta")
@@ -173,12 +180,14 @@ def _convert_one_genbank_to_fasta(input_output_paths: tuple[Path]) -> None:
     """
     in_file, out_file = input_output_paths
     
-    # Open the output file and redirect the output of any2fasta to it.
+    # Open the output file, capture the stdout of the subprocessh and compress it into the file.
     try:
-        with open(out_file, "w") as handle:
+        with gzip.open(out_file.with_suffix('.fasta.gz'), "wb") as handle:
             try:
                 # use -q for quiet mode, text=True because output is not in byte form.
-                subprocess.run(['any2fasta', '-q', '-g', str(in_file)], stdout=handle, check=True, text=True)
+                cont = subprocess.run(['any2fasta', '-q', '-g', str(in_file)], 
+                                      check = True, capture_output = True)
+                handle.write(cont.stdout)
             except CalledProcessError as err:
                 LOG.error(err)
                 raise err
@@ -186,11 +195,6 @@ def _convert_one_genbank_to_fasta(input_output_paths: tuple[Path]) -> None:
     except FileNotFoundError as err:
         LOG.error(err)
         raise err
-        
-    with open(out_file, 'r') as handle:
-        with gzip.open(out_file.with_suffix('.fasta.gz'), "wt") as compressed_handle:
-            compressed_handle.writelines(handle)
-    os.remove(out_file)
     
     return None
     
@@ -211,7 +215,8 @@ def convert_genbanks_to_fastas(in_dir: Path, out_dir: Path, workers: int = 1, no
     Returns:
         None
     """
-    input_output_paths = [(i, out_dir / i.with_suffix('.fasta').name) for i in in_dir.iterdir()]
+    input_output_paths = [(i, Path(re.sub(SEQ_FILE_EXTENSIONS, '', str(out_dir / i.name)) + '.fasta'))
+                          for i in in_dir.iterdir()]
     LOG.info(f'Converting {len(input_output_paths)} Genbank genomes to Fasta format.')
     with logging_redirect_tqdm(loggers = [LOG]):
         thread_map(_convert_one_genbank_to_fasta, input_output_paths,

@@ -5,7 +5,6 @@ from cagecleaner.run import Run
 from cagecleaner.file_utils import is_fasta, is_genbank, remove_suffixes, convert_genbanks_to_fastas
 
 import logging
-import os
 import shutil
 from abc import abstractmethod
 from cblaster.extract_clusters import get_sorted_cluster_hierarchies
@@ -154,15 +153,15 @@ class LocalRun(Run):
         for path in relevant_paths:
             if is_fasta(path):
                 fastas_found += 1
-                target_path = self.TEMP_GENOME_DIR / path
+                link_path = self.TEMP_GENOME_DIR / path
             elif is_genbank(path):
                 genbanks_found += 1
-                target_path = genbanks_temp_subfolder / path
+                link_path = genbanks_temp_subfolder / path
             try:
-                os.symlink(self.USER_GENOME_DIR / path, target_path)
+                link_path.symlink_to(self.USER_GENOME_DIR / path)
             except FileExistsError:
-                os.unlink(target_path)
-                os.symlink(self.USER_GENOME_DIR / path, target_path)
+                link_path.unlink()
+                link_path.symlink_to(self.USER_GENOME_DIR / path)
                 
         if not(fastas_found + genbanks_found):
             msg = "No fasta files or Genbank files were found in the provided genome folder!"
@@ -175,16 +174,17 @@ class LocalRun(Run):
         # Convert Genbank files to fasta format
         if genbanks_found:
             convert_genbanks_to_fastas(genbanks_temp_subfolder, self.TEMP_GENOME_DIR, workers = self.cores)
-            
-        # Remove temporary subfolder
+        
+        # Delete temporary Genbank subfolder
         shutil.rmtree(genbanks_temp_subfolder)
             
         LOG.info(f"Prepared {fastas_found + genbanks_found} genomes FASTA files in {self.TEMP_GENOME_DIR}")
             
         ## Add the assembly file column to the extended binary table
         assembly_files = [[file.name for file in self.TEMP_GENOME_DIR.iterdir() 
-                           if accession in file.name][0]
-                          for accession in self.binary_df['Organism']]
+                           if remove_suffixes(accession) in file.name][0]
+                          for accession in self.binary_df['Organism']
+                          ]
         self.binary_df['assembly_file'] = assembly_files
         
         return None
