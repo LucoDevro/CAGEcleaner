@@ -137,7 +137,7 @@ def _extract_one_region(row: dict, margin: int, in_dir: Path, out_dir: Path, str
     
     # Check for contig edges
     length = len(scaffold_to_extract_from)
-    if end >= length or begin < 0:
+    if end >= length or begin <= 0:
         contig_end = True
         # If strict, skip regions that are at a contig edge
         if strict:

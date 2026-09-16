@@ -103,7 +103,7 @@ def create_parser() -> argparse.Namespace:
     
     args_region_dereplication = parser.add_argument_group('Region-based dereplication (applies MMseqs2 clustering)')
     args_region_dereplication.add_argument('-m', '--margin', dest = 'margin', default = 0, type = int, help = "Sequence margin at both sides of the cluster in bp. Required in case of region-based dereplication. (default: 0)")
-    args_region_dereplication.add_argument('--strict', dest = 'strict_regions', default = False, action = "store_true", help = "Omit genomic regions that, including margin, are at a contig edge.")
+    args_region_dereplication.add_argument('--allow-edge', dest = 'strict_regions', default = True, action = "store_false", help = "Allow genomic regions that, including margin, are at a contig edge.")
 
     args_recovery = parser.add_argument_group('Hit recovery')
     args_recovery.add_argument('--no_recovery_content', dest = 'no_recovery_by_content', default = False, action = "store_true", help = "Skip recovering hits by cluster layout (default: False)")
