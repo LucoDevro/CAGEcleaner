@@ -1,5 +1,5 @@
 {% set name = "cagecleaner" %}
-{% set version = "1.5.2" %}
+{% set version = "1.6.0" %}
 
 package:
   name: "{{ name|lower }}"
@@ -26,12 +26,12 @@ requirements:
   run:
     - python >=3.12
     - biopython
-    - cblaster >=1.4.0
+    - cblaster ==1.4.0
     - pandas <3.0.0
     - scipy <=1.14.1
     - ncbi-datasets-cli
     - skder >=1.3.4
-    - any2fasta >=0.8.1
+    - gb-io
     - mmseqs2
     - networkx
 

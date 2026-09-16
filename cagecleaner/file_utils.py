@@ -3,14 +3,12 @@
 
 import re
 import logging
-import subprocess
 import gzip
-import os
+import gb_io
 from pathlib import Path
 from tqdm.contrib.concurrent import thread_map
 from tqdm.contrib.logging import logging_redirect_tqdm
 from Bio import SeqIO
-from subprocess import CalledProcessError
 
 
 LOG = logging.getLogger(__name__)
@@ -67,7 +65,7 @@ def is_genbank(file: str | Path) -> bool:
         return True
     
     
-def read_genome(file: str | Path):
+def read_file(file: str | Path, mode: str = "t"):
     """
     Open the appropriate file handle for a genome file.
     
@@ -75,12 +73,13 @@ def read_genome(file: str | Path):
     
     Args:
         file (str | Path): genome file to open
+        mode (str): file mode (text ('t'; default) or binary ('b'))
         
     Returns:
         handle: A file handle to open the genome file
     """
     if '.gz' in Path(file).suffixes:
-        open_file = gzip.open(file, mode = 'rt')
+        open_file = gzip.open(file, mode = f'r{mode}')
     else:
         open_file = open(file, mode = 'r')
         
@@ -125,7 +124,7 @@ def _extract_one_region(row: dict, margin: int, in_dir: Path, out_dir: Path, str
     
     in_file = in_dir / assembly_file
     try:
-        with read_genome(in_file) as handle:
+        with read_file(in_file) as handle:
             # Parse sequences
             seqs = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
     except FileNotFoundError as err:
@@ -164,9 +163,10 @@ def _extract_one_region(row: dict, margin: int, in_dir: Path, out_dir: Path, str
 
 def _convert_one_genbank_to_fasta(input_output_paths: tuple[Path]) -> None:
     """
-    Convert a genbank file to a compressed fasta file.
+    Convert a genbank file to a fasta file.
     
-    Converts a genbank file to a fasta file using any2fasta. Gzips the new file.
+    Converts a genbank file to a fasta file using a gb-io iterator. Genbank file may be compressed,
+    which is handled by read_file().
     
     Args:
         input_output_paths (tuple[Path]): Tuple of the paths of the input genbank and the output fasta file
@@ -175,22 +175,16 @@ def _convert_one_genbank_to_fasta(input_output_paths: tuple[Path]) -> None:
         None
         
     Raises:
-        FileNotFoundError: If the output path cannot be opened.
-        CalledProcessError: If the any2fasta command run failed.
+        FileNotFoundError: If any of the paths cannot be opened.
     """
     in_file, out_file = input_output_paths
     
-    # Open the output file, capture the stdout of the subprocessh and compress it into the file.
     try:
-        with gzip.open(out_file.with_suffix('.fasta.gz'), "wb") as handle:
-            try:
-                # use -q for quiet mode, text=True because output is not in byte form.
-                cont = subprocess.run(['any2fasta', '-q', '-g', str(in_file)], 
-                                      check = True, capture_output = True)
-                handle.write(cont.stdout)
-            except CalledProcessError as err:
-                LOG.error(err)
-                raise err
+        with open(out_file.with_suffix('.fasta'), "wb") as fasta_handle:
+            with read_file(in_file, mode = "b") as genbank_handle:
+                for record in gb_io.iter(genbank_handle):
+                    fasta_handle.write((f">{record.version}\n".encode()))
+                    fasta_handle.write(record.sequence + b'\n')
             
     except FileNotFoundError as err:
         LOG.error(err)
