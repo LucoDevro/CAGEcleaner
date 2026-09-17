@@ -210,6 +210,10 @@ def validate_region_run_args(args: argparse.Namespace, skip_base: bool = False):
             raise ValueError("Identity threshold should be between 0 and 100 in case of region-based dereplication.")
         if not(args.margin >= 0):
             raise ValueError("Region margin cannot be negative when dereplicating regions.")
+        if not(args.cdhit_bandwidth > 0):
+            raise ValueError("CD-HIT bandwidth must be greater than 0.")
+        if not(args.cdhit_bandwidth > 20):
+            LOG.warning("You're setting a CD-HIT bandwidth lower than its default (20). This is likely to be ineffective.")
     except ValueError as err:
         LOG.error(f'{err}')
         raise err

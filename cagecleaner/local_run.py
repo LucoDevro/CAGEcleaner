@@ -178,7 +178,7 @@ class LocalRun(Run):
         # Delete temporary Genbank subfolder
         shutil.rmtree(genbanks_temp_subfolder)
             
-        LOG.info(f"Prepared {fastas_found + genbanks_found} genomes FASTA files in {self.TEMP_GENOME_DIR}")
+        LOG.info(f"Generated {fastas_found + genbanks_found} FASTA files in {self.TEMP_GENOME_DIR}")
             
         ## Add the assembly file column to the extended binary table
         assembly_files = [[file.name for file in self.TEMP_GENOME_DIR.iterdir() 

@@ -163,6 +163,7 @@ def run_command(cmd_list: list, max_attempts: int = 3) -> None:
     def command_stdout_log(s): return LOG.debug(s.rstrip())
     def command_stderr_log(s): return LOG.warning(s.rstrip())
     
+    LOG.info(f'Running {executable.name}')
     LOG.debug(f'Running command: {" ".join(cmd)}')
     
     for attempt in range(max_attempts):

@@ -110,7 +110,11 @@ def create_parser() -> argparse.Namespace:
     args_recovery.add_argument('--no_recovery_score', dest = 'no_recovery_by_score', default = False, action = "store_true", help = "Skip recovering hits by outlier homology scores (default: False)")
     args_recovery.add_argument('--min_z_score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
     args_recovery.add_argument('--min_score_diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
-
+    
+    args_reassign_clusters = parser.add_argument_group('Cluster reassignment')
+    args_reassign_clusters.add_argument('--reassign-clusters', dest = "reassign_reprs", default = False, action = "store_true", help = "Reassign spurious cluster representatives missed by MMseqs using an a posteriori CD-HIT run (default: False).")
+    args_reassign_clusters.add_argument('--cdhit-bandwidth', dest = "cdhit_bandwidth", default = 400, type = int, help = "CD-HIT alignment bandwidth. The higher, the less spurious representatives remain, but marginal gains decrease exponentially.")
+    
     return parser
 
 
