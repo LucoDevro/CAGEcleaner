@@ -4,6 +4,7 @@
 from cagecleaner.run import Run
 from cagecleaner.file_utils import is_fasta, is_genbank, remove_suffixes, convert_genbanks_to_fastas
 
+import pandas as pd
 import logging
 import shutil
 from abc import abstractmethod
@@ -181,11 +182,26 @@ class LocalRun(Run):
         LOG.info(f"Generated {fastas_found + genbanks_found} FASTA files in {self.TEMP_GENOME_DIR}")
             
         ## Add the assembly file column to the extended binary table
-        assembly_files = [[file.name for file in self.TEMP_GENOME_DIR.iterdir() 
-                           if remove_suffixes(accession) in file.name][0]
-                          for accession in self.binary_df['Organism']
-                          ]
-        self.binary_df['assembly_file'] = assembly_files
+        LOG.info('Matching hit accessions with genome file paths')
+        
+        # First strip the filenames and the accessions from any suffix
+        accessions_no_suffices = self.binary_df['Organism'].apply(remove_suffixes)
+        accessions_no_suffices.name = 'filename'
+        filenames_no_suffices = [{'path': str(f.resolve()),
+                                  'filename': remove_suffixes(f.name)}
+                                 for f in self.TEMP_GENOME_DIR.iterdir()]
+        filenames_no_suffices = pd.DataFrame.from_records(filenames_no_suffices)
+        
+        # Then match the file paths to these shortened accessions
+        accessions_by_filenames = pd.merge(accessions_no_suffices, filenames_no_suffices, on = 'filename', how = 'left')
+        broken_links = accessions_by_filenames[accessions_by_filenames['path'].isna()]
+        if not broken_links.empty:
+            msg = f'No genome file found for accessions {", ".join(broken_links["filename"].to_list())}'
+            LOG.critical(msg)
+            raise RuntimeError(msg)
+        
+        # Set if no broken links
+        self.binary_df['assembly_file'] = accessions_by_filenames['path']
         
         return None
     
