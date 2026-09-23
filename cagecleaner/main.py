@@ -68,7 +68,7 @@ def create_parser() -> argparse.Namespace:
     args_general.add_argument('--cores', dest = 'cores', default = 1, type = int, help = "Number of cores available to use (default: 1).")    
     args_general.add_argument('-f', '--force', dest = 'force', default = False, action = 'store_true', help = "Force overwriting output (default: False).")
     args_general.add_argument('-vv', '--verbosity', dest = 'verbosity', default = 3, type = int, choices = [0,1,2,3,4], help = "Console verbosity level (default: 3 (info)).")
-    args_general.add_argument('-np', '--no-progress', dest = "no_progress", default = False, action = 'store_true', help = "Hide most progress bars (default: False).")
+    args_general.add_argument('-np', '--no_progress', dest = "no_progress", default = False, action = 'store_true', help = "Hide most progress bars (default: False).")
     args_general.add_argument('-v', '--version', action = "version", version = "%(prog)s " + __version__)
     args_general.add_argument('-h', '--help', action = 'help', help = "Show this help message and exit.")      
     
@@ -103,17 +103,16 @@ def create_parser() -> argparse.Namespace:
     
     args_region_dereplication = parser.add_argument_group('Region-based dereplication (applies MMseqs2 clustering)')
     args_region_dereplication.add_argument('-m', '--margin', dest = 'margin', default = 0, type = int, help = "Sequence margin at both sides of the cluster in bp. Required in case of region-based dereplication. (default: 0)")
-    args_region_dereplication.add_argument('--allow-edge', dest = 'strict_regions', default = True, action = "store_false", help = "Allow genomic regions that, including margin, are at a contig edge.")
+    args_region_dereplication.add_argument('--allow_edge', dest = 'strict_regions', default = True, action = "store_false", help = "Allow genomic regions that, including margin, are at a contig edge.")
+    args_region_dereplication.add_argument('--reassign_clusters', dest = "reassign_reprs", default = False, action = "store_true", help = "Reassign spurious cluster splits by MMseqs using an a posteriori CD-HIT run (default: False).")
+    args_region_dereplication.add_argument('--cdhit_bandwidth', dest = "cdhit_bandwidth", default = 400, type = int, help = "CD-HIT alignment bandwidth. The higher, the less spurious representatives remain, but marginal gains decrease exponentially (default: 400).")
+
 
     args_recovery = parser.add_argument_group('Hit recovery')
     args_recovery.add_argument('--no_recovery_content', dest = 'no_recovery_by_content', default = False, action = "store_true", help = "Skip recovering hits by cluster layout (default: False)")
     args_recovery.add_argument('--no_recovery_score', dest = 'no_recovery_by_score', default = False, action = "store_true", help = "Skip recovering hits by outlier homology scores (default: False)")
     args_recovery.add_argument('--min_z_score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
     args_recovery.add_argument('--min_score_diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
-    
-    args_reassign_clusters = parser.add_argument_group('Cluster reassignment')
-    args_reassign_clusters.add_argument('--reassign-clusters', dest = "reassign_reprs", default = False, action = "store_true", help = "Reassign spurious cluster representatives missed by MMseqs using an a posteriori CD-HIT run (default: False).")
-    args_reassign_clusters.add_argument('--cdhit-bandwidth', dest = "cdhit_bandwidth", default = 400, type = int, help = "CD-HIT alignment bandwidth. The higher, the less spurious representatives remain, but marginal gains decrease exponentially.")
     
     return parser
 
