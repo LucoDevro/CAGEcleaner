@@ -95,18 +95,24 @@ class RemoteGenomeRun(RemoteRun, GenomeRun):
         
         ## Fetch RefSeq assembly IDs
         LOG.info('Fetching RefSeq Assembly IDs')
-        refseq_assembly_accessions = get_assembly_accessions(refseq_scaffolds, 'RefSeq', no_progress = self.no_progress)
+        if refseq_scaffolds:
+            refseq_assembly_accessions = get_assembly_accessions(refseq_scaffolds, 'RefSeq', no_progress = self.no_progress)
+        else:
+            refseq_assembly_accessions = []
         
         ## Fetch Genbank assembly IDs
         LOG.info('Fetching Genbank Assembly IDs')
-        genbank_assembly_accessions = get_assembly_accessions(genbank_scaffolds, 'Genbank', no_progress = self.no_progress)
+        if genbank_scaffolds:
+            genbank_assembly_accessions = get_assembly_accessions(genbank_scaffolds, 'Genbank', no_progress = self.no_progress)
+        else:
+            genbank_assembly_accessions = []
         
         ## Gather and deduplicate assembly IDs
         LOG.info('Merging ID sets')
         assembly_accessions = refseq_assembly_accessions + genbank_assembly_accessions
         
         ## Stop if empty
-        if len(assembly_accessions) == 0:
+        if not assembly_accessions:
             msg = 'No assembly IDs retrieved!'
             LOG.critical(msg)
             raise RuntimeError(msg)
