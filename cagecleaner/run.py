@@ -112,10 +112,6 @@ class Run(ABC):
         self.zscore_outlier_threshold: float = parsed_args['zscore_outlier_threshold']
         self.minimal_score_difference: float = parsed_args['minimal_score_difference']
         
-        # Cluster reassignment arguments:
-        self.reassign_reprs: bool = parsed_args['reassign_reprs']
-        self.cdhit_bandwidth: int = parsed_args['cdhit_bandwidth']
-        
         # This variable will store the filtered session file, the end result.
         self.filtered_session: Session | None = None
         

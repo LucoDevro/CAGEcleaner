@@ -283,10 +283,6 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         LOG.info("--- STEP 2: Dereplicating ---")
         self.dereplicate_regions()  # Dereplicate.
         
-        if self.reassign_reprs:
-            LOG.info("--- STEP 2B: Reassigning cluster representatives. ---")
-            self.reassign_clusters()
-        
         LOG.info("--- STEP 3: Mapping dereplication clustering to binary table ---")
         self.join_dereplication_with_binary()  # Map each row in the binary table with its representative
         

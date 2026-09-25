@@ -181,7 +181,6 @@ class LocalRegionRun(LocalRun, RegionRun):
             None
         """
         
-        
         LOG.info("--- STEP 1: Staging genomes for dereplication. ---")
         self.prepare_genomes()
         
@@ -190,10 +189,6 @@ class LocalRegionRun(LocalRun, RegionRun):
         
         LOG.info("--- STEP 3: Dereplicating. ---")
         self.dereplicate_regions()
-        
-        if self.reassign_reprs:
-            LOG.info("--- STEP 3B: Reassigning cluster representatives. ---")
-            self.reassign_clusters()
         
         LOG.info("--- STEP 4: Mapping dereplication output to binary table. ---")
         self.join_dereplication_with_binary()
