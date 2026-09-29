@@ -106,8 +106,8 @@ def create_parser() -> argparse.Namespace:
     args_region_dereplication.add_argument('--allow_edge', dest = 'strict_regions', default = True, action = "store_false", help = "Allow genomic regions that, including margin, are at a contig edge.")
 
     args_recovery = parser.add_argument_group('Hit recovery')
-    args_recovery.add_argument('--no_recovery_content', dest = 'no_recovery_by_content', default = False, action = "store_true", help = "Skip recovering hits by cluster layout (default: False)")
-    args_recovery.add_argument('--no_recovery_score', dest = 'no_recovery_by_score', default = False, action = "store_true", help = "Skip recovering hits by outlier homology scores (default: False)")
+    args_recovery.add_argument('--recover', dest = 'recover_content', default = False, action = "store_true", help = "Recover hits by cluster layout (default: False)")
+    args_recovery.add_argument('--recover_score', dest = 'recover_score', default = False, action = "store_true", help = "Additionally recover hits by outlier homology score (default: False)")
     args_recovery.add_argument('--min_z_score', dest = 'zscore_outlier_threshold', default = 2.0, type = float, help = "z-score threshold to consider hits outliers (default: 2.0)")
     args_recovery.add_argument('--min_score_diff', dest = 'minimal_score_difference', default = 0.1, type = float, help = "minimum score difference between hits to be considered different. Discards outlier hits with a score difference below this threshold. (default: 0.1)")
     

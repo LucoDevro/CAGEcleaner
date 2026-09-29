@@ -107,8 +107,8 @@ class Run(ABC):
         self.margin: int = parsed_args['margin']
         
         # Hit recovery arguments:
-        self.no_recovery_by_content: bool = parsed_args['no_recovery_by_content']
-        self.no_recovery_by_score: bool = parsed_args['no_recovery_by_score']
+        self.recover_content: bool = parsed_args['recover_content']
+        self.recover_score: bool = parsed_args['recover_score']
         self.zscore_outlier_threshold: float = parsed_args['zscore_outlier_threshold']
         self.minimal_score_difference: float = parsed_args['minimal_score_difference']
         
@@ -292,11 +292,11 @@ class Run(ABC):
         
         
         # If the user is not interested in recovering by content, skip this workflow.
-        if self.no_recovery_by_content:
+        if self.recover_content:
             LOG.info("Skipping hit recovery.")
             return None
         
-        if self.no_recovery_by_score:
+        if self.recover_score:
             LOG.info("Skipping hit recovery by score.")
         
         # Group by representative and layout group
@@ -306,7 +306,7 @@ class Run(ABC):
             LOG.debug(f"-> {len(group)} hits in this group")
             
             # Now we want to recover hits with outlier scores within this group of hits with same representative and cluster layout
-            if not(self.no_recovery_by_score):
+            if not(self.recover_score):
                 group = recover_hits_by_score(group)  # This group now contains rows that are 'readded_by_score'
             
             # If there is a dereplication presentative in this group, we can skip picking a layout representative
@@ -325,7 +325,7 @@ class Run(ABC):
         # Log some counts
         recovered_by_content = sum(self.binary_df['dereplication_status'] == 'readded_by_content')
         LOG.info(f"Total hits recovered by alternative gene cluster composition: {recovered_by_content}")
-        if not(self.no_recovery_by_score):
+        if not(self.recover_score):
             recovered_by_score = sum(self.binary_df['dereplication_status'] == 'readded_by_score')
             LOG.info(f"Total hits recovered by outlier hit score: {recovered_by_score}")
                 
