@@ -89,7 +89,7 @@ class RegionRun(Run):
                '--kmer-per-seq', str(80),
                '--max-seqs', str(300),
                '--cluster-reassign',
-               '--seq-id-mode', str(1),
+               '--max-seq-len', str(65535),
                ]
         
         try:
