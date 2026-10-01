@@ -24,7 +24,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
-    "scipy <=1.14.1",
     "biopython",
     "cblaster ==1.4.0",
     "pandas <3.0.0",

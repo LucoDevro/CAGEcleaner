@@ -11,7 +11,6 @@ import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from copy import deepcopy
-from scipy.stats import zscore
 from random import choice
 from cblaster.classes import Session
 from cblaster.extract_clusters import get_sorted_cluster_hierarchies
@@ -274,7 +273,7 @@ class Run(ABC):
                 facilitate it identifying hits to recovery by cluster layout
             """
             # Add a column with the z-scores based on the Score in each row:
-            df['z_score'] = zscore(df['Score'])
+            df['z_score'] = (df['Score'] - df['Score'].mean()) / df['Score'].std(ddof = 0)
             # Get the mean modal score. Mean because there migth be multiple modal values
             modal_score = df['Score'].mode().mean()
             # Alter the run's binary df at the indices where the score difference and the z_score pass the thresholds
