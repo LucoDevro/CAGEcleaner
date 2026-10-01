@@ -41,7 +41,7 @@ license = {text = "MIT"}
 [project.optional-dependencies]
 doc = [
     "sphinx",
-    "sphinx_rtd_theme",
+    "pydata-sphinx-theme",
 ]
 
 [project.scripts]
