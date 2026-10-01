@@ -18,17 +18,17 @@ A slightly more complex example to run CAGEcleaner at 14 cores in full-genome de
 
 	cagecleaner -s session.json --cores 14 -i 90 -c 50
 
-A more complicated example to run CAGEcleaner at 14 cores in region dereplication mode with both thresholds at 95 %, adding a sequence margin of 5 kb to both sides of each cluster, and discarding clusters that are at a contig edge.
+A more complicated example to run CAGEcleaner at 14 cores in region dereplication mode with both thresholds at 95 %, adding a sequence margin of 5 kb to both sides of each cluster, and allowing clusters at a contig edge.
 
 .. code-block:: bash
 
-	cagecleaner -s session.json --cores 14 -i 90 -c 90 --method regions -m 5000 --strict
+	cagecleaner -s session.json --cores 14 -i 90 -c 90 --method regions -m 5000 --allow_edge
 
-A complex example that runs CAGEcleaner at 14 cores in region dereplication mode with the identity threshold at 95 %, the coverage threshold at 80 %, a sequence margin of size 10 kb, saving the results in a subfolder `results`, keeping all intermediate files, excluding a scaffold with a duplicate ID from the analysis, bypassing another one with a unique label, and disabling the hit recovery by outlier homology scores.
+A complex example that runs CAGEcleaner at 14 cores in region dereplication mode with the identity threshold at 95 %, the coverage threshold at 80 %, a sequence margin of size 10 kb, saving the results in a subfolder `results`, keeping all intermediate files, excluding a scaffold with a duplicate ID from the analysis, bypassing another one with a unique label, and enabling both hit recovery modules.
 
 .. code-block:: bash
 
-	cagecleaner -s session.json --cores 14 -i 95 -c 80 --method regions -m 10000 -o results --keep_intermediate --exs assembly1:ctg1 --bys ctg131 --no_recovery_score
+	cagecleaner -s session.json --cores 14 -i 95 -c 80 --method regions -m 10000 -o results --keep_intermediate --exs assembly1:ctg1 --bys ctg131 --recover --recover_score
 
 
 Local mode
@@ -48,17 +48,17 @@ A slightly more complex example to run CAGEcleaner at 14 cores in full-genome de
 
 	cagecleaner -s session.json -g genomes --cores 14 -i 90 -c 50
 
-A more complicated example to run CAGEcleaner at 14 cores in region dereplication mode with both thresholds at 95 %, adding a sequence margin of 5 kb to both sides of each cluster, discarding clusters that are at a contig edge.
+A more complicated example to run CAGEcleaner at 14 cores in region dereplication mode with both thresholds at 95 %, adding a sequence margin of 5 kb to both sides of each cluster, allowing clusters at a contig edge.
 
 .. code-block:: bash
 
-	cagecleaner -s session.json -g genomes --cores 14 -i 95 -c 95 --method regions -m 5000 --strict
+	cagecleaner -s session.json -g genomes --cores 14 -i 95 -c 95 --method regions -m 5000 --allow_edge
 
-A complex example that runs CAGEcleaner at 14 cores in region dereplication mode with the identity threshold at 95 %, the coverage threshold at 80 %, a sequence margin of size 10 kb, saving the results in a subfolder `results`, keeping all intermediate files, excluding a scaffold with a duplicate ID from the analysis, bypassing another one with a unique label, and disabling the hit recovery by outlier homology scores.
+A complex example that runs CAGEcleaner at 14 cores in region dereplication mode with the identity threshold at 95 %, the coverage threshold at 80 %, a sequence margin of size 10 kb, saving the results in a subfolder `results`, keeping all intermediate files, excluding a scaffold with a duplicate ID from the analysis, bypassing another one with a unique label, and enabling both hit recovery modules.
 
 .. code-block:: bash
 
-	cagecleaner -s session.json -g genomes --cores 14 -i 95 -c 80 --method regions -m 10000 -o results --keep_intermediate --exs assembly1:ctg1 --bys ctg131 --no_recovery_score
+	cagecleaner -s session.json -g genomes --cores 14 -i 95 -c 80 --method regions -m 10000 -o results --keep_intermediate --exs assembly1:ctg1 --bys ctg131 --recover --recover_score
 
 Output files
 ------------
@@ -66,16 +66,16 @@ Output files
 This tool produces at least six output files:
 
 - ``filtered_session.json`` a filtered session file
-- ``filtered_binary.txt`` a cblaster-like binary presence/absence table, containing only the retained hits
-- ``filtered_summary.txt`` a cblaster-like summary file, containing only the retained hits
+- ``filtered_binary.txt`` a filtered cblaster binary presence/absence table, containing only the retained hits
+- ``filtered_summary.txt`` a filtered cblaster summary file, containing only the retained hits
 - ``extended_binary.txt`` a cblaster-like binary table extended with the following columns
 
 	- ``Number`` Number of the cluster in the original session
 	- ``Strand`` Tuple representing on which strand each query gene homolog was found.
-	- ``Layout_group`` Tuple representing the synteny layout
+	- ``Layout_group`` Tuple representing the synteny layout in terms of query homologs, used for recovery by content
+	- ``assembly_file`` fasta file of the hosting genome or region
 	- ``representative`` the representative genome or region
 	- ``dereplication_status`` status of this cluster (Was it removed/kept? Why?)
-	- ``assembly_file`` fasta file of the hosting genome or region
 
 - ``retained_cluster_numbers.txt`` the cluster numbers of each selected hit
 - ``genome_cluster_sizes.txt`` a tab-separated text file with the number of genomes in each dereplication genome cluster
@@ -87,9 +87,9 @@ Optionally, the downloaded sequence files and the dereplication output files gen
 In ``extended_binary.txt``, there are four possible dereplication statuses.
 
 +--------------------------------+-----------------------------------------------------------------------------+
-| `dereplication_representative` | Hit part of the sequence selected as sequence cluster representative.       |
+| `dereplication_representative` | Hit part of the sequence selected as the sequence cluster representative.   |
 +--------------------------------+-----------------------------------------------------------------------------+
-| `readded_by_content`           | Kept due to a different group layout than the dereplication representative. |
+| `readded_by_content`           | Kept due to a different synteny than the dereplication representative.      |
 +--------------------------------+-----------------------------------------------------------------------------+
 | `readded_by_score`             | Kept due to an outlier homology score.                                      |
 +--------------------------------+-----------------------------------------------------------------------------+
@@ -99,11 +99,11 @@ In ``extended_binary.txt``, there are four possible dereplication statuses.
 Input from TSV files
 --------------------
 
-CAGEcleaner can process outputs from other gene mining tools than cblaster, although you need to wrangle your non-cblaster output into three TSV files with specific formatting (see also the example files). Using our provided helper tool ``cagecleaner-generate-session``, generate then a new cblaster session file, which you can use as input for CAGEcleaner.
+CAGEcleaner can process outputs from other gene mining tools than cblaster, although you need to wrangle your non-cblaster output into three TSV files with specific formatting (see also the `cfoldseeker query example files <https://github.com/LucoDevro/CAGEcleaner/tree/main/examples/cfoldseeker_query>`_). Using our provided helper tool ``cagecleaner-generate-session``, generate then a new cblaster session file, which you can use as input for CAGEcleaner.
 
 The **formatting of these three TSV files** is described below.
 
-***Don't forget the header line in each file!***
+**Don't forget the header line in each file!**
 
 hits.tsv
 ~~~~~~~~
@@ -136,7 +136,7 @@ length     length of the cluster in bp
 score      a score for the cluster (e.g. the cblaster score)
 scaff      an ID of the scaffold that harbours this cluster (e.g. an NCBI Nucleotide ID, a contig label of your own local genome assembly)
 strand     strand location of the cluster
-taxon_name name of the organism (can be a human-readable name, or a NCBI Assembly ID)
+taxon_name name of the organism (can be a human-readable name, or an NCBI Assembly ID)
 taxon_id   a taxon ID (e.g. the NCBI taxon ID, an arbitrary ID)
 ========== ================================================================================================================================
 
@@ -161,13 +161,13 @@ Cluster content
 
 This strategy assesses the number of homologs that were found for each query gene.
 
-For example, suppose you found two groups of hits. Group 1 has one gene A and one gene B, and contains the hit that was retained due to the dereplication. On the other hand, group 2 has two genes A and one gene B. If you would stick to the hit reduction after the dereplication, group 2 would not be represented anymore.
+For example, suppose you found two groups of hits. Group 1 has one gene A followed by one gene B, and contains the hit that was retained due to the dereplication. On the other hand, group 2 has two genes A followed by one gene B. If you would stick to the hit reduction after the dereplication, group 2 would not be represented anymore.
 
 In each content group not containing the dereplication representative hit, the hit to be retained is chosen randomly.
 
 .. note::
 
-   This recovery method may also recover redundant cluster hits of which a query homolog was missed by your mining tool, for example because of a too high e-value.
+   This recovery method may also recover hits in which a query homolog was missed by your mining tool, for example because of a too high e-value.
 
 Homology score
 ~~~~~~~~~~~~~~~
@@ -189,95 +189,94 @@ Example hit recovery
 
 Let's consider a (simplified) extended binary table output table where CAGEcleaner has added the representative, and the dereplication status for each row:
 
-======== ======== ===== ===== ===== ===== ============== ====================
-Organism Scaffold Score Gene1 Gene2 Gene3 Representative Dereplication status
-======== ======== ===== ===== ===== ===== ============== ====================
-org1     scaff1   3.17  1     1     1     org1           dereplication_representative
-org2     scaff2   3.16  1     1     1     org1           redundant
-org3     scaff3   3.17  1     0     1     org1           redundant
-org4     scaff4   3.17  1     1     1     org4           dereplication_representative
-org5     scaff5   2.92  1     0     1     org4           redundant
-org6     scaff6   3.12  1     0     1     org4           redundant
-org7     scaff7   3.16  1     1     1     org4           redundant
-org8     scaff8   3.14  1     0     1     org4           redundant
-======== ======== ===== ===== ===== ===== ============== ====================
+======== ======== ===== ============ ============== ============================
+Organism Scaffold Score Layout_group Representative Dereplication status
+======== ======== ===== ============ ============== ============================
+org1     scaff1   3.17  (1, 2, 3)    org1           dereplication_representative
+org2     scaff2   3.16  (1, 2, 3)    org1           redundant
+org3     scaff3   3.17  (1, 3)       org1           redundant
+org4     scaff4   3.17  (1, 2, 3)    org4           dereplication_representative
+org5     scaff5   2.92  (1, 3)       org4           redundant
+org6     scaff6   3.12  (1, 3)       org4           redundant
+org7     scaff7   3.16  (1, 2, 3)    org4           redundant
+org8     scaff8   3.14  (1, 3)       org4           redundant
+======== ======== ===== ============ ============== ============================
 
 The first step is to group the rows based on their corresponding representatives. In this case, there are two groups; org1 and org4. This will result in the following two tables:
 
 *REPRESENTATIVE = org1:*
 
-======== ======== ===== ===== ===== ===== ============== ====================
-Organism Scaffold Score Gene1 Gene2 Gene3 Representative Dereplication status
-======== ======== ===== ===== ===== ===== ============== ====================
-org1     scaff1   3.17  1     1     1     org1           dereplication_representative
-org2     scaff2   3.16  1     1     1     org1           redundant
-org3     scaff3   3.17  1     0     1     org1           redundant
-======== ======== ===== ===== ===== ===== ============== ====================
+======== ======== ===== ============ ============== ============================
+Organism Scaffold Score Layout_group Representative Dereplication status
+======== ======== ===== ============ ============== ============================
+org1     scaff1   3.17  (1, 2, 3)    org1           dereplication_representative
+org2     scaff2   3.16  (1, 2, 3)    org1           redundant
+org3     scaff3   3.17  (1, 3)       org1           redundant
+======== ======== ===== ============ ============== ============================
 
 *REPRESENTATIVE = org4:*
 
-======== ======== ===== ===== ===== ===== ============== ====================
-Organism Scaffold Score Gene1 Gene2 Gene3 Representative Dereplication status
-======== ======== ===== ===== ===== ===== ============== ====================
-org4     scaff4   3.17  1     1     1     org4           dereplication_representative
-org5     scaff5   2.92  1     0     1     org4           redundant
-org6     scaff6   3.12  1     0     1     org4           redundant
-org7     scaff7   3.16  1     1     1     org4           redundant
-org8     scaff8   3.14  1     0     1     org4           redundant
-======== ======== ===== ===== ===== ===== ============== ====================
+======== ======== ===== ============ ============== ============================
+Organism Scaffold Score Layout_group Representative Dereplication status
+======== ======== ===== ============ ============== ============================
+org4     scaff4   3.17  (1, 2, 3)    org4           dereplication_representative
+org5     scaff5   2.92  (1, 3)       org4           redundant
+org6     scaff6   3.12  (1, 3)       org4           redundant
+org7     scaff7   3.16  (1, 2, 3)    org4           redundant
+org8     scaff8   3.14  (1, 3)       org4           redundant
+======== ======== ===== ============ ============== ============================
 
 Now notice that the gene cluster composition varies within the groupings, something that might also occur in a real-life example. Some hits contain all the genes from the queries, whereas others are missing gene2. In the first grouping, org3 is missing gene2. If recovery by content is enabled, CAGEcleaner will make two groups and select a random representative for each group if it doesn't contain a dereplication representative. Hence, in this case, two hits are retained: org1 as representative for the structural group of org1 and org2, and org3 for its own structural group.
 
 *ALL GENES PRESENT:*
 
-======== ======== ===== ===== ===== ===== ============== ====================
-Organism Scaffold Score Gene1 Gene2 Gene3 Representative Dereplication status
-======== ======== ===== ===== ===== ===== ============== ====================
-org1     scaff1   3.17  1     1     1     org1           dereplication_representative
-org2     scaff2   3.16  1     1     1     org1           redundant
-======== ======== ===== ===== ===== ===== ============== ====================
+======== ======== ===== ============ ============== ============================
+Organism Scaffold Score Layout_group Representative Dereplication status
+======== ======== ===== ============ ============== ============================
+org1     scaff1   3.17  (1, 2, 3)    org1           dereplication_representative
+org2     scaff2   3.16  (1, 2, 3)    org1           redundant
+======== ======== ===== ============ ============== ============================
 
 *GENE2 MISSING:*
 
-======== ======== ===== ===== ===== ===== ============== ====================
-Organism Scaffold Score Gene1 Gene2 Gene3 Representative Dereplication status
-======== ======== ===== ===== ===== ===== ============== ====================
-org3     scaff3   3.17  1     0     1     org1           redundant
-======== ======== ===== ===== ===== ===== ============== ====================
+======== ======== ===== ============ ============== ============================
+Organism Scaffold Score Layout_group Representative Dereplication status
+======== ======== ===== ============ ============== ============================
+org3     scaff3   3.17  (1, 3)       org1           readded_by_content
+======== ======== ===== ============ ============== ============================
 
 Now let's consider the second grouping with org4 as dereplication representative and divide this table by gene cluster content:
 
 *ALL GENES PRESENT:*
 
-======== ======== ===== ===== ===== ===== ============== ====================
-Organism Scaffold Score Gene1 Gene2 Gene3 Representative Dereplication status
-======== ======== ===== ===== ===== ===== ============== ====================
-org4     scaff4   3.17  1     1     1     org4           dereplication_representative
-org7     scaff7   3.16  1     1     1     org4           redundant
-======== ======== ===== ===== ===== ===== ============== ====================
+======== ======== ===== ============ ============== ============================
+Organism Scaffold Score Layout_group Representative Dereplication status
+======== ======== ===== ============ ============== ============================
+org4     scaff4   3.17  (1, 2, 3)    org4           dereplication_representative
+org7     scaff7   3.16  (1, 2, 3)    org4           redundant
+======== ======== ===== ============ ============== ============================
 
 *GENE2 MISSING:*
 
-======== ======== ===== ===== ===== ===== ============== ====================
-Organism Scaffold Score Gene1 Gene2 Gene3 Representative Dereplication status
-======== ======== ===== ===== ===== ===== ============== ====================
-org5     scaff5   2.92  1     0     1     org4           redundant
-org6     scaff6   3.12  1     0     1     org4           redundant
-org8     scaff8   3.14  1     0     1     org4           redundant
-======== ======== ===== ===== ===== ===== ============== ====================
+======== ======== ===== ============ ============== ============================
+Organism Scaffold Score Layout_group Representative Dereplication status
+======== ======== ===== ============ ============== ============================
+org5     scaff5   2.92  (1, 3)       org4           readded_by_score
+org6     scaff6   3.12  (1, 3)       org4           readded_by_content
+org8     scaff8   3.14  (1, 3)       org4           redundant
+======== ======== ===== ============ ============== ============================
 
-The grouping where all genes are present contains a representative, so no recovery is required. The other grouping contains hits where gene2 is missing. Notice that org5's cblaster score (2.92) significantly deviates from the scores in the rest of this grouping. If recovery by score is enabled, CAGEcleaner will retain this score outlier. Equivalent to the org1 case, a random non-outlier hit will be selected to represent this grouping if recovery by content is enabled (in this case org6).
+The grouping where all genes are present contains a representative, so no recovery is required. The other grouping contains hits where gene2 is missing. Notice that org5's cblaster score (2.92) significantly deviates from the scores in the rest of this grouping. If recovery by score is enabled, CAGEcleaner will retain this score outlier. Equivalent to the org1 case, a random non-outlier hit (ignoring score outliers) will be selected to represent this grouping if recovery by content is enabled (in this case org6).
 
 To summarise, the (simplified) binary table for this example case will look like below:
 
-======== ======== ===== ===== ===== ===== ============== ====================
-Organism Scaffold Score Gene1 Gene2 Gene3 Representative Dereplication status
-======== ======== ===== ===== ===== ===== ============== ====================
-org1     scaff1   3.17  1     1     1     org1           dereplication_representative
-org3     scaff3   3.17  1     0     1     org1           redundant
-org4     scaff4   3.17  1     1     1     org4           dereplication_representative
-org5     scaff5   2.92  1     0     1     org4           redundant
-org6     scaff6   3.12  1     0     1     org4           redundant
-======== ======== ===== ===== ===== ===== ============== ====================
-
+======== ======== ===== ============ ============== ============================
+Organism Scaffold Score Layout_group Representative Dereplication status
+======== ======== ===== ============ ============== ============================
+org1     scaff1   3.17  (1, 2, 3)    org1           dereplication_representative
+org3     scaff3   3.17  (1, 3)       org1           readded_by_content
+org4     scaff4   3.17  (1, 2, 3)    org4           dereplication_representative
+org5     scaff5   2.92  (1, 3)       org4           readded_by_score
+org6     scaff6   3.12  (1, 3)       org4           readded_by_content
+======== ======== ===== ============ ============== ============================
 
