@@ -227,7 +227,7 @@ def generate_cblaster_session(hits: Path, clusters: Path, queries: Path, mode: s
     """
     #### Read tables
     hits_df = pd.read_table(hits, sep = "\t",
-                            usecols = ['db_id', 'query', 'scaff', 'strand', 'coords', 'evalue', 'score', 'seqid', 'tcov'])
+                            usecols = ['db_id', 'query', 'scaff', 'strand', 'coords', 'evalue', 'score', 'seqid', 'qcov'])
     clusters_df = pd.read_table(clusters, sep = "\t",
                                 usecols = ['number', 'hits', 'start', 'end', 'length', 'score', 'scaff', 'taxon_name', 'taxon_id'])
     queries_df = pd.read_table(queries, sep = "\t")
