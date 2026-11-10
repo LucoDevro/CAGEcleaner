@@ -163,6 +163,7 @@ def run_command(cmd_list: list, max_attempts: int = 3) -> None:
     def command_stdout_log(s): return LOG.debug(s.rstrip())
     def command_stderr_log(s): return LOG.warning(s.rstrip())
     
+    LOG.info(f'Running {executable.name}')
     LOG.debug(f'Running command: {" ".join(cmd)}')
     
     for attempt in range(max_attempts):
@@ -226,7 +227,7 @@ def generate_cblaster_session(hits: Path, clusters: Path, queries: Path, mode: s
     """
     #### Read tables
     hits_df = pd.read_table(hits, sep = "\t",
-                            usecols = ['db_id', 'query', 'scaff', 'strand', 'coords', 'evalue', 'score', 'seqid', 'tcov'])
+                            usecols = ['db_id', 'query', 'scaff', 'strand', 'coords', 'evalue', 'score', 'seqid', 'qcov'])
     clusters_df = pd.read_table(clusters, sep = "\t",
                                 usecols = ['number', 'hits', 'start', 'end', 'length', 'score', 'scaff', 'taxon_name', 'taxon_id'])
     queries_df = pd.read_table(queries, sep = "\t")

@@ -106,10 +106,10 @@ class RemoteRegionRun(RemoteRun, RegionRun):
         if self.strict_regions:
             regions = regions[~mask_up]
         else:
-            regions['Start'] = regions['Start'].clip(lower = 1)
+            regions['Start'] = regions['Start'].clip(lower = 0)
             
         ## Treat contig edges downstream
-        mask_down = regions['End'] > regions['Contig_length']
+        mask_down = regions['End'] >= regions['Contig_length']
         if self.strict_regions:
             regions = regions[~mask_down]
         else:

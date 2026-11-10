@@ -173,8 +173,8 @@ def get_assembly_accessions(scaffolds: list, source: str, no_progress: bool = Fa
         msg = 'Invalid NCBI Nucleotide database!'
         LOG.error(msg)
         raise ValueError(msg)
-    
-    if len(scaffolds) == 0:
+
+    if not scaffolds:
         msg = 'Scaffold ID list empty!'
         LOG.error(msg)
         raise ValueError(msg)

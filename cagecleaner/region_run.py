@@ -77,7 +77,7 @@ class RegionRun(Run):
             msg = "The dereplication input folder is empty!"
             LOG.critical(msg)
             raise RuntimeError(msg)
-        
+            
         cmd = ['mmseqs', 'easy-cluster',
                *[str(p) for p in self.DEREP_IN_DIR.iterdir()],
                str(self.DEREP_OUT_DIR / 'derep'),
@@ -85,7 +85,11 @@ class RegionRun(Run):
                '--min-seq-id', str(self.identity/100),
                '-c', str(self.coverage/100),
                '--threads', str(self.cores),
-               '-v', mmseqs_verbosity
+               '-v', mmseqs_verbosity,
+               '--kmer-per-seq', str(80),
+               '--max-seqs', str(300),
+               '--cluster-reassign',
+               '--max-seq-len', str(65535),
                ]
         
         try:

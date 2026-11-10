@@ -29,17 +29,17 @@ Then start using it by activating the conda environment.
 Docker
 -------
 
-CAGEcleaner is also available as a Docker image from DockerHub. This is one of the recommended ways to run CAGEcleaner on Windows (the other one being running it using Windows' WSL feature).
+CAGEcleaner is also available as a Docker image from Quay.io. This is one of the recommended ways to run CAGEcleaner on Windows (the other one being running it using Windows' WSL feature). Run the following command to pull the container, adding one of the `possible version tags <https://quay.io/repository/biocontainers/cagecleaner?tab=tags>`_.
 
 .. code-block:: bash
 
-	docker pull lucodevro/cagecleaner
+	docker pull quay.io/biocontainers/cagecleaner:<tag>
 
 There is no entrypoint set up so running CAGEcleaner requires prepending your CAGEcleaner command with the appropriate Docker commands.
 
 .. code-block:: bash
 
-	docker run lucodevro/cagecleaner -v <your-cblaster-session>:session.json -v <your-output-folder>:output cagecleaner -s session.json -o output
+	docker run quay.io/biocontainers/cagecleaner:<tag> -v <your-cblaster-session>:session.json -v <your-output-folder>:output cagecleaner -s session.json -o output
 
 GitHub
 -------
@@ -53,7 +53,7 @@ Alternatively, it is possible to install the latest semi-stable development vers
 PyPi
 ------
 
-CAGEcleaner is also installable from PyPi using pip, yet we do not recommend using this approach as some dependencies are not available from PyPi (NCBI Datasets CLI, Entrez Direct, any2fasta, MMseqs2) and therefore should be installed beforehand. So either make sure you have installed these dependencies separately, or use one of the other installation options.
+CAGEcleaner is also installable from PyPi using pip.
 
 .. code-block:: bash
 

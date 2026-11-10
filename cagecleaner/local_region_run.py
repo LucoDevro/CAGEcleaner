@@ -181,7 +181,6 @@ class LocalRegionRun(LocalRun, RegionRun):
             None
         """
         
-        
         LOG.info("--- STEP 1: Staging genomes for dereplication. ---")
         self.prepare_genomes()
         
