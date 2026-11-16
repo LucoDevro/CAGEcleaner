@@ -119,7 +119,7 @@ coords start and end coordinates of the homolog on the scaffold, separated by tw
 evalue a probabilistic value for the homolog
 score  a score for the homolog
 seqid  sequence identity of the homolog with its matching query
-tcov   target coverage of the homolog with its matching query
+qcov   query coverage of the homolog with its matching query
 ====== ===================================================================================================================================================================
 
 clusters.tsv
